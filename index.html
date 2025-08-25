@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Streaming Site</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+    }
+    header {
+      background: #222;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+    }
+    .search-container {
+      padding: 10px;
+      text-align: center;
+      background: #111;
+    }
+    .search-container input {
+      width: 90%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* always 3 per row */
+      gap: 10px;
+      padding: 10px;
+    }
+    .card {
+      background: #1c1c1c;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.03);
+    }
+    .card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+    .card p {
+      padding: 8px;
+      font-size: 13px;
+      text-align: center;
+    }
+    .player {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 9999;
+    }
+    .player iframe {
+      width: 100%;
+      max-width: 900px;
+      aspect-ratio: 16 / 9;
+      border: none;
+      border-radius: 10px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 15px; right: 15px;
+      background: red;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<header>🎬 YouDai Connecting Tamil</header>
+
+<div class="search-container">
+  <input type="text" id="searchBox" placeholder="Search videos...">
+</div>
+
+<div class="grid" id="videoGrid"></div>
+
+<div class="player" id="videoPlayer">
+  <iframe id="playerIframe" allowfullscreen></iframe>
+  <button class="close-btn" onclick="closePlayer()">✖</button>
+</div>
+
+<script>
+  const videos = [
+    // YouTube
+    { platform: "youtube", id: "I9VwhL6wd6I", title: "YouTube Video 1", thumb: "https://img.youtube.com/vi/I9VwhL6wd6I/hqdefault.jpg" },
+    { platform: "youtube", id: "4hU4cUqox0Y", title: "YouTube Video 2", thumb: "https://img.youtube.com/vi/4hU4cUqox0Y/hqdefault.jpg" },
+    // Dailymotion	
+    { platform: "dailymotion", id: "k6lBBd8MzD5zXXDIg52", title: "Sakthivel 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6lBBd8MzD5zXXDIg52" },
+    { platform: "dailymotion", id: "k6YpvLVzuo5bOEDIg4U", title: "Kanmani Anbudan 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6YpvLVzuo5bOEDIg4U" },
+    { platform: "dailymotion", id: "k34lixSVFq4uOKDIgaS", title: "Thendrale Mella Pesu 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k34lixSVFq4uOKDIgaS" },
+    { platform: "dailymotion", id: "k73wZM0qXPhs66DIg9C", title: "Dhanam 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k73wZM0qXPhs66DIg9C" },
+    { platform: "dailymotion", id: "k3k6CPy0Ynn3B8DIgaQ", title: "Magale En Marumagale 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k3k6CPy0Ynn3B8DIgaQ" },
+    { platform: "dailymotion", id: "k6MjYagjbWq0DxDIg4S", title: "Aaha Kalyanam 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6MjYagjbWq0DxDIg4S" },
+    { platform: "dailymotion", id: "k3jVVlix3hAKL2DIgaO", title: "Poongatru Thirumbuma 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k3jVVlix3hAKL2DIgaO" },
+    { platform: "dailymotion", id: "k3DByWaxvavPRUDIg50", title: "Mahanadhi 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k3DByWaxvavPRUDIg50" },
+    { platform: "dailymotion", id: "kJWrqt0QDjLAH0DIg4W", title: "Pandian Stores 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/kJWrqt0QDjLAH0DIg4W" },
+    { platform: "dailymotion", id: "k5CcbPrOXc59J7DIg9A", title: "Ayyanar Thunai 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k5CcbPrOXc59J7DIg9A" },
+    { platform: "dailymotion", id: "k6stDhfHTjtAYdDIg54", title: "Siragadikka Aasai 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6stDhfHTjtAYdDIg54" },
+    { platform: "dailymotion", id: "k7yyJNXA3hry0ODIg4Y", title: "Chinna Marumagal 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k7yyJNXA3hry0ODIg4Y" },
+    { platform: "dailymotion", id: "k3Zi99JRptVkwdDIgdk", title: "Sindhu Bairavi Kacheri Arambam 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k3Zi99JRptVkwdDIgdk" },
+    { platform: "dailymotion", id: "k4YB1618VtsPDmDIlp8", title: "Varisu 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k4YB1618VtsPDmDIlp8" },
+    { platform: "dailymotion", id: "kGqDTa9CsaoKC5DIm3c", title: "Idhayam 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/kGqDTa9CsaoKC5DIm3c" },
+    { platform: "dailymotion", id: "k6QN8ez38wVQOmDImC4", title: "Manasellam 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6QN8ez38wVQOmDImC4" },
+    { platform: "dailymotion", id: "k5oXE23vrnYPplDInhe", title: "Mounam Pesiyadhe 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k5oXE23vrnYPplDInhe" },
+    { platform: "dailymotion", id: "k243VTZ3qrF9ICDIs2m", title: "Maari 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k243VTZ3qrF9ICDIs2m" },
+    { platform: "dailymotion", id: "k6q5UEY3DvKzQIDIsfY", title: "Getti Melam 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6q5UEY3DvKzQIDIsfY" },
+    { platform: "dailymotion", id: "k6UeMTdsvJPxg6DIufo", title: "Chinna Siru Kiliye-25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6UeMTdsvJPxg6DIufo" },
+    { platform: "dailymotion", id: "k2itHovhOfKZzcDIuLQ", title: "Veera 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k2itHovhOfKZzcDIuLQ" },
+    { platform: "dailymotion", id: "k69bxjFRpcHLpODIuMo", title: "Ramayanam 25-08-2025 Sun Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k69bxjFRpcHLpODIuMo" },
+  ];
+
+  const grid = document.getElementById("videoGrid");
+  const searchBox = document.getElementById("searchBox");
+
+  function renderVideos(list) {
+    grid.innerHTML = "";
+    list.forEach(video => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${video.thumb}" alt="${video.title}">
+        <p>${video.title}</p>
+      `;
+      card.onclick = () => openPlayer(video);
+      grid.appendChild(card);
+    });
+  }
+
+  function openPlayer(video) {
+    document.getElementById("videoPlayer").style.display = "flex";
+    let embedUrl = "";
+    if (video.platform === "youtube") {
+      embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1`;
+    } else if (video.platform === "dailymotion") {
+      embedUrl = `https://www.dailymotion.com/embed/video/${video.id}?autoplay=1`;
+    }
+    document.getElementById("playerIframe").src = embedUrl;
+  }
+
+  function closePlayer() {
+    document.getElementById("videoPlayer").style.display = "none";
+    document.getElementById("playerIframe").src = "";
+  }
+
+  // Live search
+  searchBox.addEventListener("input", () => {
+    const query = searchBox.value.toLowerCase();
+    const filtered = videos.filter(v => v.title.toLowerCase().includes(query));
+    renderVideos(filtered);
+  });
+
+  // Initial render
+  renderVideos(videos);
+</script>
+
+</body>
+</html>
