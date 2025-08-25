@@ -680,12 +680,60 @@
       }
     }
 
+    /* Go to top button */
+    .go-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+      border: none;
+      border-radius: 50%;
+      width: 55px;
+      height: 55px;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.8);
+      box-shadow: 0 4px 20px rgba(78, 205, 196, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .go-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    .go-to-top:hover {
+      background: linear-gradient(135deg, #45b7d1, #4ecdc4);
+      transform: scale(1.1);
+      box-shadow: 0 6px 25px rgba(78, 205, 196, 0.5);
+    }
+
+    .go-to-top:active {
+      transform: scale(0.95);
+    }
+
+    @media (max-width: 768px) {
+      .go-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+      }
+    }
+
     /* Hide sections */
     .hidden {
       display: none;
     }
-
-    /* Dark scrollbar for webkit browsers */
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -755,6 +803,11 @@
       <div class="video-grid" id="searchGrid"></div>
     </div>
   </div>
+
+  <!-- Go to Top Button -->
+  <button class="go-to-top" id="goToTopBtn">
+    <i class="fas fa-chevron-up"></i>
+  </button>
 
   <div class="video-player" id="videoPlayer">
     <div class="player-container">
@@ -988,7 +1041,8 @@ const videos = [
       gridTitle: document.getElementById("gridTitle"),
       searchTitle: document.getElementById("searchTitle"),
       videoPlayer: document.getElementById("videoPlayer"),
-      playerIframe: document.getElementById("playerIframe")
+      playerIframe: document.getElementById("playerIframe"),
+      goToTopBtn: document.getElementById("goToTopBtn")
     };
 
     let currentView = 'sections'; // 'sections', 'grid', 'search'
@@ -1008,6 +1062,10 @@ const videos = [
       elements.clearFilters.addEventListener("click", clearAllFilters);
       elements.calendarBtn.addEventListener("click", toggleDatePicker);
       elements.backButton.addEventListener("click", backToSections);
+      elements.goToTopBtn.addEventListener("click", scrollToTop);
+      
+      // Handle scroll for go-to-top button visibility
+      window.addEventListener("scroll", throttle(handleScroll, 100));
       
       // Close player when clicking outside the iframe
       elements.videoPlayer.addEventListener("click", (e) => {
@@ -1057,6 +1115,18 @@ const videos = [
       };
     }
 
+    function throttle(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        if (!timeout) {
+          timeout = setTimeout(() => {
+            timeout = null;
+            func(...args);
+          }, wait);
+        }
+      };
+    }
+
     function getOptimalThumbnail(video) {
       return window.innerWidth < 768 ? video.mthumb : video.dthumb;
     }
@@ -1073,6 +1143,25 @@ const videos = [
     // Sort videos by date (latest first)
     function sortVideosByDate(videos) {
       return [...videos].sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    // Go to top functionality
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    function handleScroll() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const showButton = scrollTop > 500; // Show button after scrolling 500px
+      
+      if (showButton) {
+        elements.goToTopBtn.classList.add('visible');
+      } else {
+        elements.goToTopBtn.classList.remove('visible');
+      }
     }
 
     // Date picker functions
@@ -1156,6 +1245,12 @@ const videos = [
     function backToSections() {
       showView('sections');
       currentChannel = null;
+      
+      // Scroll to top when returning to sections
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
 
     function showChannelGrid(channel) {
@@ -1165,6 +1260,12 @@ const videos = [
       renderVideoGrid(sortedVideos, elements.videoGrid, false);
       currentChannel = channel;
       showView('grid');
+      
+      // Scroll to top when showing grid view
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
 
     function showSearchResults(filteredVideos, query, dateVal) {
@@ -1181,6 +1282,12 @@ const videos = [
       const sortedResults = sortVideosByDate(filteredVideos);
       renderVideoGrid(sortedResults, elements.searchGrid, true);
       showView('search');
+      
+      // Scroll to top when showing search results
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
 
     // Rendering functions
