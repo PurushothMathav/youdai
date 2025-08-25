@@ -3,178 +3,1291 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Streaming Site</title>
+  <title>YouDai Connecting Tamil</title>
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+      color: #ffffff;
       margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
+
+    /* Responsive container */
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        padding: 0 25px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .container {
+        padding: 0 40px;
+      }
+    }
+
+    /* Header */
     header {
-      background: #222;
-      padding: 15px;
+      background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+      padding: 20px 0;
       text-align: center;
-      font-size: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
     }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(18px, 4vw, 28px);
+      font-weight: 700;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradient 3s ease infinite;
+    }
+
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Top bar with search and filters */
+    .top-bar {
+      background: rgba(30, 30, 30, 0.8);
+      backdrop-filter: blur(10px);
+      padding: 15px 0;
+      position: sticky;
+      top: 80px;
+      z-index: 99;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .search-filter-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
     .search-container {
-      padding: 10px;
-      text-align: center;
-      background: #111;
+      position: relative;
+      flex: 1;
+      max-width: 100%;
     }
-    .search-container input {
-      width: 90%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
+
+    @media (min-width: 768px) {
+      .search-container {
+        max-width: 400px;
+      }
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 50px 12px 20px;
+      border-radius: 25px;
+      border: 2px solid transparent;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
       font-size: 16px;
       outline: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr); /* always 3 per row */
-      gap: 10px;
-      padding: 10px;
+
+    .search-input:focus {
+      border-color: #4ecdc4;
+      background: rgba(255,255,255,0.15);
+      box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
     }
-    .card {
-      background: #1c1c1c;
-      border-radius: 10px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.2s;
+
+    .search-input::placeholder {
+      color: rgba(255,255,255,0.6);
     }
-    .card:hover {
-      transform: scale(1.03);
-    }
-    .card img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-    }
-    .card p {
-      padding: 8px;
-      font-size: 13px;
-      text-align: center;
-    }
-    .player {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.95);
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 9999;
-    }
-    .player iframe {
-      width: 100%;
-      max-width: 900px;
-      aspect-ratio: 16 / 9;
-      border: none;
-      border-radius: 10px;
-    }
-    .close-btn {
+
+    .search-icon {
       position: absolute;
-      top: 15px; right: 15px;
-      background: red;
-      padding: 10px 15px;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.6);
+      pointer-events: none;
+    }
+
+    /* Filter controls */
+    .filter-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-shrink: 0;
+    }
+
+    .date-filter-container {
+      position: relative;
+    }
+
+    .calendar-btn {
+      background: rgba(255,255,255,0.1);
       border: none;
-      border-radius: 6px;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .calendar-btn:hover, .calendar-btn.active {
+      background: #4ecdc4;
+      transform: scale(1.1);
+      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+    }
+
+    .date-input {
+      position: absolute;
+      top: 55px;
+      right: 0;
+      background: rgba(30, 30, 30, 0.95);
+      border: 2px solid #4ecdc4;
+      border-radius: 12px;
+      padding: 12px;
+      color: #fff;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      z-index: 1000;
+      min-width: 200px;
+    }
+
+    @media (max-width: 480px) {
+      .date-input {
+        right: -50px;
+        min-width: 180px;
+      }
+    }
+
+    .date-input:focus {
+      outline: none;
+    }
+
+    .clear-filters-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      color: white;
       cursor: pointer;
       font-size: 14px;
-      color: white;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .clear-filters-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+
+    /* Channel menu */
+    .channel-menu {
+      padding: 20px 0;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #4ecdc4 transparent;
+    }
+
+    .channel-menu::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .channel-menu::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+    }
+
+    .channel-menu::-webkit-scrollbar-thumb {
+      background: #4ecdc4;
+      border-radius: 3px;
+    }
+
+    .channel-buttons {
+      display: flex;
+      gap: 12px;
+      padding-bottom: 10px;
+      min-width: max-content;
+    }
+
+    .channel-btn {
+      background: rgba(255,255,255,0.1);
+      border: 2px solid transparent;
+      border-radius: 25px;
+      padding: 10px 20px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      backdrop-filter: blur(10px);
+    }
+
+    .channel-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    .channel-btn.active {
+      background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+      border-color: #4ecdc4;
+      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+    }
+
+    /* Video grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns */
+      gap: 15px;
+      padding: 20px 0 40px;
+    }
+
+    @media (min-width: 768px) {
+      .video-grid {
+        grid-template-columns: repeat(4, 1fr); /* Tablet: 4 columns */
+        gap: 20px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .video-grid {
+        grid-template-columns: repeat(5, 1fr); /* PC: 5 columns */
+        gap: 25px;
+      }
+    }
+
+    /* Video cards */
+    .video-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+    }
+
+    .video-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border-color: rgba(78, 205, 196, 0.5);
+    }
+
+    .video-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent, rgba(78, 205, 196, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .video-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-thumbnail {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+    }
+
+    @media (min-width: 768px) {
+      .card-thumbnail {
+        height: 200px;
+      }
+    }
+
+    .card-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .video-card:hover .card-thumbnail img {
+      transform: scale(1.1);
+    }
+
+    .play-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.7);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4ecdc4;
+      font-size: 24px;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .video-card:hover .play-overlay {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .card-content {
+      padding: 16px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin: 0 0 8px 0;
+      color: #fff;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .card-channel {
+      background: rgba(78, 205, 196, 0.2);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    /* Video player */
+    .video-player {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.95);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .player-container {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    }
+
+    .player-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Remove player controls - let iframe handle everything */
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #4ecdc4;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* No results message */
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .no-results i {
+      font-size: 64px;
+      margin-bottom: 20px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .no-results h3 {
+      font-size: 24px;
+      margin: 0 0 10px 0;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .no-results p {
+      font-size: 16px;
+      margin: 0;
+    }
+
+    /* Responsive utilities */
+    .mobile-only {
+      display: block;
+    }
+
+    .desktop-only {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .mobile-only {
+        display: none;
+      }
+      .desktop-only {
+        display: block;
+      }
+    }
+
+    /* Landscape orientation for mobile video viewing */
+    @media screen and (max-width: 768px) and (orientation: landscape) {
+      .video-player {
+        padding: 10px;
+      }
+      
+      .player-controls {
+        top: 10px;
+        right: 10px;
+      }
+      
+      .control-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+    }
+
+    /* Dark scrollbar for webkit browsers */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.1);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(78, 205, 196, 0.6);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(78, 205, 196, 0.8);
     }
   </style>
 </head>
 <body>
+  <header>
+    <div class="container">
+      <h1>🎬 YouDai Connecting Tamil</h1>
+    </div>
+  </header>
 
-<header>🎬 YouDai Connecting Tamil</header>
+  <div class="top-bar">
+    <div class="container">
+      <div class="search-filter-container">
+        <div class="search-container">
+          <input type="text" id="searchBox" class="search-input" placeholder="Search videos...">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+        
+        <div class="filter-controls">
+          <div class="date-filter-container">
+            <button class="calendar-btn" id="calendarBtn">
+              <i class="fas fa-calendar-alt"></i>
+            </button>
+            <input type="date" id="dateFilter" class="date-input" style="display: none;">
+          </div>
+          <button class="clear-filters-btn" id="clearFilters" style="display: none;">
+            <i class="fas fa-times"></i> Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div class="search-container">
-  <input type="text" id="searchBox" placeholder="Search videos...">
-</div>
+  <div class="container">
+    <div class="channel-menu">
+      <div class="channel-buttons" id="channelButtons"></div>
+    </div>
 
-<div class="grid" id="videoGrid"></div>
+    <div class="video-grid" id="videoGrid"></div>
+  </div>
 
-<div class="player" id="videoPlayer">
-  <iframe id="playerIframe" allowfullscreen></iframe>
-  <button class="close-btn" onclick="closePlayer()">✖</button>
-</div>
+  <div class="video-player" id="videoPlayer">
+    <div class="player-container">
+      <iframe id="playerIframe" class="player-iframe" allowfullscreen></iframe>
+    </div>
+  </div>
 
-<script>
-  const videos = [
-    // YouTube
-    { platform: "youtube", id: "I9VwhL6wd6I", title: "YouTube Video 1", thumb: "https://img.youtube.com/vi/I9VwhL6wd6I/hqdefault.jpg" },
-    { platform: "youtube", id: "4hU4cUqox0Y", title: "YouTube Video 2", thumb: "https://img.youtube.com/vi/4hU4cUqox0Y/hqdefault.jpg" },
-    // Dailymotion	
-    { platform: "dailymotion", id: "k6lBBd8MzD5zXXDIg52", title: "Sakthivel 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6lBBd8MzD5zXXDIg52" },
-    { platform: "dailymotion", id: "k6YpvLVzuo5bOEDIg4U", title: "Kanmani Anbudan 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6YpvLVzuo5bOEDIg4U" },
-    { platform: "dailymotion", id: "k34lixSVFq4uOKDIgaS", title: "Thendrale Mella Pesu 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k34lixSVFq4uOKDIgaS" },
-    { platform: "dailymotion", id: "k73wZM0qXPhs66DIg9C", title: "Dhanam 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k73wZM0qXPhs66DIg9C" },
-    { platform: "dailymotion", id: "k3k6CPy0Ynn3B8DIgaQ", title: "Magale En Marumagale 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k3k6CPy0Ynn3B8DIgaQ" },
-    { platform: "dailymotion", id: "k6MjYagjbWq0DxDIg4S", title: "Aaha Kalyanam 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6MjYagjbWq0DxDIg4S" },
-    { platform: "dailymotion", id: "k3jVVlix3hAKL2DIgaO", title: "Poongatru Thirumbuma 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k3jVVlix3hAKL2DIgaO" },
-    { platform: "dailymotion", id: "k3DByWaxvavPRUDIg50", title: "Mahanadhi 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k3DByWaxvavPRUDIg50" },
-    { platform: "dailymotion", id: "kJWrqt0QDjLAH0DIg4W", title: "Pandian Stores 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/kJWrqt0QDjLAH0DIg4W" },
-    { platform: "dailymotion", id: "k5CcbPrOXc59J7DIg9A", title: "Ayyanar Thunai 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k5CcbPrOXc59J7DIg9A" },
-    { platform: "dailymotion", id: "k6stDhfHTjtAYdDIg54", title: "Siragadikka Aasai 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6stDhfHTjtAYdDIg54" },
-    { platform: "dailymotion", id: "k7yyJNXA3hry0ODIg4Y", title: "Chinna Marumagal 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k7yyJNXA3hry0ODIg4Y" },
-    { platform: "dailymotion", id: "k3Zi99JRptVkwdDIgdk", title: "Sindhu Bairavi Kacheri Arambam 25-08-2025 Vijay Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k3Zi99JRptVkwdDIgdk" },
-    { platform: "dailymotion", id: "k4YB1618VtsPDmDIlp8", title: "Varisu 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k4YB1618VtsPDmDIlp8" },
-    { platform: "dailymotion", id: "kGqDTa9CsaoKC5DIm3c", title: "Idhayam 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/kGqDTa9CsaoKC5DIm3c" },
-    { platform: "dailymotion", id: "k6QN8ez38wVQOmDImC4", title: "Manasellam 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6QN8ez38wVQOmDImC4" },
-    { platform: "dailymotion", id: "k5oXE23vrnYPplDInhe", title: "Mounam Pesiyadhe 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k5oXE23vrnYPplDInhe" },
-    { platform: "dailymotion", id: "k243VTZ3qrF9ICDIs2m", title: "Maari 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k243VTZ3qrF9ICDIs2m" },
-    { platform: "dailymotion", id: "k6q5UEY3DvKzQIDIsfY", title: "Getti Melam 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6q5UEY3DvKzQIDIsfY" },
-    { platform: "dailymotion", id: "k6UeMTdsvJPxg6DIufo", title: "Chinna Siru Kiliye-25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k6UeMTdsvJPxg6DIufo" },
-    { platform: "dailymotion", id: "k2itHovhOfKZzcDIuLQ", title: "Veera 25-08-2025 Zee Tamil Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k2itHovhOfKZzcDIuLQ" },
-    { platform: "dailymotion", id: "k69bxjFRpcHLpODIuMo", title: "Ramayanam 25-08-2025 Sun Tv Serial", thumb: "https://www.dailymotion.com/thumbnail/video/k69bxjFRpcHLpODIuMo" },
-  ];
-
-  const grid = document.getElementById("videoGrid");
-  const searchBox = document.getElementById("searchBox");
-
-  function renderVideos(list) {
-    grid.innerHTML = "";
-    list.forEach(video => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <img src="${video.thumb}" alt="${video.title}">
-        <p>${video.title}</p>
-      `;
-      card.onclick = () => openPlayer(video);
-      grid.appendChild(card);
-    });
+  <script>
+const videos = [
+  { 
+    "platform": "youtube", 
+    "id": "a7TuPgvdXjY", 
+    "title": "Ethirneechal Thodargiradhu | EP - 226 | 10 Aug 2025 | Sun TV", 
+    "mthumb": "https://img.youtube.com/vi/a7TuPgvdXjY/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/a7TuPgvdXjY/hqdefault.jpg",
+    "channel": "SUN TV",
+    "date": "2025-08-10"
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k6lBBd8MzD5zXXDIg52", 
+    "title": "Sakthivel 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k6lBBd8MzD5zXXDIg52?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k6lBBd8MzD5zXXDIg52",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25"
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k6YpvLVzuo5bOEDIg4U", 
+    "title": "Kanmani Anbudan 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k6YpvLVzuo5bOEDIg4U?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k6YpvLVzuo5bOEDIg4U",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k34lixSVFq4uOKDIgaS", 
+    "title": "Thendrale Mella Pesu 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k34lixSVFq4uOKDIgaS?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k34lixSVFq4uOKDIgaS",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k73wZM0qXPhs66DIg9C", 
+    "title": "Dhanam 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k73wZM0qXPhs66DIg9C?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k73wZM0qXPhs66DIg9C",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k3k6CPy0Ynn3B8DIgaQ", 
+    "title": "Magale En Marumagale 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k3k6CPy0Ynn3B8DIgaQ?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k3k6CPy0Ynn3B8DIgaQ",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k6MjYagjbWq0DxDIg4S", 
+    "title": "Aaha Kalyanam 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k6MjYagjbWq0DxDIg4S?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k6MjYagjbWq0DxDIg4S",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25"
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k3jVVlix3hAKL2DIgaO", 
+    "title": "Poongatru Thirumbuma 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k3jVVlix3hAKL2DIgaO?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k3jVVlix3hAKL2DIgaO",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k3DByWaxvavPRUDIg50", 
+    "title": "Mahanadhi 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k3DByWaxvavPRUDIg50?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k3DByWaxvavPRUDIg50",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "kJWrqt0QDjLAH0DIg4W", 
+    "title": "Pandian Stores 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/kJWrqt0QDjLAH0DIg4W?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/kJWrqt0QDjLAH0DIg4W",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k5CcbPrOXc59J7DIg9A", 
+    "title": "Ayyanar Thunai 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k5CcbPrOXc59J7DIg9A?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k5CcbPrOXc59J7DIg9A",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k6stDhfHTjtAYdDIg54", 
+    "title": "Siragadikka Aasai 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k6stDhfHTjtAYdDIg54?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k6stDhfHTjtAYdDIg54",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k7yyJNXA3hry0ODIg4Y", 
+    "title": "Chinna Marumagal 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k7yyJNXA3hry0ODIg4Y?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k7yyJNXA3hry0ODIg4Y",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k3Zi99JRptVkwdDIgdk", 
+    "title": "Sindhu Bairavi Kacheri Arambam 25-08-2025 Vijay Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k3Zi99JRptVkwdDIgdk?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k3Zi99JRptVkwdDIgdk",
+    "channel": "VIJAY TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k4YB1618VtsPDmDIlp8", 
+    "title": "Varisu 25-08-2025 Zee Tamil Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k4YB1618VtsPDmDIlp8?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k4YB1618VtsPDmDIlp8",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-08-25" 
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "kGqDTa9CsaoKC5DIm3c", 
+    "title": "Idhayam 25-08-2025 Zee Tamil Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/kGqDTa9CsaoKC5DIm3c?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/kGqDTa9CsaoKC5DIm3c",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-08-25"  
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k6QN8ez38wVQOmDImC4", 
+    "title": "Manasellam 25-08-2025 Zee Tamil Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k6QN8ez38wVQOmDImC4?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k6QN8ez38wVQOmDImC4",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-08-25"  
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k5oXE23vrnYPplDInhe", 
+    "title": "Mounam Pesiyadhe 25-08-2025 Zee Tamil Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k5oXE23vrnYPplDInhe?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k5oXE23vrnYPplDInhe",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-08-25"  
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k243VTZ3qrF9ICDIs2m", 
+    "title": "Maari 25-08-2025 Zee Tamil Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k243VTZ3qrF9ICDIs2m?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k243VTZ3qrF9ICDIs2m",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-08-25"  
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k6q5UEY3DvKzQIDIsfY", 
+    "title": "Getti Melam 25-08-2025 Zee Tamil Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k6q5UEY3DvKzQIDIsfY?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k6q5UEY3DvKzQIDIsfY",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-08-25"  
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k6UeMTdsvJPxg6DIufo", 
+    "title": "Chinna Siru Kiliye 25-08-2025 Zee Tamil Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k6UeMTdsvJPxg6DIufo?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k6UeMTdsvJPxg6DIufo",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-08-25"  
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k2itHovhOfKZzcDIuLQ", 
+    "title": "Veera 25-08-2025 Zee Tamil Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k2itHovhOfKZzcDIuLQ?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k2itHovhOfKZzcDIuLQ",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-08-25"  
+  },
+  { 
+    "platform": "dailymotion", 
+    "id": "k69bxjFRpcHLpODIuMo", 
+    "title": "Ramayanam 25-08-2025 Sun Tv Serial", 
+    "mthumb": "https://www.dailymotion.com/thumbnail/video/k69bxjFRpcHLpODIuMo?size=240x180",
+    "dthumb": "https://www.dailymotion.com/thumbnail/video/k69bxjFRpcHLpODIuMo",
+    "channel": "SUN TV",
+    "date": "2025-08-25"  
   }
+];
 
-  function openPlayer(video) {
-    document.getElementById("videoPlayer").style.display = "flex";
-    let embedUrl = "";
-    if (video.platform === "youtube") {
-      embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1`;
-    } else if (video.platform === "dailymotion") {
-      embedUrl = `https://www.dailymotion.com/embed/video/${video.id}?autoplay=1`;
+    // DOM elements
+    const elements = {
+      videoGrid: document.getElementById("videoGrid"),
+      searchBox: document.getElementById("searchBox"),
+      calendarBtn: document.getElementById("calendarBtn"),
+      dateFilter: document.getElementById("dateFilter"),
+      clearFilters: document.getElementById("clearFilters"),
+      channelButtons: document.getElementById("channelButtons"),
+      videoPlayer: document.getElementById("videoPlayer"),
+      playerIframe: document.getElementById("playerIframe")
+    };
+
+    let activeChannel = null;
+    let isDatePickerVisible = false;
+
+    // Initialize the app
+    function init() {
+      renderChannels();
+      renderVideos(videos);
+      setupEventListeners();
     }
-    document.getElementById("playerIframe").src = embedUrl;
-  }
 
-  function closePlayer() {
-    document.getElementById("videoPlayer").style.display = "none";
-    document.getElementById("playerIframe").src = "";
-  }
+    // Event listeners
+    function setupEventListeners() {
+      elements.searchBox.addEventListener("input", debounce(applyFilters, 300));
+      elements.dateFilter.addEventListener("change", applyFilters);
+      elements.clearFilters.addEventListener("click", clearAllFilters);
+      elements.calendarBtn.addEventListener("click", toggleDatePicker);
+      
+      // Close player when clicking outside the iframe
+      elements.videoPlayer.addEventListener("click", (e) => {
+        if (e.target === elements.videoPlayer) {
+          closePlayer();
+        }
+      });
+      
+      // Close date picker when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest('.date-filter-container')) {
+          hideDatePicker();
+        }
+      });
 
-  // Live search
-  searchBox.addEventListener("input", () => {
-    const query = searchBox.value.toLowerCase();
-    const filtered = videos.filter(v => v.title.toLowerCase().includes(query));
-    renderVideos(filtered);
-  });
+      // Handle escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          if (isDatePickerVisible) {
+            hideDatePicker();
+          } else if (elements.videoPlayer.style.display === 'flex') {
+            closePlayer();
+          }
+        }
+      });
 
-  // Initial render
-  renderVideos(videos);
-</script>
+      // Handle orientation change for mobile
+      window.addEventListener("orientationchange", handleOrientationChange);
+      
+      // Auto-detect fullscreen changes and handle orientation
+      document.addEventListener("fullscreenchange", handleFullscreenChange);
+      document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+      document.addEventListener("msfullscreenchange", handleFullscreenChange);
+    }
 
+    // Utility functions
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    function getOptimalThumbnail(video) {
+      return window.innerWidth < 768 ? video.mthumb : video.dthumb;
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-IN', { 
+        day: 'numeric', 
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    // Date picker functions
+    function toggleDatePicker() {
+      if (isDatePickerVisible) {
+        hideDatePicker();
+      } else {
+        showDatePicker();
+      }
+    }
+
+    function showDatePicker() {
+      elements.dateFilter.style.display = 'block';
+      elements.calendarBtn.classList.add('active');
+      isDatePickerVisible = true;
+      // Focus on the date input to trigger mobile date picker
+      setTimeout(() => elements.dateFilter.focus(), 100);
+    }
+
+    function hideDatePicker() {
+      if (!elements.dateFilter.value) {
+        elements.dateFilter.style.display = 'none';
+      }
+      elements.calendarBtn.classList.remove('active');
+      isDatePickerVisible = false;
+    }
+
+    // Filter functions
+    function applyFilters() {
+      const query = elements.searchBox.value.toLowerCase().trim();
+      const dateVal = elements.dateFilter.value;
+      
+      let filtered = videos;
+
+      // Apply search filter
+      if (query) {
+        filtered = filtered.filter(v => 
+          v.title.toLowerCase().includes(query) ||
+          v.channel.toLowerCase().includes(query)
+        );
+      }
+
+      // Apply date filter
+      if (dateVal) {
+        filtered = filtered.filter(v => v.date === dateVal);
+        elements.calendarBtn.classList.add('active');
+      } else {
+        elements.calendarBtn.classList.remove('active');
+      }
+
+      // Apply channel filter
+      if (activeChannel) {
+        filtered = filtered.filter(v => v.channel === activeChannel);
+      }
+
+      // Show/hide clear filters button
+      const hasFilters = query || dateVal || activeChannel;
+      elements.clearFilters.style.display = hasFilters ? 'block' : 'none';
+
+      renderVideos(filtered);
+    }
+
+    function clearAllFilters() {
+      elements.searchBox.value = '';
+      elements.dateFilter.value = '';
+      elements.dateFilter.style.display = 'none';
+      elements.calendarBtn.classList.remove('active');
+      activeChannel = null;
+      elements.clearFilters.style.display = 'none';
+      updateChannelButtons();
+      renderVideos(videos);
+      isDatePickerVisible = false;
+    }
+
+    // Rendering functions
+    function renderVideos(videoList) {
+      if (videoList.length === 0) {
+        elements.videoGrid.innerHTML = `
+          <div class="no-results" style="grid-column: 1 / -1;">
+            <i class="fas fa-search"></i>
+            <h3>No videos found</h3>
+            <p>Try adjusting your search criteria or filters</p>
+          </div>
+        `;
+        return;
+      }
+
+      elements.videoGrid.innerHTML = videoList.map((video, index) => `
+        <div class="video-card" data-platform="${video.platform}" data-id="${video.id}" data-index="${index}">
+          <div class="card-thumbnail">
+            <img src="${getOptimalThumbnail(video)}" alt="${video.title}" loading="lazy" onerror="handleImageError(this)">
+            <div class="play-overlay">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">${video.title}</h3>
+            <div class="card-meta">
+              <span class="card-channel">${video.channel}</span>
+              <span class="card-date">${formatDate(video.date)}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Add click event listeners to video cards
+      const videoCards = elements.videoGrid.querySelectorAll('.video-card');
+      videoCards.forEach(card => {
+        card.addEventListener('click', () => {
+          const platform = card.dataset.platform;
+          const id = card.dataset.id;
+          const index = parseInt(card.dataset.index);
+          const video = videoList[index];
+          
+          if (video) {
+            openPlayer(platform, id, video);
+          }
+        });
+      });
+    }
+
+    function renderChannels() {
+      const channels = [...new Set(videos.map(v => v.channel))];
+      
+      const channelHTML = [
+        `<button class="channel-btn ${!activeChannel ? 'active' : ''}" onclick="selectChannel(null)">
+          <i class="fas fa-th-large"></i> All
+        </button>`,
+        ...channels.map(channel => `
+          <button class="channel-btn ${activeChannel === channel ? 'active' : ''}" 
+                  onclick="selectChannel('${channel}')">
+            ${channel}
+          </button>
+        `)
+      ].join('');
+
+      elements.channelButtons.innerHTML = channelHTML;
+    }
+
+    function updateChannelButtons() {
+      const buttons = elements.channelButtons.querySelectorAll('.channel-btn');
+      buttons.forEach((btn, index) => {
+        if (index === 0) {
+          btn.classList.toggle('active', !activeChannel);
+        } else {
+          const channelName = btn.textContent.trim();
+          btn.classList.toggle('active', activeChannel === channelName);
+        }
+      });
+    }
+
+    function selectChannel(channel) {
+      activeChannel = channel;
+      updateChannelButtons();
+      applyFilters();
+    }
+
+    // Video player functions
+    function openPlayer(platform, videoId, video = null) {
+      let embedUrl = '';
+      
+      if (platform === 'youtube') {
+        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&controls=1`;
+      } else if (platform === 'dailymotion') {
+        embedUrl = `https://www.dailymotion.com/embed/video/${videoId}?autoplay=1&ui-logo=0&controls=1`;
+      }
+
+      console.log('Opening video:', platform, videoId, embedUrl); // Debug log
+
+      elements.playerIframe.src = embedUrl;
+      elements.videoPlayer.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      // Track video play event
+      if (video) {
+        trackEvent('video_play', {
+          platform: platform,
+          videoId: videoId,
+          title: video.title,
+          channel: video.channel
+        });
+      }
+
+      // Auto-enter fullscreen on mobile for better experience
+      setTimeout(() => {
+        if (window.innerWidth <= 768) {
+          const playerContainer = document.querySelector('.player-container');
+          requestFullscreen(playerContainer);
+        }
+      }, 1000);
+    }
+
+    function closePlayer() {
+      elements.videoPlayer.style.display = 'none';
+      elements.playerIframe.src = '';
+      document.body.style.overflow = '';
+
+      // Exit fullscreen if active
+      if (isFullscreen()) {
+        exitFullscreen();
+      }
+
+      // Unlock orientation
+      if (screen.orientation && screen.orientation.unlock) {
+        try {
+          screen.orientation.unlock();
+        } catch (err) {
+          console.log('Orientation unlock failed');
+        }
+      }
+    }
+
+    // Fullscreen helper functions
+    function requestFullscreen(element) {
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      }
+    }
+
+    function exitFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+
+    function isFullscreen() {
+      return !!(document.fullscreenElement || 
+                document.webkitFullscreenElement || 
+                document.mozFullScreenElement || 
+                document.msFullscreenElement);
+    }
+
+    function handleFullscreenChange() {
+      const fullscreen = isFullscreen();
+      
+      // Lock to landscape when entering fullscreen on mobile
+      if (fullscreen && window.innerWidth <= 768) {
+        if (screen.orientation && screen.orientation.lock) {
+          try {
+            screen.orientation.lock('landscape').catch(() => {
+              console.log('Landscape lock failed');
+            });
+          } catch (err) {
+            console.log('Orientation API not supported');
+          }
+        }
+      }
+      
+      // Unlock orientation when exiting fullscreen
+      if (!fullscreen) {
+        if (screen.orientation && screen.orientation.unlock) {
+          try {
+            screen.orientation.unlock();
+          } catch (err) {
+            console.log('Orientation unlock failed');
+          }
+        }
+      }
+    }
+
+    function handleOrientationChange() {
+      setTimeout(() => {
+        // Re-render videos with appropriate thumbnails after orientation change
+        const currentVideos = Array.from(elements.videoGrid.querySelectorAll('.video-card')).length;
+        if (currentVideos > 0) {
+          applyFilters();
+        }
+      }, 100);
+    }
+
+    // Listen for fullscreen changes
+    // (Removed - now handled in setupEventListeners)
+
+    // Handle window resize for responsive thumbnails
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        // Update thumbnails on resize
+        const videoCards = elements.videoGrid.querySelectorAll('.video-card img');
+        videoCards.forEach((img, index) => {
+          const videoIndex = Array.from(elements.videoGrid.querySelectorAll('.video-card')).indexOf(img.closest('.video-card'));
+          if (videos[videoIndex]) {
+            img.src = getOptimalThumbnail(videos[videoIndex]);
+          }
+        });
+      }, 250);
+    });
+
+    // Add smooth scroll behavior for channel menu
+    function smoothScrollChannels(direction) {
+      const container = elements.channelButtons.parentElement;
+      const scrollAmount = 200;
+      container.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (elements.videoPlayer.style.display === 'flex') {
+        switch(e.key) {
+          case 'f':
+          case 'F':
+            e.preventDefault();
+            const playerContainer = document.querySelector('.player-container');
+            if (!isFullscreen()) {
+              requestFullscreen(playerContainer);
+            } else {
+              exitFullscreen();
+            }
+            break;
+          case ' ':
+            e.preventDefault();
+            // Space bar could control play/pause if needed
+            break;
+        }
+      }
+    });
+
+    // Add loading states for video cards
+    function addLoadingState() {
+      elements.videoGrid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+          <div class="loading"></div>
+          <p style="margin-top: 15px; color: rgba(255,255,255,0.6);">Loading videos...</p>
+        </div>
+      `;
+    }
+
+    // Add error handling for images
+    window.handleImageError = function(img) {
+      img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pgo8L3N2Zz4K';
+      img.alt = 'No thumbnail available';
+    };
+
+    // Performance optimization: Lazy load videos
+    function setupIntersectionObserver() {
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+                observer.unobserve(img);
+              }
+            }
+          });
+        }, {
+          rootMargin: '50px'
+        });
+
+        // This will be used when we have more videos
+        return imageObserver;
+      }
+      return null;
+    }
+
+    // Add search suggestions (basic implementation)
+    function setupSearchSuggestions() {
+      const searchTerms = [...new Set(videos.flatMap(v => [
+        ...v.title.toLowerCase().split(' '),
+        v.channel.toLowerCase()
+      ]))].filter(term => term.length > 2);
+
+      // Could implement autocomplete here with the searchTerms array
+    }
+
+    // Add analytics tracking (placeholder)
+    function trackEvent(eventName, data = {}) {
+      // console.log('Analytics Event:', eventName, data);
+      // This would integrate with your analytics service
+    }
+
+    // Enhanced video opening with analytics
+    window.openPlayerLegacy = function(platform, videoId) {
+      const video = videos.find(v => v.platform === platform && v.id === videoId);
+      openPlayer(platform, videoId, video);
+    };
+
+    // Global functions for onclick handlers
+    window.selectChannel = selectChannel;
+
+    // Initialize everything when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    // Service Worker registration for PWA capabilities (optional)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        // navigator.serviceWorker.register('/sw.js')
+        //   .then(registration => console.log('SW registered'))
+        //   .catch(error => console.log('SW registration failed'));
+      });
+    }
+  </script>
 </body>
 </html>
