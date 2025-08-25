@@ -182,6 +182,7 @@
       box-shadow: 0 8px 25px rgba(0,0,0,0.3);
       z-index: 1000;
       min-width: 200px;
+      color-scheme: dark;
     }
 
     @media (max-width: 480px) {
@@ -193,6 +194,13 @@
 
     .date-input:focus {
       outline: none;
+      border-color: #45b7d1;
+    }
+
+    .date-input::-webkit-calendar-picker-indicator {
+      background-color: #4ecdc4;
+      border-radius: 3px;
+      cursor: pointer;
     }
 
     .clear-filters-btn {
@@ -214,84 +222,144 @@
       box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
     }
 
-    /* Channel menu */
-    .channel-menu {
-      padding: 20px 0;
-      overflow-x: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #4ecdc4 transparent;
+    /* Channel Sections - Netflix Style */
+    .channel-sections {
+      padding: 20px 0 40px;
     }
 
-    .channel-menu::-webkit-scrollbar {
-      height: 6px;
+    .channel-section {
+      margin-bottom: 40px;
     }
 
-    .channel-menu::-webkit-scrollbar-track {
-      background: rgba(255,255,255,0.1);
-      border-radius: 3px;
-    }
-
-    .channel-menu::-webkit-scrollbar-thumb {
-      background: #4ecdc4;
-      border-radius: 3px;
-    }
-
-    .channel-buttons {
+    .section-header {
       display: flex;
-      gap: 12px;
-      padding-bottom: 10px;
-      min-width: max-content;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0 15px;
     }
 
-    .channel-btn {
+    .section-header:hover {
+      transform: translateX(5px);
+    }
+
+    .section-title {
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+
+    .section-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .section-expand {
+      color: rgba(255,255,255,0.7);
+      font-size: 16px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-header:hover .section-expand {
+      color: #4ecdc4;
+      transform: translateX(5px);
+    }
+
+    .back-home-btn {
       background: rgba(255,255,255,0.1);
-      border: 2px solid transparent;
-      border-radius: 25px;
-      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
       color: #fff;
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
       transition: all 0.3s ease;
-      white-space: nowrap;
       backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .channel-btn:hover {
-      background: rgba(255,255,255,0.2);
+    .back-home-btn:hover {
+      background: #4ecdc4;
       transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
     }
 
-    .channel-btn.active {
-      background: linear-gradient(135deg, #4ecdc4, #45b7d1);
-      border-color: #4ecdc4;
-      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+    /* Horizontal scrolling container */
+    .videos-container {
+      position: relative;
+      overflow: hidden;
     }
 
-    /* Video grid */
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr); /* Mobile: 3 columns */
+    .videos-scroll {
+      display: flex;
       gap: 15px;
-      padding: 20px 0 40px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 0 15px 20px;
     }
 
-    @media (min-width: 768px) {
-      .video-grid {
-        grid-template-columns: repeat(4, 1fr); /* Tablet: 4 columns */
-        gap: 20px;
+    .videos-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Scroll buttons */
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.8);
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+      display: none;
+    }
+
+    .scroll-btn:hover {
+      background: rgba(78, 205, 196, 0.9);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .scroll-btn.left {
+      left: 10px;
+    }
+
+    .scroll-btn.right {
+      right: 10px;
+    }
+
+    .videos-container:hover .scroll-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+      .scroll-btn {
+        display: none !important;
       }
     }
 
-    @media (min-width: 1200px) {
-      .video-grid {
-        grid-template-columns: repeat(5, 1fr); /* PC: 5 columns */
-        gap: 25px;
-      }
-    }
-
-    /* Video cards */
-    .video-card {
+    /* Video cards in horizontal scroll */
+    .video-card-horizontal {
       background: rgba(255,255,255,0.05);
       border-radius: 16px;
       overflow: hidden;
@@ -300,15 +368,30 @@
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255,255,255,0.1);
       position: relative;
+      flex-shrink: 0;
+      width: 280px;
     }
 
-    .video-card:hover {
-      transform: translateY(-8px) scale(1.02);
+    @media (max-width: 768px) {
+      .video-card-horizontal {
+        width: 240px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .video-card-horizontal {
+        width: 200px;
+      }
+    }
+
+    .video-card-horizontal:hover {
+      transform: scale(1.05);
       box-shadow: 0 20px 40px rgba(0,0,0,0.3);
       border-color: rgba(78, 205, 196, 0.5);
+      z-index: 5;
     }
 
-    .video-card::before {
+    .video-card-horizontal::before {
       content: '';
       position: absolute;
       top: 0;
@@ -321,19 +404,83 @@
       pointer-events: none;
     }
 
-    .video-card:hover::before {
+    .video-card-horizontal:hover::before {
       opacity: 1;
     }
 
-    .card-thumbnail {
-      position: relative;
-      width: 100%;
-      height: 180px;
-      overflow: hidden;
+    /* Grid layout for expanded view */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      padding: 20px 15px;
     }
 
     @media (min-width: 768px) {
-      .card-thumbnail {
+      .video-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 20px 25px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .video-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 25px;
+        padding: 20px 40px;
+      }
+    }
+
+    /* Video cards in grid */
+    .video-card-grid {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+    }
+
+    .video-card-grid:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border-color: rgba(78, 205, 196, 0.5);
+    }
+
+    .video-card-grid::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent, rgba(78, 205, 196, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .video-card-grid:hover::before {
+      opacity: 1;
+    }
+
+    /* Thumbnail styles */
+    .card-thumbnail {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      overflow: hidden;
+    }
+
+    .video-card-grid .card-thumbnail {
+      height: 180px;
+    }
+
+    @media (min-width: 768px) {
+      .video-card-grid .card-thumbnail {
         height: 200px;
       }
     }
@@ -345,7 +492,8 @@
       transition: transform 0.3s ease;
     }
 
-    .video-card:hover .card-thumbnail img {
+    .video-card-horizontal:hover .card-thumbnail img,
+    .video-card-grid:hover .card-thumbnail img {
       transform: scale(1.1);
     }
 
@@ -367,11 +515,28 @@
       transition: all 0.3s ease;
     }
 
-    .video-card:hover .play-overlay {
+    .video-card-horizontal:hover .play-overlay,
+    .video-card-grid:hover .play-overlay {
       opacity: 1;
       transform: translate(-50%, -50%) scale(1.1);
     }
 
+    /* Channel tag for grid mode */
+    .channel-tag {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.8);
+      color: #4ecdc4;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(78, 205, 196, 0.3);
+    }
+
+    /* Card content */
     .card-content {
       padding: 16px;
     }
@@ -396,11 +561,29 @@
       color: rgba(255,255,255,0.6);
     }
 
-    .card-channel {
-      background: rgba(78, 205, 196, 0.2);
-      padding: 4px 8px;
-      border-radius: 12px;
+    .card-date {
       font-weight: 500;
+    }
+
+    /* Grid view header */
+    .grid-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 40px 0 20px 0;
+      padding: 0 15px;
+    }
+
+    @media (min-width: 768px) {
+      .grid-header {
+        padding: 0 25px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .grid-header {
+        padding: 0 40px;
+      }
     }
 
     /* Video player */
@@ -435,8 +618,6 @@
       height: 100%;
       border: none;
     }
-
-    /* Remove player controls - let iframe handle everything */
 
     /* Loading animation */
     .loading {
@@ -477,40 +658,31 @@
       margin: 0;
     }
 
-    /* Responsive utilities */
-    .mobile-only {
-      display: block;
+    /* Search results header */
+    .search-results {
+      margin-top: 40px;
     }
 
-    .desktop-only {
-      display: none;
+    .search-results .section-title {
+      padding: 0 15px;
+      margin-bottom: 20px;
     }
 
     @media (min-width: 768px) {
-      .mobile-only {
-        display: none;
-      }
-      .desktop-only {
-        display: block;
+      .search-results .section-title {
+        padding: 0 25px;
       }
     }
 
-    /* Landscape orientation for mobile video viewing */
-    @media screen and (max-width: 768px) and (orientation: landscape) {
-      .video-player {
-        padding: 10px;
+    @media (min-width: 1200px) {
+      .search-results .section-title {
+        padding: 0 40px;
       }
-      
-      .player-controls {
-        top: 10px;
-        right: 10px;
-      }
-      
-      .control-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 16px;
-      }
+    }
+
+    /* Hide sections */
+    .hidden {
+      display: none;
     }
 
     /* Dark scrollbar for webkit browsers */
@@ -563,11 +735,25 @@
   </div>
 
   <div class="container">
-    <div class="channel-menu">
-      <div class="channel-buttons" id="channelButtons"></div>
+    <!-- Channel sections view -->
+    <div class="channel-sections" id="channelSections"></div>
+    
+    <!-- Grid view for single channel -->
+    <div class="video-grid-container hidden" id="videoGridContainer">
+      <div class="grid-header">
+        <h2 class="section-title" id="gridTitle"></h2>
+        <button class="back-home-btn" id="backButton">
+          <i class="fas fa-home"></i> Back Home
+        </button>
+      </div>
+      <div class="video-grid" id="videoGrid"></div>
     </div>
-
-    <div class="video-grid" id="videoGrid"></div>
+    
+    <!-- Search results -->
+    <div class="search-results hidden" id="searchResults">
+      <h2 class="section-title" id="searchTitle">Search Results</h2>
+      <div class="video-grid" id="searchGrid"></div>
+    </div>
   </div>
 
   <div class="video-player" id="videoPlayer">
@@ -578,7 +764,7 @@
 
   <script>
 const videos = [
-  { 
+/*  { 
     "platform": "youtube", 
     "id": "a7TuPgvdXjY", 
     "title": "Ethirneechal Thodargiradhu | EP - 226 | 10 Aug 2025 | Sun TV", 
@@ -586,11 +772,11 @@ const videos = [
     "dthumb": "https://img.youtube.com/vi/a7TuPgvdXjY/hqdefault.jpg",
     "channel": "SUN TV",
     "date": "2025-08-10"
-  },
+  }, */
   { 
     "platform": "dailymotion", 
     "id": "k6lBBd8MzD5zXXDIg52", 
-    "title": "Sakthivel 25-08-2025 Vijay Tv Serial", 
+    "title": "Sakthivel", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k6lBBd8MzD5zXXDIg52?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k6lBBd8MzD5zXXDIg52",
     "channel": "VIJAY TV",
@@ -599,7 +785,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k6YpvLVzuo5bOEDIg4U", 
-    "title": "Kanmani Anbudan 25-08-2025 Vijay Tv Serial", 
+    "title": "Kanmani Anbudan", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k6YpvLVzuo5bOEDIg4U?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k6YpvLVzuo5bOEDIg4U",
     "channel": "VIJAY TV",
@@ -608,7 +794,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k34lixSVFq4uOKDIgaS", 
-    "title": "Thendrale Mella Pesu 25-08-2025 Vijay Tv Serial", 
+    "title": "Thendrale Mella Pesu", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k34lixSVFq4uOKDIgaS?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k34lixSVFq4uOKDIgaS",
     "channel": "VIJAY TV",
@@ -617,7 +803,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k73wZM0qXPhs66DIg9C", 
-    "title": "Dhanam 25-08-2025 Vijay Tv Serial", 
+    "title": "Dhanam", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k73wZM0qXPhs66DIg9C?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k73wZM0qXPhs66DIg9C",
     "channel": "VIJAY TV",
@@ -626,7 +812,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k3k6CPy0Ynn3B8DIgaQ", 
-    "title": "Magale En Marumagale 25-08-2025 Vijay Tv Serial", 
+    "title": "Magale En Marumagale", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k3k6CPy0Ynn3B8DIgaQ?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k3k6CPy0Ynn3B8DIgaQ",
     "channel": "VIJAY TV",
@@ -635,7 +821,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k6MjYagjbWq0DxDIg4S", 
-    "title": "Aaha Kalyanam 25-08-2025 Vijay Tv Serial", 
+    "title": "Aaha Kalyanam", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k6MjYagjbWq0DxDIg4S?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k6MjYagjbWq0DxDIg4S",
     "channel": "VIJAY TV",
@@ -644,7 +830,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k3jVVlix3hAKL2DIgaO", 
-    "title": "Poongatru Thirumbuma 25-08-2025 Vijay Tv Serial", 
+    "title": "Poongatru Thirumbuma", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k3jVVlix3hAKL2DIgaO?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k3jVVlix3hAKL2DIgaO",
     "channel": "VIJAY TV",
@@ -653,7 +839,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k3DByWaxvavPRUDIg50", 
-    "title": "Mahanadhi 25-08-2025 Vijay Tv Serial", 
+    "title": "Mahanadhi", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k3DByWaxvavPRUDIg50?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k3DByWaxvavPRUDIg50",
     "channel": "VIJAY TV",
@@ -662,7 +848,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "kJWrqt0QDjLAH0DIg4W", 
-    "title": "Pandian Stores 25-08-2025 Vijay Tv Serial", 
+    "title": "Pandian Stores", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/kJWrqt0QDjLAH0DIg4W?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/kJWrqt0QDjLAH0DIg4W",
     "channel": "VIJAY TV",
@@ -671,7 +857,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k5CcbPrOXc59J7DIg9A", 
-    "title": "Ayyanar Thunai 25-08-2025 Vijay Tv Serial", 
+    "title": "Ayyanar Thunai", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k5CcbPrOXc59J7DIg9A?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k5CcbPrOXc59J7DIg9A",
     "channel": "VIJAY TV",
@@ -680,7 +866,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k6stDhfHTjtAYdDIg54", 
-    "title": "Siragadikka Aasai 25-08-2025 Vijay Tv Serial", 
+    "title": "Siragadikka Aasai", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k6stDhfHTjtAYdDIg54?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k6stDhfHTjtAYdDIg54",
     "channel": "VIJAY TV",
@@ -689,7 +875,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k7yyJNXA3hry0ODIg4Y", 
-    "title": "Chinna Marumagal 25-08-2025 Vijay Tv Serial", 
+    "title": "Chinna Marumagal", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k7yyJNXA3hry0ODIg4Y?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k7yyJNXA3hry0ODIg4Y",
     "channel": "VIJAY TV",
@@ -698,7 +884,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k3Zi99JRptVkwdDIgdk", 
-    "title": "Sindhu Bairavi Kacheri Arambam 25-08-2025 Vijay Tv Serial", 
+    "title": "Sindhu Bairavi Kacheri Arambam", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k3Zi99JRptVkwdDIgdk?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k3Zi99JRptVkwdDIgdk",
     "channel": "VIJAY TV",
@@ -707,7 +893,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k4YB1618VtsPDmDIlp8", 
-    "title": "Varisu 25-08-2025 Zee Tamil Serial", 
+    "title": "Varisu", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k4YB1618VtsPDmDIlp8?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k4YB1618VtsPDmDIlp8",
     "channel": "ZEETAMIL TV",
@@ -716,7 +902,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "kGqDTa9CsaoKC5DIm3c", 
-    "title": "Idhayam 25-08-2025 Zee Tamil Serial", 
+    "title": "Idhayam", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/kGqDTa9CsaoKC5DIm3c?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/kGqDTa9CsaoKC5DIm3c",
     "channel": "ZEETAMIL TV",
@@ -725,7 +911,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k6QN8ez38wVQOmDImC4", 
-    "title": "Manasellam 25-08-2025 Zee Tamil Serial", 
+    "title": "Manasellam", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k6QN8ez38wVQOmDImC4?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k6QN8ez38wVQOmDImC4",
     "channel": "ZEETAMIL TV",
@@ -734,7 +920,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k5oXE23vrnYPplDInhe", 
-    "title": "Mounam Pesiyadhe 25-08-2025 Zee Tamil Serial", 
+    "title": "Mounam Pesiyadhe", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k5oXE23vrnYPplDInhe?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k5oXE23vrnYPplDInhe",
     "channel": "ZEETAMIL TV",
@@ -743,7 +929,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k243VTZ3qrF9ICDIs2m", 
-    "title": "Maari 25-08-2025 Zee Tamil Serial", 
+    "title": "Maari", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k243VTZ3qrF9ICDIs2m?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k243VTZ3qrF9ICDIs2m",
     "channel": "ZEETAMIL TV",
@@ -752,7 +938,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k6q5UEY3DvKzQIDIsfY", 
-    "title": "Getti Melam 25-08-2025 Zee Tamil Serial", 
+    "title": "Getti Melam", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k6q5UEY3DvKzQIDIsfY?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k6q5UEY3DvKzQIDIsfY",
     "channel": "ZEETAMIL TV",
@@ -761,7 +947,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k6UeMTdsvJPxg6DIufo", 
-    "title": "Chinna Siru Kiliye 25-08-2025 Zee Tamil Serial", 
+    "title": "Chinna Siru Kiliye", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k6UeMTdsvJPxg6DIufo?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k6UeMTdsvJPxg6DIufo",
     "channel": "ZEETAMIL TV",
@@ -770,7 +956,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k2itHovhOfKZzcDIuLQ", 
-    "title": "Veera 25-08-2025 Zee Tamil Serial", 
+    "title": "Veera", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k2itHovhOfKZzcDIuLQ?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k2itHovhOfKZzcDIuLQ",
     "channel": "ZEETAMIL TV",
@@ -779,7 +965,7 @@ const videos = [
   { 
     "platform": "dailymotion", 
     "id": "k69bxjFRpcHLpODIuMo", 
-    "title": "Ramayanam 25-08-2025 Sun Tv Serial", 
+    "title": "Ramayanam", 
     "mthumb": "https://www.dailymotion.com/thumbnail/video/k69bxjFRpcHLpODIuMo?size=240x180",
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k69bxjFRpcHLpODIuMo",
     "channel": "SUN TV",
@@ -789,32 +975,39 @@ const videos = [
 
     // DOM elements
     const elements = {
+      channelSections: document.getElementById("channelSections"),
+      videoGridContainer: document.getElementById("videoGridContainer"),
       videoGrid: document.getElementById("videoGrid"),
+      searchResults: document.getElementById("searchResults"),
+      searchGrid: document.getElementById("searchGrid"),
       searchBox: document.getElementById("searchBox"),
       calendarBtn: document.getElementById("calendarBtn"),
       dateFilter: document.getElementById("dateFilter"),
       clearFilters: document.getElementById("clearFilters"),
-      channelButtons: document.getElementById("channelButtons"),
+      backButton: document.getElementById("backButton"),
+      gridTitle: document.getElementById("gridTitle"),
+      searchTitle: document.getElementById("searchTitle"),
       videoPlayer: document.getElementById("videoPlayer"),
       playerIframe: document.getElementById("playerIframe")
     };
 
-    let activeChannel = null;
+    let currentView = 'sections'; // 'sections', 'grid', 'search'
+    let currentChannel = null;
     let isDatePickerVisible = false;
 
     // Initialize the app
     function init() {
-      renderChannels();
-      renderVideos(videos);
+      renderChannelSections();
       setupEventListeners();
     }
 
     // Event listeners
     function setupEventListeners() {
-      elements.searchBox.addEventListener("input", debounce(applyFilters, 300));
-      elements.dateFilter.addEventListener("change", applyFilters);
+      elements.searchBox.addEventListener("input", debounce(handleSearch, 300));
+      elements.dateFilter.addEventListener("change", handleSearch);
       elements.clearFilters.addEventListener("click", clearAllFilters);
       elements.calendarBtn.addEventListener("click", toggleDatePicker);
+      elements.backButton.addEventListener("click", backToSections);
       
       // Close player when clicking outside the iframe
       elements.videoPlayer.addEventListener("click", (e) => {
@@ -877,6 +1070,11 @@ const videos = [
       });
     }
 
+    // Sort videos by date (latest first)
+    function sortVideosByDate(videos) {
+      return [...videos].sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
     // Date picker functions
     function toggleDatePicker() {
       if (isDatePickerVisible) {
@@ -890,23 +1088,25 @@ const videos = [
       elements.dateFilter.style.display = 'block';
       elements.calendarBtn.classList.add('active');
       isDatePickerVisible = true;
-      // Focus on the date input to trigger mobile date picker
       setTimeout(() => elements.dateFilter.focus(), 100);
     }
 
     function hideDatePicker() {
-      if (!elements.dateFilter.value) {
-        elements.dateFilter.style.display = 'none';
-      }
+      elements.dateFilter.style.display = 'none';
       elements.calendarBtn.classList.remove('active');
       isDatePickerVisible = false;
     }
 
-    // Filter functions
-    function applyFilters() {
+    // Search and filter functions
+    function handleSearch() {
       const query = elements.searchBox.value.toLowerCase().trim();
       const dateVal = elements.dateFilter.value;
       
+      if (!query && !dateVal) {
+        backToSections();
+        return;
+      }
+
       let filtered = videos;
 
       // Apply search filter
@@ -921,20 +1121,18 @@ const videos = [
       if (dateVal) {
         filtered = filtered.filter(v => v.date === dateVal);
         elements.calendarBtn.classList.add('active');
+        // Hide date picker after selection
+        elements.dateFilter.style.display = 'none';
+        isDatePickerVisible = false;
       } else {
         elements.calendarBtn.classList.remove('active');
       }
 
-      // Apply channel filter
-      if (activeChannel) {
-        filtered = filtered.filter(v => v.channel === activeChannel);
-      }
+      // Show clear filters button
+      elements.clearFilters.style.display = 'block';
 
-      // Show/hide clear filters button
-      const hasFilters = query || dateVal || activeChannel;
-      elements.clearFilters.style.display = hasFilters ? 'block' : 'none';
-
-      renderVideos(filtered);
+      // Show search results
+      showSearchResults(filtered, query, dateVal);
     }
 
     function clearAllFilters() {
@@ -942,17 +1140,129 @@ const videos = [
       elements.dateFilter.value = '';
       elements.dateFilter.style.display = 'none';
       elements.calendarBtn.classList.remove('active');
-      activeChannel = null;
       elements.clearFilters.style.display = 'none';
-      updateChannelButtons();
-      renderVideos(videos);
       isDatePickerVisible = false;
+      backToSections();
+    }
+
+    // View management functions
+    function showView(view) {
+      elements.channelSections.classList.toggle('hidden', view !== 'sections');
+      elements.videoGridContainer.classList.toggle('hidden', view !== 'grid');
+      elements.searchResults.classList.toggle('hidden', view !== 'search');
+      currentView = view;
+    }
+
+    function backToSections() {
+      showView('sections');
+      currentChannel = null;
+    }
+
+    function showChannelGrid(channel) {
+      const channelVideos = videos.filter(v => v.channel === channel);
+      const sortedVideos = sortVideosByDate(channelVideos);
+      elements.gridTitle.textContent = `${channel} Shows`;
+      renderVideoGrid(sortedVideos, elements.videoGrid, false);
+      currentChannel = channel;
+      showView('grid');
+    }
+
+    function showSearchResults(filteredVideos, query, dateVal) {
+      let title = 'Search Results';
+      if (query && dateVal) {
+        title = `Results for "${query}" on ${formatDate(dateVal)}`;
+      } else if (query) {
+        title = `Results for "${query}"`;
+      } else if (dateVal) {
+        title = `Videos from ${formatDate(dateVal)}`;
+      }
+      
+      elements.searchTitle.textContent = title;
+      const sortedResults = sortVideosByDate(filteredVideos);
+      renderVideoGrid(sortedResults, elements.searchGrid, true);
+      showView('search');
     }
 
     // Rendering functions
-    function renderVideos(videoList) {
+    function renderChannelSections() {
+      // Define fixed channel order
+      const channelOrder = ['SUN TV', 'VIJAY TV', 'ZEETAMIL TV'];
+      const allChannels = [...new Set(videos.map(v => v.channel))];
+      
+      // Create ordered channels list, adding any new channels at the end
+      const orderedChannels = [
+        ...channelOrder.filter(channel => allChannels.includes(channel)),
+        ...allChannels.filter(channel => !channelOrder.includes(channel))
+      ];
+      
+      const sectionsHTML = orderedChannels.map(channel => {
+        const channelVideos = videos.filter(v => v.channel === channel);
+        const sortedChannelVideos = sortVideosByDate(channelVideos);
+        
+        return `
+          <div class="channel-section" data-channel="${channel}">
+            <div class="section-header">
+              <h2 class="section-title">${channel} Shows</h2>
+              <div class="section-actions">
+                <span class="section-expand" onclick="showChannelGrid('${channel}')">
+                  <span>View All</span>
+                  <i class="fas fa-chevron-right"></i>
+                </span>
+              </div>
+            </div>
+            <div class="videos-container">
+              <button class="scroll-btn left" onclick="scrollVideos('${channel}', 'left')">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <div class="videos-scroll" id="scroll-${channel.replace(/\s+/g, '')}">
+                ${sortedChannelVideos.map(video => `
+                  <div class="video-card-horizontal" data-platform="${video.platform}" data-id="${video.id}">
+                    <div class="card-thumbnail">
+                      <img src="${getOptimalThumbnail(video)}" alt="${video.title}" loading="lazy" onerror="handleImageError(this)">
+                      <div class="play-overlay">
+                        <i class="fas fa-play"></i>
+                      </div>
+                    </div>
+                    <div class="card-content">
+                      <h3 class="card-title">${video.title}</h3>
+                      <div class="card-meta">
+                        <span class="card-date">${formatDate(video.date)}</span>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+              <button class="scroll-btn right" onclick="scrollVideos('${channel}', 'right')">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      elements.channelSections.innerHTML = sectionsHTML;
+
+      // Add click event listeners to video cards
+      setTimeout(() => {
+        const videoCards = elements.channelSections.querySelectorAll('.video-card-horizontal');
+        videoCards.forEach(card => {
+          card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const platform = card.dataset.platform;
+            const id = card.dataset.id;
+            const video = videos.find(v => v.platform === platform && v.id === id);
+            
+            if (video) {
+              openPlayer(platform, id, video);
+            }
+          });
+        });
+      }, 100);
+    }
+
+    function renderVideoGrid(videoList, container, showChannelTags) {
       if (videoList.length === 0) {
-        elements.videoGrid.innerHTML = `
+        container.innerHTML = `
           <div class="no-results" style="grid-column: 1 / -1;">
             <i class="fas fa-search"></i>
             <h3>No videos found</h3>
@@ -962,10 +1272,11 @@ const videos = [
         return;
       }
 
-      elements.videoGrid.innerHTML = videoList.map((video, index) => `
-        <div class="video-card" data-platform="${video.platform}" data-id="${video.id}" data-index="${index}">
+      container.innerHTML = videoList.map(video => `
+        <div class="video-card-grid" data-platform="${video.platform}" data-id="${video.id}">
           <div class="card-thumbnail">
             <img src="${getOptimalThumbnail(video)}" alt="${video.title}" loading="lazy" onerror="handleImageError(this)">
+            ${showChannelTags ? `<span class="channel-tag">${video.channel}</span>` : ''}
             <div class="play-overlay">
               <i class="fas fa-play"></i>
             </div>
@@ -973,7 +1284,6 @@ const videos = [
           <div class="card-content">
             <h3 class="card-title">${video.title}</h3>
             <div class="card-meta">
-              <span class="card-channel">${video.channel}</span>
               <span class="card-date">${formatDate(video.date)}</span>
             </div>
           </div>
@@ -981,55 +1291,32 @@ const videos = [
       `).join('');
 
       // Add click event listeners to video cards
-      const videoCards = elements.videoGrid.querySelectorAll('.video-card');
-      videoCards.forEach(card => {
-        card.addEventListener('click', () => {
-          const platform = card.dataset.platform;
-          const id = card.dataset.id;
-          const index = parseInt(card.dataset.index);
-          const video = videoList[index];
-          
-          if (video) {
-            openPlayer(platform, id, video);
-          }
+      setTimeout(() => {
+        const videoCards = container.querySelectorAll('.video-card-grid');
+        videoCards.forEach(card => {
+          card.addEventListener('click', () => {
+            const platform = card.dataset.platform;
+            const id = card.dataset.id;
+            const video = videos.find(v => v.platform === platform && v.id === id);
+            
+            if (video) {
+              openPlayer(platform, id, video);
+            }
+          });
         });
-      });
+      }, 100);
     }
 
-    function renderChannels() {
-      const channels = [...new Set(videos.map(v => v.channel))];
+    // Scroll functions for horizontal sections
+    function scrollVideos(channel, direction) {
+      const scrollContainer = document.getElementById(`scroll-${channel.replace(/\s+/g, '')}`);
+      const scrollAmount = 300;
+      const scrollDirection = direction === 'left' ? -scrollAmount : scrollAmount;
       
-      const channelHTML = [
-        `<button class="channel-btn ${!activeChannel ? 'active' : ''}" onclick="selectChannel(null)">
-          <i class="fas fa-th-large"></i> All
-        </button>`,
-        ...channels.map(channel => `
-          <button class="channel-btn ${activeChannel === channel ? 'active' : ''}" 
-                  onclick="selectChannel('${channel}')">
-            ${channel}
-          </button>
-        `)
-      ].join('');
-
-      elements.channelButtons.innerHTML = channelHTML;
-    }
-
-    function updateChannelButtons() {
-      const buttons = elements.channelButtons.querySelectorAll('.channel-btn');
-      buttons.forEach((btn, index) => {
-        if (index === 0) {
-          btn.classList.toggle('active', !activeChannel);
-        } else {
-          const channelName = btn.textContent.trim();
-          btn.classList.toggle('active', activeChannel === channelName);
-        }
+      scrollContainer.scrollBy({
+        left: scrollDirection,
+        behavior: 'smooth'
       });
-    }
-
-    function selectChannel(channel) {
-      activeChannel = channel;
-      updateChannelButtons();
-      applyFilters();
     }
 
     // Video player functions
@@ -1041,8 +1328,6 @@ const videos = [
       } else if (platform === 'dailymotion') {
         embedUrl = `https://www.dailymotion.com/embed/video/${videoId}?autoplay=1&ui-logo=0&controls=1`;
       }
-
-      console.log('Opening video:', platform, videoId, embedUrl); // Debug log
 
       elements.playerIframe.src = embedUrl;
       elements.videoPlayer.style.display = 'flex';
@@ -1058,13 +1343,7 @@ const videos = [
         });
       }
 
-      // Auto-enter fullscreen on mobile for better experience
-      setTimeout(() => {
-        if (window.innerWidth <= 768) {
-          const playerContainer = document.querySelector('.player-container');
-          requestFullscreen(playerContainer);
-        }
-      }, 1000);
+      // Note: Removed auto-fullscreen - let user control fullscreen via player controls
     }
 
     function closePlayer() {
@@ -1122,15 +1401,19 @@ const videos = [
     function handleFullscreenChange() {
       const fullscreen = isFullscreen();
       
-      // Lock to landscape when entering fullscreen on mobile
+      // Only handle orientation if user initiated fullscreen and we're on mobile
       if (fullscreen && window.innerWidth <= 768) {
-        if (screen.orientation && screen.orientation.lock) {
-          try {
-            screen.orientation.lock('landscape').catch(() => {
-              console.log('Landscape lock failed');
-            });
-          } catch (err) {
-            console.log('Orientation API not supported');
+        // Check current orientation and lock to landscape if appropriate
+        if (window.innerHeight < window.innerWidth) {
+          // Already in landscape, lock it
+          if (screen.orientation && screen.orientation.lock) {
+            try {
+              screen.orientation.lock('landscape').catch(() => {
+                console.log('Landscape lock failed');
+              });
+            } catch (err) {
+              console.log('Orientation API not supported');
+            }
           }
         }
       }
@@ -1149,42 +1432,30 @@ const videos = [
 
     function handleOrientationChange() {
       setTimeout(() => {
-        // Re-render videos with appropriate thumbnails after orientation change
-        const currentVideos = Array.from(elements.videoGrid.querySelectorAll('.video-card')).length;
-        if (currentVideos > 0) {
-          applyFilters();
+        // Re-render sections with appropriate thumbnails after orientation change
+        if (currentView === 'sections') {
+          renderChannelSections();
         }
       }, 100);
     }
-
-    // Listen for fullscreen changes
-    // (Removed - now handled in setupEventListeners)
 
     // Handle window resize for responsive thumbnails
     let resizeTimeout;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
-        // Update thumbnails on resize
-        const videoCards = elements.videoGrid.querySelectorAll('.video-card img');
-        videoCards.forEach((img, index) => {
-          const videoIndex = Array.from(elements.videoGrid.querySelectorAll('.video-card')).indexOf(img.closest('.video-card'));
-          if (videos[videoIndex]) {
-            img.src = getOptimalThumbnail(videos[videoIndex]);
-          }
-        });
+        // Update thumbnails on resize based on current view
+        if (currentView === 'sections') {
+          renderChannelSections();
+        } else if (currentView === 'grid' && currentChannel) {
+          const channelVideos = videos.filter(v => v.channel === currentChannel);
+          const sortedVideos = sortVideosByDate(channelVideos);
+          renderVideoGrid(sortedVideos, elements.videoGrid, false);
+        } else if (currentView === 'search') {
+          handleSearch();
+        }
       }, 250);
     });
-
-    // Add smooth scroll behavior for channel menu
-    function smoothScrollChannels(direction) {
-      const container = elements.channelButtons.parentElement;
-      const scrollAmount = 200;
-      container.scrollBy({
-        left: direction * scrollAmount,
-        behavior: 'smooth'
-      });
-    }
 
     // Add keyboard navigation
     document.addEventListener('keydown', (e) => {
@@ -1200,23 +1471,9 @@ const videos = [
               exitFullscreen();
             }
             break;
-          case ' ':
-            e.preventDefault();
-            // Space bar could control play/pause if needed
-            break;
         }
       }
     });
-
-    // Add loading states for video cards
-    function addLoadingState() {
-      elements.videoGrid.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-          <div class="loading"></div>
-          <p style="margin-top: 15px; color: rgba(255,255,255,0.6);">Loading videos...</p>
-        </div>
-      `;
-    }
 
     // Add error handling for images
     window.handleImageError = function(img) {
@@ -1224,54 +1481,15 @@ const videos = [
       img.alt = 'No thumbnail available';
     };
 
-    // Performance optimization: Lazy load videos
-    function setupIntersectionObserver() {
-      if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              const img = entry.target;
-              if (img.dataset.src) {
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-                observer.unobserve(img);
-              }
-            }
-          });
-        }, {
-          rootMargin: '50px'
-        });
-
-        // This will be used when we have more videos
-        return imageObserver;
-      }
-      return null;
-    }
-
-    // Add search suggestions (basic implementation)
-    function setupSearchSuggestions() {
-      const searchTerms = [...new Set(videos.flatMap(v => [
-        ...v.title.toLowerCase().split(' '),
-        v.channel.toLowerCase()
-      ]))].filter(term => term.length > 2);
-
-      // Could implement autocomplete here with the searchTerms array
-    }
-
     // Add analytics tracking (placeholder)
     function trackEvent(eventName, data = {}) {
       // console.log('Analytics Event:', eventName, data);
       // This would integrate with your analytics service
     }
 
-    // Enhanced video opening with analytics
-    window.openPlayerLegacy = function(platform, videoId) {
-      const video = videos.find(v => v.platform === platform && v.id === videoId);
-      openPlayer(platform, videoId, video);
-    };
-
     // Global functions for onclick handlers
-    window.selectChannel = selectChannel;
+    window.scrollVideos = scrollVideos;
+    window.showChannelGrid = showChannelGrid;
 
     // Initialize everything when DOM is ready
     if (document.readyState === 'loading') {
