@@ -509,7 +509,7 @@
       justify-content: center;
     }
 
-    .copy-btn, .close-btn {
+    .copy-btn, .open-btn, .close-btn {
       background: #4ecdc4;
       border: none;
       border-radius: 8px;
@@ -521,7 +521,7 @@
       transition: all 0.3s ease;
     }
 
-    .copy-btn:hover {
+    .copy-btn:hover, .open-btn:hover {
       background: #45b7d1;
       transform: translateY(-2px);
     }
@@ -577,8 +577,8 @@
       </a>
       
       <div class="nav-actions">
-        <button class="nav-btn cast-btn" id="castBtn" title="Cast to TV">
-          <i class="fas fa-cast"></i>
+        <button class="nav-btn cast-btn" id="castBtn" title="Open Link">
+          <i class="fas fa-tv"></i>
         </button>
         <button class="nav-btn share-btn" id="shareBtn" title="Share Video">
           <i class="fas fa-share-alt"></i>
@@ -618,17 +618,6 @@
           <div class="channel-badge" id="channelName">Loading...</div>
         </div>
         <div class="video-date" id="videoDate">Loading...</div>
-      </div>
-      
-      <div class="video-actions">
-        <button class="action-btn cast" id="castActionBtn">
-          <i class="fas fa-cast"></i>
-          <span>Cast</span>
-        </button>
-        <button class="action-btn share" id="shareActionBtn">
-          <i class="fas fa-share-alt"></i>
-          <span>Share</span>
-        </button>
       </div>
     </div>
   </section>
@@ -676,10 +665,9 @@
           shareUrl: document.getElementById('shareUrl'),
           copyBtn: document.getElementById('copyBtn'),
           closeShareBtn: document.getElementById('closeShareBtn'),
+		  //openLinkBtn: document.getElementById('openLinkBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
-          castActionBtn: document.getElementById('castActionBtn'),
-          shareActionBtn: document.getElementById('shareActionBtn'),
           externalLink: document.getElementById('externalLink')
         };
 
@@ -716,27 +704,34 @@
         this.updateUI();
       }
 
-      updateUI() {
-        const { title, channel, date } = this.currentVideo;
-        
-        // Update video info
-        this.elements.videoTitle.textContent = title;
-        this.elements.channelName.textContent = channel;
-        this.elements.videoDate.textContent = this.formatDate(date);
-        this.elements.relatedTitle.textContent = `More from ${channel}`;
-        
-        // Update page title
-        document.title = `${title} - YouDai Player`;
-        
-        // Update share URL
-        this.elements.shareUrl.value = window.location.href;
-        
-        // Update external link
-        this.updateExternalLink();
-        
-        // Render related videos
-        this.renderRelatedVideos();
-      }
+updateUI() {
+  const { title, channel, date } = this.currentVideo;
+  
+  this.elements.videoTitle.textContent = title;
+  this.elements.channelName.textContent = channel;
+  this.elements.videoDate.textContent = this.formatDate(date);
+  this.elements.relatedTitle.textContent = `More from ${channel}`;
+
+  document.title = `${title} - YouDai Player`;
+
+  // ✅ Use direct video link instead of page URL
+  this.elements.shareUrl.value = this.getDirectVideoLink();
+
+  // External platform link
+  this.updateExternalLink();
+
+  this.renderRelatedVideos();
+}
+
+getDirectVideoLink() {
+  const { platform, id } = this.currentVideo;
+  switch(platform) {
+    case 'youtube': return `https://www.youtube.com/watch?v=${id}`;
+    case 'dailymotion': return `https://www.dailymotion.com/video/${id}`;
+    case 'ok': return `https://ok.ru/video/${id}`;
+    default: return window.location.href;
+  }
+}
 
       updateExternalLink() {
         const { platform, id } = this.currentVideo;
@@ -929,24 +924,26 @@
       }
 
       setupEventListeners() {
-        // Share button clicks
-        this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
-        this.elements.shareActionBtn.addEventListener('click', () => this.openShareModal());
-        
-        // Share modal actions
-        this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
-        this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
-        
-        // Close modal when clicking outside
-        this.elements.shareModal.addEventListener('click', (e) => {
-          if (e.target === this.elements.shareModal) {
-            this.closeShareModal();
-          }
-        });
-        
-        // Cast button clicks
-        this.elements.castBtn.addEventListener('click', () => this.handleCast());
-        this.elements.castActionBtn.addEventListener('click', () => this.handleCast());
+  // Share button
+  this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
+
+  // Share modal
+  this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
+  this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
+  this.elements.shareModal.addEventListener('click', (e) => {
+    if (e.target === this.elements.shareModal) this.closeShareModal();
+  });
+
+  // Cast button
+  this.elements.castBtn.addEventListener('click', () => this.handleCast());
+  
+  /* Open link directly
+this.elements.openLinkBtn.addEventListener('click', () => {
+  const url = this.elements.shareUrl.value;
+  if (url && url !== '#') {
+    window.open(url, '_blank');
+  }
+}); */
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -1004,35 +1001,25 @@
       }
 
       detectCastDevices() {
-        // Check for Google Cast API
-        if (window.chrome && window.chrome.cast) {
-          this.elements.castBtn.classList.add('cast-available');
-          this.elements.castActionBtn.classList.add('cast-available');
-        }
-        
-        // Check for WebRTC casting capabilities
-        if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-          this.elements.castBtn.style.opacity = '1';
-          this.elements.castActionBtn.style.opacity = '1';
-        }
-      }
+  if (window.chrome && window.chrome.cast) {
+    this.elements.castBtn.classList.add('cast-available');
+  }
 
-      handleCast() {
-        if (window.chrome && window.chrome.cast) {
-          // Use Google Cast if available
-          this.initializeCast();
-        } else if (navigator.share) {
-          // Use Web Share API as fallback
-          navigator.share({
-            title: this.currentVideo.title,
-            text: `Watch "${this.currentVideo.title}" on YouDai`,
-            url: window.location.href
-          });
-        } else {
-          // Show cast info
-          alert('Cast feature requires a Cast-enabled device or browser. You can share the video link to watch on other devices.');
-        }
-      }
+  if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+    this.elements.castBtn.style.opacity = '1';
+  }
+}
+
+
+handleCast() {
+  const url = this.getDirectVideoLink();
+  if (url && url !== '#') {
+    window.open(url, '_blank');  // opens YouTube/Dailymotion/OK.ru directly
+  } else {
+    alert('Unable to open video link.');
+  }
+}
+
 
       initializeCast() {
         // Initialize Google Cast (this would need the Cast SDK loaded)
