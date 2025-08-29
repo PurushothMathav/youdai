@@ -28357,5 +28357,167 @@
     "dthumb": "https://www.dailymotion.com/thumbnail/video/k7GlMqPKebE1S9Dnk7E",
     "channel": "VIJAY TV",
     "date": "2025-07-06"
-  }
+  },
+  {
+    "platform": "yupptv",
+    "id": "polimer-news",
+    "title": "Polimer News",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/polimer-news.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/polimer-news.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "puthiyathalaimurai",
+    "title": "Puthiya Thalaimurai",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/puthiyathalaimurai.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/puthiyathalaimurai.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "seithigal-tv",
+    "title": "Seithigal TV",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/seithigal-tv.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/seithigal-tv.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "news7tamil",
+    "title": "News7 Tamil",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/news7tamil.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/news7tamil.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "peppers-tv",
+    "title": "Peppers TV",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Peppers-TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Peppers-TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "athavan-tv-hd",
+    "title": "Athavan TV HD",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Athavan_TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Athavan_TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "murasu",
+    "title": "Murasu",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/murasu.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/murasu.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",	  
+    "id": "sri-sankara-tamil",
+    "title": "Sri Sankara Tamil",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/sri-sankara-tamil.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/sri-sankara-tamil.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "sri-naga-sai-mandir",
+    "title": "Sri Naga Sai Mandir",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Sri-Naga-Sai-Mandir.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Sri-Naga-Sai-Mandir.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "sivan-temple-tv",
+    "title": "Sivan Temple TV",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Sivan_Temple_TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Sivan_Temple_TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "svbc-2",
+    "title": "SVBC 2",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/SVBC-2_TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/SVBC-2_TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "swasthik-tv",
+    "title": "Swasthik TV",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/swasthik.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/swasthik.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },  
+  {
+    "platform": "yupptv",
+    "id": "madha-tv",
+    "title": "Madha TV",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Madha_TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Madha_TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "angel-tv",
+    "title": "Angel TV",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/angel-tv.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/angel-tv.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "moon-tv",
+    "title": "Moon TV",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Moon-TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Moon-TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "nambikkai",
+    "title": "Nambikkai TV",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Nambikkai-TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/Nambikkai-TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "hosanna",
+    "title": "Hosanna",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/hosanna-tv.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/hosanna-tv.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },
+  {
+    "platform": "yupptv",
+    "id": "holy-god-tv",
+    "title": "Holy God TV",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/HOLY_GOD_TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/HOLY_GOD_TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  }  
 ]

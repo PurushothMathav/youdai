@@ -730,6 +730,7 @@ getDirectVideoLink() {
     case 'youtube': return `https://www.youtube.com/watch?v=${id}`;
     case 'dailymotion': return `https://www.dailymotion.com/video/${id}`;
     case 'ok': return `https://ok.ru/video/${id}`;
+	case 'yupptv': return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
     default: return window.location.href;
   }
 }
@@ -748,6 +749,9 @@ getDirectVideoLink() {
           case 'ok':
             url = `https://ok.ru/video/${id}`;
             break;
+		  case 'yupptv':
+			url = `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
+			break;
         }
         
         this.elements.externalLink.href = url;
@@ -875,6 +879,9 @@ getDirectVideoLink() {
             
           case 'ok':
             return `https://ok.ru/videoembed/${id}?autoplay=1`;
+			
+		  case 'yupptv':
+			return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
             
           default:
             return '';
