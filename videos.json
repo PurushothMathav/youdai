@@ -153,11 +153,11 @@
     "date": "2025-08-30"
   },
   {
-    "platform": "dailymotion",
-    "id": "ktLSELdKQbwzlLDKpKg",
+    "platform": "ok",
+    "id": "10515973016274",
     "title": "Cooku with Comali S6",
-    "mthumb": "https://www.dailymotion.com/thumbnail/video/ktLSELdKQbwzlLDKpKg?size=240x180",
-    "dthumb": "https://www.dailymotion.com/thumbnail/video/ktLSELdKQbwzlLDKpKg",
+    "mthumb": "https://img10.hotstar.com/image/upload/f_auto,q_auto/sources/r1/cms/prod/5887/1754983435887-i",
+    "dthumb": "https://img10.hotstar.com/image/upload/f_auto,q_auto/sources/r1/cms/prod/5887/1754983435887-i",
     "channel": "VIJAY TV",
     "date": "2025-08-30"
   },
@@ -28565,6 +28565,24 @@
     "channel": "Live TV",
 	"date": "2025-08-29"
   },
+  {
+    "platform": "youtube",
+    "id": "9M02G5c6x6w",
+    "title": "Sun News",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/YuppTV_TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/YuppTV_TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },  
+  {
+    "platform": "youtube",
+    "id": "dUJx4aDoIQo",
+    "title": "News18 Tamilnadu",
+    "mthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/YuppTV_TV.jpg",
+    "dthumb": "https://d229kpbsb5jevy.cloudfront.net/tv/480/270/languages/YuppTV_TV.jpg",
+    "channel": "Live TV",
+	"date": "2025-08-29"
+  },  
   {
     "platform": "yupptv",
     "id": "peppers-tv",
