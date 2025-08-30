@@ -419,63 +419,43 @@
       margin: 0;
     }
 
-    /* Enhanced Fullscreen styles for mobile auto-rotation */
-    .player-container:fullscreen {
-      background: #000;
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: none !important;
-      aspect-ratio: auto !important;
+    /* Fullscreen styles - MINIMAL CHANGES ONLY */
+    .fullscreen-player {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 10000;
+      max-width: none;
     }
 
-    .player-container:-webkit-full-screen {
-      background: #000;
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: none !important;
-      aspect-ratio: auto !important;
-    }
-
-    .player-container:-moz-full-screen {
-      background: #000;
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: none !important;
-      aspect-ratio: auto !important;
-    }
-
-    /* Fullscreen iframe adjustments */
-    .player-container:fullscreen .player-iframe,
-    .player-container:-webkit-full-screen .player-iframe,
-    .player-container:-moz-full-screen .player-iframe {
-      width: 100vw !important;
-      height: 100vh !important;
-      object-fit: contain;
-    }
-
-    /* Hide other content in fullscreen */
-    .player-container:fullscreen ~ *,
-    .player-container:-webkit-full-screen ~ *,
-    .player-container:-moz-full-screen ~ * {
-      display: none !important;
-    }
-
-    /* Mobile landscape orientation optimization */
-    @media screen and (max-width: 768px) and (orientation: landscape) {
-      .player-container {
-        height: 100vh;
-        max-width: none;
-        width: 100vw;
-        aspect-ratio: auto;
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 0 10px;
       }
-      
-      .top-nav {
-        display: none;
+
+      .video-info {
+        padding: 15px 10px;
       }
-      
-      .video-info,
+
+      .video-meta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .meta-left {
+        width: 100%;
+      }
+
+      .video-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
       .related-section {
-        display: none;
+        padding: 30px 10px;
       }
     }
 
@@ -560,35 +540,6 @@
       color: #4ecdc4 !important;
     }
 
-    /* Mobile optimizations */
-    @media (max-width: 768px) {
-      .nav-container {
-        padding: 0 10px;
-      }
-
-      .video-info {
-        padding: 15px 10px;
-      }
-
-      .video-meta {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .meta-left {
-        width: 100%;
-      }
-
-      .video-actions {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .related-section {
-        padding: 30px 10px;
-      }
-    }
-
     /* Responsive design */
     @media (max-width: 480px) {
       .nav-container {
@@ -614,33 +565,6 @@
     /* Hide elements when needed */
     .hidden {
       display: none !important;
-    }
-
-    /* Fullscreen button for mobile */
-    .fullscreen-btn {
-      position: absolute;
-      bottom: 15px;
-      right: 15px;
-      background: rgba(0,0,0,0.7);
-      border: none;
-      border-radius: 6px;
-      padding: 8px 12px;
-      color: #fff;
-      cursor: pointer;
-      font-size: 14px;
-      z-index: 10;
-      transition: all 0.3s ease;
-    }
-
-    .fullscreen-btn:hover {
-      background: rgba(0,0,0,0.9);
-      transform: scale(1.05);
-    }
-
-    @media (min-width: 769px) {
-      .fullscreen-btn {
-        display: none;
-      }
     }
   </style>
 </head>
@@ -672,11 +596,6 @@
       </div>
       
       <iframe id="playerIframe" class="player-iframe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>
-      
-      <!-- Mobile fullscreen button -->
-      <button class="fullscreen-btn" id="fullscreenBtn">
-        <i class="fas fa-expand"></i>
-      </button>
       
       <div class="player-error" id="playerError">
         <i class="fas fa-exclamation-triangle error-icon"></i>
@@ -732,8 +651,6 @@
         this.relatedVideos = [];
         this.retryCount = 0;
         this.maxRetries = 3;
-        this.isFullscreen = false;
-        this.orientationLocked = false;
         
         this.elements = {
           playerIframe: document.getElementById('playerIframe'),
@@ -751,8 +668,7 @@
           closeShareBtn: document.getElementById('closeShareBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
-          externalLink: document.getElementById('externalLink'),
-          fullscreenBtn: document.getElementById('fullscreenBtn')
+          externalLink: document.getElementById('externalLink')
         };
 
         this.init();
@@ -761,92 +677,48 @@
       async init() {
         this.loadVideoData();
         this.setupEventListeners();
-        this.setupOrientationHandling();
+        this.setupMobileOrientationHandler(); // Only add this for mobile orientation
         this.detectCastDevices();
         this.loadVideo();
       }
 
-      setupOrientationHandling() {
-        // Handle orientation changes
-        window.addEventListener('orientationchange', () => {
-          setTimeout(() => {
-            this.handleOrientationChange();
-          }, 100);
-        });
+      // MINIMAL ADDITION - Only handle mobile orientation in fullscreen
+      setupMobileOrientationHandler() {
+        // Handle fullscreen changes to manage orientation on mobile
+        const handleFullscreenChange = async () => {
+          const isFullscreen = !!(document.fullscreenElement || 
+                                 document.webkitFullscreenElement || 
+                                 document.mozFullScreenElement);
 
-        // Handle fullscreen changes
-        document.addEventListener('fullscreenchange', () => this.handleFullscreenChange());
-        document.addEventListener('webkitfullscreenchange', () => this.handleFullscreenChange());
-        document.addEventListener('mozfullscreenchange', () => this.handleFullscreenChange());
+          // Only attempt orientation lock on mobile devices
+          const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                          window.innerWidth <= 768;
 
-        // Handle screen orientation API if available
-        if (screen.orientation) {
-          screen.orientation.addEventListener('change', () => {
-            this.handleOrientationChange();
-          });
-        }
-      }
-
-      handleOrientationChange() {
-        // Force layout recalculation
-        if (this.isFullscreen) {
-          this.adjustFullscreenLayout();
-        }
-      }
-
-      handleFullscreenChange() {
-        this.isFullscreen = !!(document.fullscreenElement || 
-                              document.webkitFullscreenElement || 
-                              document.mozFullScreenElement);
-
-        if (this.isFullscreen) {
-          this.enterFullscreenMode();
-        } else {
-          this.exitFullscreenMode();
-        }
-      }
-
-      async enterFullscreenMode() {
-        try {
-          // Request orientation lock to landscape for better video viewing
-          if (screen.orientation && screen.orientation.lock) {
-            await screen.orientation.lock('landscape-primary');
-            this.orientationLocked = true;
+          if (isFullscreen && isMobile) {
+            // Try to lock to landscape when entering fullscreen on mobile
+            if (screen.orientation && screen.orientation.lock) {
+              try {
+                await screen.orientation.lock('landscape-primary');
+              } catch (error) {
+                // Fallback: try alternative landscape orientation
+                try {
+                  await screen.orientation.lock('landscape');
+                } catch (altError) {
+                  console.log('Orientation lock not supported:', altError);
+                }
+              }
+            }
+          } else if (!isFullscreen && isMobile) {
+            // Unlock orientation when exiting fullscreen
+            if (screen.orientation && screen.orientation.unlock) {
+              screen.orientation.unlock();
+            }
           }
-        } catch (error) {
-          console.log('Orientation lock not supported or failed:', error);
-        }
+        };
 
-        this.adjustFullscreenLayout();
-        
-        // Update fullscreen button icon
-        const icon = this.elements.fullscreenBtn.querySelector('i');
-        if (icon) {
-          icon.className = 'fas fa-compress';
-        }
-      }
-
-      exitFullscreenMode() {
-        // Unlock orientation when exiting fullscreen
-        if (this.orientationLocked && screen.orientation && screen.orientation.unlock) {
-          screen.orientation.unlock();
-          this.orientationLocked = false;
-        }
-
-        // Update fullscreen button icon
-        const icon = this.elements.fullscreenBtn.querySelector('i');
-        if (icon) {
-          icon.className = 'fas fa-expand';
-        }
-      }
-
-      adjustFullscreenLayout() {
-        if (this.isFullscreen) {
-          // Ensure iframe fills entire screen
-          this.elements.playerIframe.style.width = '100vw';
-          this.elements.playerIframe.style.height = '100vh';
-          this.elements.playerIframe.style.objectFit = 'contain';
-        }
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
       }
 
       loadVideoData() {
@@ -1111,9 +983,6 @@
 
         // Cast button
         this.elements.castBtn.addEventListener('click', () => this.handleCast());
-
-        // Fullscreen button
-        this.elements.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -1136,13 +1005,6 @@
         // Handle back button state
         window.addEventListener('popstate', () => {
           window.location.href = 'index.html';
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-          if (this.isFullscreen) {
-            this.adjustFullscreenLayout();
-          }
         });
       }
 
@@ -1196,47 +1058,17 @@
         }
       }
 
-      async toggleFullscreen() {
-        try {
-          if (!this.isFullscreen) {
-            // Enter fullscreen
-            if (this.elements.playerContainer.requestFullscreen) {
-              await this.elements.playerContainer.requestFullscreen();
-            } else if (this.elements.playerContainer.webkitRequestFullscreen) {
-              await this.elements.playerContainer.webkitRequestFullscreen();
-            } else if (this.elements.playerContainer.mozRequestFullScreen) {
-              await this.elements.playerContainer.mozRequestFullScreen();
-            }
-            
-            // Try to lock orientation to landscape for better viewing
-            if ('orientation' in screen && 'lock' in screen.orientation) {
-              try {
-                await screen.orientation.lock('landscape-primary');
-              } catch (orientationError) {
-                console.log('Could not lock orientation:', orientationError);
-                // Try alternative orientation
-                try {
-                  await screen.orientation.lock('landscape');
-                } catch (altError) {
-                  console.log('Alternative orientation lock failed:', altError);
-                }
-              }
-            }
-          } else {
-            // Exit fullscreen
-            if (document.exitFullscreen) {
-              await document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-              await document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-              await document.mozCancelFullScreen();
-            }
-          }
-        } catch (error) {
-          console.error('Fullscreen toggle failed:', error);
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          this.elements.playerContainer.requestFullscreen().catch(err => {
+            console.log('Fullscreen error:', err);
+          });
+        } else {
+          document.exitFullscreen();
         }
       }
 
+      // Global retry function
       retryLoad() {
         this.retryCount = 0;
         this.loadVideo();
@@ -1281,14 +1113,6 @@
         //   .catch(error => console.log('SW registration failed'));
       });
     }
-
-    // Handle device orientation changes for better mobile experience
-    window.addEventListener('orientationchange', () => {
-      setTimeout(() => {
-        // Force layout recalculation after orientation change
-        window.dispatchEvent(new Event('resize'));
-      }, 100);
-    });
   </script>
 </body>
 </html>
