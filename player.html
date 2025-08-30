@@ -419,7 +419,7 @@
       margin: 0;
     }
 
-    /* Fullscreen styles - MINIMAL CHANGES ONLY */
+    /* Fullscreen styles */
     .fullscreen-player {
       position: fixed !important;
       top: 0;
@@ -566,52 +566,6 @@
     .hidden {
       display: none !important;
     }
-
-    /* Custom fullscreen button for mobile */
-    .custom-fullscreen-btn {
-      position: absolute;
-      bottom: 15px;
-      right: 15px;
-      background: rgba(0, 0, 0, 0.8);
-      border: none;
-      border-radius: 8px;
-      width: 45px;
-      height: 35px;
-      color: #fff;
-      cursor: pointer;
-      font-size: 16px;
-      z-index: 20;
-      transition: all 0.3s ease;
-      display: none; /* Hidden by default */
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .custom-fullscreen-btn:hover {
-      background: rgba(78, 205, 196, 0.9);
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
-    }
-
-    .custom-fullscreen-btn:active {
-      transform: scale(0.95);
-    }
-
-    /* Show custom fullscreen button on mobile devices */
-    @media (max-width: 768px), (pointer: coarse) {
-      .custom-fullscreen-btn {
-        display: flex;
-      }
-    }
-
-    /* Hide custom button when in fullscreen */
-    .player-container:fullscreen .custom-fullscreen-btn,
-    .player-container:-webkit-full-screen .custom-fullscreen-btn,
-    .player-container:-moz-full-screen .custom-fullscreen-btn {
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -641,12 +595,7 @@
         <div class="loading"></div>
       </div>
       
-      <iframe id="playerIframe" class="player-iframe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>
-      
-      <!-- Custom fullscreen button for mobile when platform buttons are hidden -->
-      <button class="custom-fullscreen-btn" id="customFullscreenBtn" title="Fullscreen">
-        <i class="fas fa-expand"></i>
-      </button>
+      <iframe id="playerIframe" class="player-iframe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
       
       <div class="player-error" id="playerError">
         <i class="fas fa-exclamation-triangle error-icon"></i>
@@ -717,10 +666,10 @@
           shareUrl: document.getElementById('shareUrl'),
           copyBtn: document.getElementById('copyBtn'),
           closeShareBtn: document.getElementById('closeShareBtn'),
+		  //openLinkBtn: document.getElementById('openLinkBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
-          externalLink: document.getElementById('externalLink'),
-          customFullscreenBtn: document.getElementById('customFullscreenBtn')
+          externalLink: document.getElementById('externalLink')
         };
 
         this.init();
@@ -729,48 +678,8 @@
       async init() {
         this.loadVideoData();
         this.setupEventListeners();
-        this.setupMobileOrientationHandler(); // Only add this for mobile orientation
         this.detectCastDevices();
         this.loadVideo();
-      }
-
-      // MINIMAL ADDITION - Only handle mobile orientation in fullscreen
-      setupMobileOrientationHandler() {
-        // Handle fullscreen changes to manage orientation on mobile
-        const handleFullscreenChange = async () => {
-          const isFullscreen = !!(document.fullscreenElement || 
-                                 document.webkitFullscreenElement || 
-                                 document.mozFullScreenElement);
-
-          // Only attempt orientation lock on mobile devices
-          const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                          window.innerWidth <= 768;
-
-          if (isFullscreen && isMobile) {
-            // Try to lock to landscape when entering fullscreen on mobile
-            if (screen.orientation && screen.orientation.lock) {
-              try {
-                await screen.orientation.lock('landscape-primary');
-              } catch (error) {
-                // Fallback: try alternative landscape orientation
-                try {
-                  await screen.orientation.lock('landscape');
-                } catch (altError) {
-                  console.log('Orientation lock not supported:', altError);
-                }
-              }
-            }
-          } else if (!isFullscreen && isMobile) {
-            // Unlock orientation when exiting fullscreen
-            if (screen.orientation && screen.orientation.unlock) {
-              screen.orientation.unlock();
-            }
-          }
-        };
-
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
       }
 
       loadVideoData() {
@@ -796,35 +705,35 @@
         this.updateUI();
       }
 
-      updateUI() {
-        const { title, channel, date } = this.currentVideo;
-        
-        this.elements.videoTitle.textContent = title;
-        this.elements.channelName.textContent = channel;
-        this.elements.videoDate.textContent = this.formatDate(date);
-        this.elements.relatedTitle.textContent = `More from ${channel}`;
+updateUI() {
+  const { title, channel, date } = this.currentVideo;
+  
+  this.elements.videoTitle.textContent = title;
+  this.elements.channelName.textContent = channel;
+  this.elements.videoDate.textContent = this.formatDate(date);
+  this.elements.relatedTitle.textContent = `More from ${channel}`;
 
-        document.title = `${title} - YouDai Player`;
+  document.title = `${title} - YouDai Player`;
 
-        // Use direct video link instead of page URL
-        this.elements.shareUrl.value = this.getDirectVideoLink();
+  // ✅ Use direct video link instead of page URL
+  this.elements.shareUrl.value = this.getDirectVideoLink();
 
-        // External platform link
-        this.updateExternalLink();
+  // External platform link
+  this.updateExternalLink();
 
-        this.renderRelatedVideos();
-      }
+  this.renderRelatedVideos();
+}
 
-      getDirectVideoLink() {
-        const { platform, id } = this.currentVideo;
-        switch(platform) {
-          case 'youtube': return `https://www.youtube.com/watch?v=${id}`;
-          case 'dailymotion': return `https://www.dailymotion.com/video/${id}`;
-          case 'ok': return `https://ok.ru/video/${id}`;
-          case 'yupptv': return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
-          default: return window.location.href;
-        }
-      }
+getDirectVideoLink() {
+  const { platform, id } = this.currentVideo;
+  switch(platform) {
+    case 'youtube': return `https://www.youtube.com/watch?v=${id}`;
+    case 'dailymotion': return `https://www.dailymotion.com/video/${id}`;
+    case 'ok': return `https://ok.ru/video/${id}`;
+	case 'yupptv': return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
+    default: return window.location.href;
+  }
+}
 
       updateExternalLink() {
         const { platform, id } = this.currentVideo;
@@ -840,9 +749,9 @@
           case 'ok':
             url = `https://ok.ru/video/${id}`;
             break;
-          case 'yupptv':
-            url = `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
-            break;
+		  case 'yupptv':
+			url = `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
+			break;
         }
         
         this.elements.externalLink.href = url;
@@ -959,20 +868,20 @@
         switch(platform) {
           case 'youtube':
             const ytUrls = [
-              `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&controls=1&fs=1`,
-              `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&controls=1&fs=1`,
-              `https://www.youtube-nocookie.com/embed/${id}?rel=0&controls=1&fs=1`
+              `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&controls=1`,
+              `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&controls=1`,
+              `https://www.youtube-nocookie.com/embed/${id}?rel=0&controls=1`
             ];
             return ytUrls[retryAttempt] || ytUrls[0];
             
           case 'dailymotion':
-            return `https://www.dailymotion.com/embed/video/${id}?autoplay=1&ui-logo=0&controls=1&ui-start-screen-info=false&ui-highlight=0&queue-enable=0&sharing-enable=0`;
+            return `https://www.dailymotion.com/embed/video/${id}?autoplay=1&ui-logo=0&controls=1`;
             
           case 'ok':
             return `https://ok.ru/videoembed/${id}?autoplay=1`;
 			
-          case 'yupptv':
-            return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
+		  case 'yupptv':
+			return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
             
           default:
             return '';
@@ -1023,21 +932,26 @@
       }
 
       setupEventListeners() {
-        // Share button
-        this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
+  // Share button
+  this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
 
-        // Share modal
-        this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
-        this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
-        this.elements.shareModal.addEventListener('click', (e) => {
-          if (e.target === this.elements.shareModal) this.closeShareModal();
-        });
+  // Share modal
+  this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
+  this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
+  this.elements.shareModal.addEventListener('click', (e) => {
+    if (e.target === this.elements.shareModal) this.closeShareModal();
+  });
 
-        // Cast button
-        this.elements.castBtn.addEventListener('click', () => this.handleCast());
-
-        // Custom fullscreen button for mobile
-        this.elements.customFullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+  // Cast button
+  this.elements.castBtn.addEventListener('click', () => this.handleCast());
+  
+  /* Open link directly
+this.elements.openLinkBtn.addEventListener('click', () => {
+  const url = this.elements.shareUrl.value;
+  if (url && url !== '#') {
+    window.open(url, '_blank');
+  }
+}); */
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -1095,22 +1009,30 @@
       }
 
       detectCastDevices() {
-        if (window.chrome && window.chrome.cast) {
-          this.elements.castBtn.classList.add('cast-available');
-        }
+  if (window.chrome && window.chrome.cast) {
+    this.elements.castBtn.classList.add('cast-available');
+  }
 
-        if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-          this.elements.castBtn.style.opacity = '1';
-        }
-      }
+  if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+    this.elements.castBtn.style.opacity = '1';
+  }
+}
 
-      handleCast() {
-        const url = this.getDirectVideoLink();
-        if (url && url !== '#') {
-          window.open(url, '_blank');  // opens YouTube/Dailymotion/OK.ru directly
-        } else {
-          alert('Unable to open video link.');
-        }
+
+handleCast() {
+  const url = this.getDirectVideoLink();
+  if (url && url !== '#') {
+    window.open(url, '_blank');  // opens YouTube/Dailymotion/OK.ru directly
+  } else {
+    alert('Unable to open video link.');
+  }
+}
+
+
+      initializeCast() {
+        // Initialize Google Cast (this would need the Cast SDK loaded)
+        console.log('Initializing Cast...');
+        alert('Cast feature coming soon! You can share the video link to watch on other devices.');
       }
 
       toggleFullscreen() {
