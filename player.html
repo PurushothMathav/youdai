@@ -705,35 +705,35 @@
         this.updateUI();
       }
 
-updateUI() {
-  const { title, channel, date } = this.currentVideo;
+	updateUI() {
+		const { title, channel, date } = this.currentVideo;
   
-  this.elements.videoTitle.textContent = title;
-  this.elements.channelName.textContent = channel;
-  this.elements.videoDate.textContent = this.formatDate(date);
-  this.elements.relatedTitle.textContent = `More from ${channel}`;
+		this.elements.videoTitle.textContent = title;
+		this.elements.channelName.textContent = channel;
+		this.elements.videoDate.textContent = this.formatDate(date);
+		this.elements.relatedTitle.textContent = `More from ${channel}`;
 
-  document.title = `${title} - YouDai Player`;
+		document.title = `${title} - YouDai Player`;
 
-  // ✅ Use direct video link instead of page URL
-  this.elements.shareUrl.value = this.getDirectVideoLink();
+		// ✅ Use direct video link instead of page URL
+		this.elements.shareUrl.value = this.getDirectVideoLink();
 
-  // External platform link
-  this.updateExternalLink();
+		// External platform link
+		this.updateExternalLink();
 
-  this.renderRelatedVideos();
-}
+		this.renderRelatedVideos();
+	}
 
-getDirectVideoLink() {
-  const { platform, id } = this.currentVideo;
-  switch(platform) {
-    case 'youtube': return `https://www.youtube.com/watch?v=${id}`;
-    case 'dailymotion': return `https://www.dailymotion.com/video/${id}`;
-    case 'ok': return `https://ok.ru/video/${id}`;
-	case 'yupptv': return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
-    default: return window.location.href;
-  }
-}
+	getDirectVideoLink() {
+		const { platform, id } = this.currentVideo;
+		switch(platform) {
+			case 'youtube': return `https://www.youtube.com/watch?v=${id}`;
+			case 'dailymotion': return `https://www.dailymotion.com/video/${id}`;
+			case 'ok': return `https://ok.ru/video/${id}`;
+			case 'yupptv': return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
+			default: return window.location.href;
+		}
+	}
 
       updateExternalLink() {
         const { platform, id } = this.currentVideo;
@@ -932,26 +932,18 @@ getDirectVideoLink() {
       }
 
       setupEventListeners() {
-  // Share button
-  this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
+		// Share button
+		this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
 
-  // Share modal
-  this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
-  this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
-  this.elements.shareModal.addEventListener('click', (e) => {
-    if (e.target === this.elements.shareModal) this.closeShareModal();
-  });
+		// Share modal
+		this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
+		this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
+		this.elements.shareModal.addEventListener('click', (e) => {
+			if (e.target === this.elements.shareModal) this.closeShareModal();
+		});
 
-  // Cast button
-  this.elements.castBtn.addEventListener('click', () => this.handleCast());
-  
-  /* Open link directly
-this.elements.openLinkBtn.addEventListener('click', () => {
-  const url = this.elements.shareUrl.value;
-  if (url && url !== '#') {
-    window.open(url, '_blank');
-  }
-}); */
+		// Cast button
+		this.elements.castBtn.addEventListener('click', () => this.handleCast());
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -1009,24 +1001,24 @@ this.elements.openLinkBtn.addEventListener('click', () => {
       }
 
       detectCastDevices() {
-  if (window.chrome && window.chrome.cast) {
-    this.elements.castBtn.classList.add('cast-available');
-  }
+		if (window.chrome && window.chrome.cast) {
+			this.elements.castBtn.classList.add('cast-available');
+		}
 
-  if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-    this.elements.castBtn.style.opacity = '1';
-  }
-}
+		if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+			this.elements.castBtn.style.opacity = '1';
+		}
+	}
 
 
-handleCast() {
-  const url = this.getDirectVideoLink();
-  if (url && url !== '#') {
-    window.open(url, '_blank');  // opens YouTube/Dailymotion/OK.ru directly
-  } else {
-    alert('Unable to open video link.');
-  }
-}
+	handleCast() {
+		const url = this.getDirectVideoLink();
+		if (url && url !== '#') {
+			window.open(url, '_blank');  // opens YouTube/Dailymotion/OK.ru directly
+		} else {
+			alert('Unable to open video link.');
+		}
+	}
 
 
       initializeCast() {
@@ -1044,6 +1036,23 @@ handleCast() {
           document.exitFullscreen();
         }
       }
+	  
+	  toggleFullscreen() {
+		if (!document.fullscreenElement) {
+			this.elements.playerContainer.requestFullscreen().then(() => {
+				// Try to lock orientation to landscape
+				if (screen.orientation && screen.orientation.lock) {
+					screen.orientation.lock("landscape").catch(err => {
+						console.log("Orientation lock not supported:", err);
+					});
+				}	
+			}).catch(err => {
+				console.log('Fullscreen error:', err);
+			});
+		} else {
+			document.exitFullscreen();
+		}
+	  }
 
       // Global retry function
       retryLoad() {
