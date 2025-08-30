@@ -1037,22 +1037,27 @@
         }
       }
 	  
-	  toggleFullscreen() {
-		if (!document.fullscreenElement) {
-			this.elements.playerContainer.requestFullscreen().then(() => {
-				// Try to lock orientation to landscape
-				if (screen.orientation && screen.orientation.lock) {
-					screen.orientation.lock("landscape").catch(err => {
-						console.log("Orientation lock not supported:", err);
-					});
-				}	
-			}).catch(err => {
-				console.log('Fullscreen error:', err);
-			});
-		} else {
-			document.exitFullscreen();
-		}
-	  }
+toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    this.elements.playerContainer.requestFullscreen()
+      .catch(err => console.log("Fullscreen error:", err));
+    
+    // Wait until fullscreen is active, then lock orientation
+    const onFsChange = () => {
+      if (document.fullscreenElement) {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock("landscape")
+            .catch(err => console.log("Orientation lock not supported:", err));
+        }
+      }
+      document.removeEventListener("fullscreenchange", onFsChange);
+    };
+    document.addEventListener("fullscreenchange", onFsChange);
+  } else {
+    document.exitFullscreen();
+  }
+}
+
 
       // Global retry function
       retryLoad() {
