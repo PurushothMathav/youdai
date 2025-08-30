@@ -566,6 +566,52 @@
     .hidden {
       display: none !important;
     }
+
+    /* Custom fullscreen button for mobile */
+    .custom-fullscreen-btn {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      background: rgba(0, 0, 0, 0.8);
+      border: none;
+      border-radius: 8px;
+      width: 45px;
+      height: 35px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 20;
+      transition: all 0.3s ease;
+      display: none; /* Hidden by default */
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .custom-fullscreen-btn:hover {
+      background: rgba(78, 205, 196, 0.9);
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+    }
+
+    .custom-fullscreen-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Show custom fullscreen button on mobile devices */
+    @media (max-width: 768px), (pointer: coarse) {
+      .custom-fullscreen-btn {
+        display: flex;
+      }
+    }
+
+    /* Hide custom button when in fullscreen */
+    .player-container:fullscreen .custom-fullscreen-btn,
+    .player-container:-webkit-full-screen .custom-fullscreen-btn,
+    .player-container:-moz-full-screen .custom-fullscreen-btn {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -596,6 +642,11 @@
       </div>
       
       <iframe id="playerIframe" class="player-iframe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>
+      
+      <!-- Custom fullscreen button for mobile when platform buttons are hidden -->
+      <button class="custom-fullscreen-btn" id="customFullscreenBtn" title="Fullscreen">
+        <i class="fas fa-expand"></i>
+      </button>
       
       <div class="player-error" id="playerError">
         <i class="fas fa-exclamation-triangle error-icon"></i>
@@ -668,7 +719,8 @@
           closeShareBtn: document.getElementById('closeShareBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
-          externalLink: document.getElementById('externalLink')
+          externalLink: document.getElementById('externalLink'),
+          customFullscreenBtn: document.getElementById('customFullscreenBtn')
         };
 
         this.init();
@@ -907,14 +959,14 @@
         switch(platform) {
           case 'youtube':
             const ytUrls = [
-              `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&controls=1`,
-              `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&controls=1`,
-              `https://www.youtube-nocookie.com/embed/${id}?rel=0&controls=1`
+              `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&controls=1&fs=1`,
+              `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&controls=1&fs=1`,
+              `https://www.youtube-nocookie.com/embed/${id}?rel=0&controls=1&fs=1`
             ];
             return ytUrls[retryAttempt] || ytUrls[0];
             
           case 'dailymotion':
-            return `https://www.dailymotion.com/embed/video/${id}?autoplay=1&ui-logo=0&controls=1`;
+            return `https://www.dailymotion.com/embed/video/${id}?autoplay=1&ui-logo=0&controls=1&ui-start-screen-info=false&ui-highlight=0&queue-enable=0&sharing-enable=0`;
             
           case 'ok':
             return `https://ok.ru/videoembed/${id}?autoplay=1`;
@@ -983,6 +1035,9 @@
 
         // Cast button
         this.elements.castBtn.addEventListener('click', () => this.handleCast());
+
+        // Custom fullscreen button for mobile
+        this.elements.customFullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
