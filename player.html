@@ -9,6 +9,11 @@
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="icon" type="image/png" href="/youdai/icons/icon-192.png">
+  
+  <script type="text/javascript"
+  src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework">
+</script>
+
 
   <style>
     * {
@@ -679,8 +684,23 @@
         this.setupEventListeners();
         this.setupMobileOrientationHandler(); // Only add this for mobile orientation
         this.detectCastDevices();
+		this.initCast();
         this.loadVideo();
       }
+	  
+	  initCast() {
+  window['__onGCastApiAvailable'] = (isAvailable) => {
+    if (isAvailable) {
+      const context = cast.framework.CastContext.getInstance();
+      context.setOptions({
+        receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+        autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED
+      });
+      console.log("Cast initialized");
+    }
+  };
+}
+
 
       // MINIMAL ADDITION - Only handle mobile orientation in fullscreen
       setupMobileOrientationHandler() {
@@ -1049,14 +1069,39 @@
         }
       }
 
-      handleCast() {
-        const url = this.getDirectVideoLink();
-        if (url && url !== '#') {
-          window.open(url, '_blank');  // opens YouTube/Dailymotion/OK.ru directly
+handleCast() {
+  const { platform, id } = this.currentVideo;
+
+  if (platform === "dailymotion") {
+    fetch(`https://www.dailymotion.com/player/metadata/video/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        const hls = data.qualities.auto?.[0]?.url;
+        if (hls) {
+          const mediaInfo = new chrome.cast.media.MediaInfo(hls, 'application/x-mpegURL');
+          const request = new chrome.cast.media.LoadRequest(mediaInfo);
+
+          cast.framework.CastContext.getInstance().requestSession()
+            .then(session => {
+              session.loadMedia(request).then(
+                () => console.log("Casting started"),
+                (err) => console.error("Load error", err)
+              );
+            })
+            .catch(err => console.error("Cast session error", err));
         } else {
-          alert('Unable to open video link.');
+          window.open(`https://www.dailymotion.com/video/${id}`, "_blank");
         }
-      }
+      })
+      .catch(err => {
+        console.error("Metadata fetch error", err);
+        window.open(`https://www.dailymotion.com/video/${id}`, "_blank");
+      });
+  } else {
+    // fallback for other platforms
+    window.open(this.getDirectVideoLink(), "_blank");
+  }
+}
 
       toggleFullscreen() {
         if (!document.fullscreenElement) {
