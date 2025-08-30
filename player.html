@@ -419,43 +419,63 @@
       margin: 0;
     }
 
-    /* Fullscreen styles */
-    .fullscreen-player {
-      position: fixed !important;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 10000;
-      max-width: none;
+    /* Enhanced Fullscreen styles for mobile auto-rotation */
+    .player-container:fullscreen {
+      background: #000;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      aspect-ratio: auto !important;
     }
 
-    /* Mobile optimizations */
-    @media (max-width: 768px) {
-      .nav-container {
-        padding: 0 10px;
-      }
+    .player-container:-webkit-full-screen {
+      background: #000;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      aspect-ratio: auto !important;
+    }
 
-      .video-info {
-        padding: 15px 10px;
-      }
+    .player-container:-moz-full-screen {
+      background: #000;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      aspect-ratio: auto !important;
+    }
 
-      .video-meta {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    /* Fullscreen iframe adjustments */
+    .player-container:fullscreen .player-iframe,
+    .player-container:-webkit-full-screen .player-iframe,
+    .player-container:-moz-full-screen .player-iframe {
+      width: 100vw !important;
+      height: 100vh !important;
+      object-fit: contain;
+    }
 
-      .meta-left {
-        width: 100%;
-      }
+    /* Hide other content in fullscreen */
+    .player-container:fullscreen ~ *,
+    .player-container:-webkit-full-screen ~ *,
+    .player-container:-moz-full-screen ~ * {
+      display: none !important;
+    }
 
-      .video-actions {
-        width: 100%;
-        justify-content: flex-start;
+    /* Mobile landscape orientation optimization */
+    @media screen and (max-width: 768px) and (orientation: landscape) {
+      .player-container {
+        height: 100vh;
+        max-width: none;
+        width: 100vw;
+        aspect-ratio: auto;
       }
-
+      
+      .top-nav {
+        display: none;
+      }
+      
+      .video-info,
       .related-section {
-        padding: 30px 10px;
+        display: none;
       }
     }
 
@@ -540,6 +560,35 @@
       color: #4ecdc4 !important;
     }
 
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 0 10px;
+      }
+
+      .video-info {
+        padding: 15px 10px;
+      }
+
+      .video-meta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .meta-left {
+        width: 100%;
+      }
+
+      .video-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .related-section {
+        padding: 30px 10px;
+      }
+    }
+
     /* Responsive design */
     @media (max-width: 480px) {
       .nav-container {
@@ -565,6 +614,33 @@
     /* Hide elements when needed */
     .hidden {
       display: none !important;
+    }
+
+    /* Fullscreen button for mobile */
+    .fullscreen-btn {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      background: rgba(0,0,0,0.7);
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .fullscreen-btn:hover {
+      background: rgba(0,0,0,0.9);
+      transform: scale(1.05);
+    }
+
+    @media (min-width: 769px) {
+      .fullscreen-btn {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -595,7 +671,12 @@
         <div class="loading"></div>
       </div>
       
-      <iframe id="playerIframe" class="player-iframe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+      <iframe id="playerIframe" class="player-iframe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"></iframe>
+      
+      <!-- Mobile fullscreen button -->
+      <button class="fullscreen-btn" id="fullscreenBtn">
+        <i class="fas fa-expand"></i>
+      </button>
       
       <div class="player-error" id="playerError">
         <i class="fas fa-exclamation-triangle error-icon"></i>
@@ -651,6 +732,8 @@
         this.relatedVideos = [];
         this.retryCount = 0;
         this.maxRetries = 3;
+        this.isFullscreen = false;
+        this.orientationLocked = false;
         
         this.elements = {
           playerIframe: document.getElementById('playerIframe'),
@@ -666,10 +749,10 @@
           shareUrl: document.getElementById('shareUrl'),
           copyBtn: document.getElementById('copyBtn'),
           closeShareBtn: document.getElementById('closeShareBtn'),
-		  //openLinkBtn: document.getElementById('openLinkBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
-          externalLink: document.getElementById('externalLink')
+          externalLink: document.getElementById('externalLink'),
+          fullscreenBtn: document.getElementById('fullscreenBtn')
         };
 
         this.init();
@@ -678,8 +761,92 @@
       async init() {
         this.loadVideoData();
         this.setupEventListeners();
+        this.setupOrientationHandling();
         this.detectCastDevices();
         this.loadVideo();
+      }
+
+      setupOrientationHandling() {
+        // Handle orientation changes
+        window.addEventListener('orientationchange', () => {
+          setTimeout(() => {
+            this.handleOrientationChange();
+          }, 100);
+        });
+
+        // Handle fullscreen changes
+        document.addEventListener('fullscreenchange', () => this.handleFullscreenChange());
+        document.addEventListener('webkitfullscreenchange', () => this.handleFullscreenChange());
+        document.addEventListener('mozfullscreenchange', () => this.handleFullscreenChange());
+
+        // Handle screen orientation API if available
+        if (screen.orientation) {
+          screen.orientation.addEventListener('change', () => {
+            this.handleOrientationChange();
+          });
+        }
+      }
+
+      handleOrientationChange() {
+        // Force layout recalculation
+        if (this.isFullscreen) {
+          this.adjustFullscreenLayout();
+        }
+      }
+
+      handleFullscreenChange() {
+        this.isFullscreen = !!(document.fullscreenElement || 
+                              document.webkitFullscreenElement || 
+                              document.mozFullScreenElement);
+
+        if (this.isFullscreen) {
+          this.enterFullscreenMode();
+        } else {
+          this.exitFullscreenMode();
+        }
+      }
+
+      async enterFullscreenMode() {
+        try {
+          // Request orientation lock to landscape for better video viewing
+          if (screen.orientation && screen.orientation.lock) {
+            await screen.orientation.lock('landscape-primary');
+            this.orientationLocked = true;
+          }
+        } catch (error) {
+          console.log('Orientation lock not supported or failed:', error);
+        }
+
+        this.adjustFullscreenLayout();
+        
+        // Update fullscreen button icon
+        const icon = this.elements.fullscreenBtn.querySelector('i');
+        if (icon) {
+          icon.className = 'fas fa-compress';
+        }
+      }
+
+      exitFullscreenMode() {
+        // Unlock orientation when exiting fullscreen
+        if (this.orientationLocked && screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+          this.orientationLocked = false;
+        }
+
+        // Update fullscreen button icon
+        const icon = this.elements.fullscreenBtn.querySelector('i');
+        if (icon) {
+          icon.className = 'fas fa-expand';
+        }
+      }
+
+      adjustFullscreenLayout() {
+        if (this.isFullscreen) {
+          // Ensure iframe fills entire screen
+          this.elements.playerIframe.style.width = '100vw';
+          this.elements.playerIframe.style.height = '100vh';
+          this.elements.playerIframe.style.objectFit = 'contain';
+        }
       }
 
       loadVideoData() {
@@ -705,35 +872,35 @@
         this.updateUI();
       }
 
-updateUI() {
-  const { title, channel, date } = this.currentVideo;
-  
-  this.elements.videoTitle.textContent = title;
-  this.elements.channelName.textContent = channel;
-  this.elements.videoDate.textContent = this.formatDate(date);
-  this.elements.relatedTitle.textContent = `More from ${channel}`;
+      updateUI() {
+        const { title, channel, date } = this.currentVideo;
+        
+        this.elements.videoTitle.textContent = title;
+        this.elements.channelName.textContent = channel;
+        this.elements.videoDate.textContent = this.formatDate(date);
+        this.elements.relatedTitle.textContent = `More from ${channel}`;
 
-  document.title = `${title} - YouDai Player`;
+        document.title = `${title} - YouDai Player`;
 
-  // ✅ Use direct video link instead of page URL
-  this.elements.shareUrl.value = this.getDirectVideoLink();
+        // Use direct video link instead of page URL
+        this.elements.shareUrl.value = this.getDirectVideoLink();
 
-  // External platform link
-  this.updateExternalLink();
+        // External platform link
+        this.updateExternalLink();
 
-  this.renderRelatedVideos();
-}
+        this.renderRelatedVideos();
+      }
 
-getDirectVideoLink() {
-  const { platform, id } = this.currentVideo;
-  switch(platform) {
-    case 'youtube': return `https://www.youtube.com/watch?v=${id}`;
-    case 'dailymotion': return `https://www.dailymotion.com/video/${id}`;
-    case 'ok': return `https://ok.ru/video/${id}`;
-	case 'yupptv': return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
-    default: return window.location.href;
-  }
-}
+      getDirectVideoLink() {
+        const { platform, id } = this.currentVideo;
+        switch(platform) {
+          case 'youtube': return `https://www.youtube.com/watch?v=${id}`;
+          case 'dailymotion': return `https://www.dailymotion.com/video/${id}`;
+          case 'ok': return `https://ok.ru/video/${id}`;
+          case 'yupptv': return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
+          default: return window.location.href;
+        }
+      }
 
       updateExternalLink() {
         const { platform, id } = this.currentVideo;
@@ -749,9 +916,9 @@ getDirectVideoLink() {
           case 'ok':
             url = `https://ok.ru/video/${id}`;
             break;
-		  case 'yupptv':
-			url = `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
-			break;
+          case 'yupptv':
+            url = `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
+            break;
         }
         
         this.elements.externalLink.href = url;
@@ -880,8 +1047,8 @@ getDirectVideoLink() {
           case 'ok':
             return `https://ok.ru/videoembed/${id}?autoplay=1`;
 			
-		  case 'yupptv':
-			return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
+          case 'yupptv':
+            return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
             
           default:
             return '';
@@ -932,26 +1099,21 @@ getDirectVideoLink() {
       }
 
       setupEventListeners() {
-  // Share button
-  this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
+        // Share button
+        this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
 
-  // Share modal
-  this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
-  this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
-  this.elements.shareModal.addEventListener('click', (e) => {
-    if (e.target === this.elements.shareModal) this.closeShareModal();
-  });
+        // Share modal
+        this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
+        this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
+        this.elements.shareModal.addEventListener('click', (e) => {
+          if (e.target === this.elements.shareModal) this.closeShareModal();
+        });
 
-  // Cast button
-  this.elements.castBtn.addEventListener('click', () => this.handleCast());
-  
-  /* Open link directly
-this.elements.openLinkBtn.addEventListener('click', () => {
-  const url = this.elements.shareUrl.value;
-  if (url && url !== '#') {
-    window.open(url, '_blank');
-  }
-}); */
+        // Cast button
+        this.elements.castBtn.addEventListener('click', () => this.handleCast());
+
+        // Fullscreen button
+        this.elements.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
         
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -974,6 +1136,13 @@ this.elements.openLinkBtn.addEventListener('click', () => {
         // Handle back button state
         window.addEventListener('popstate', () => {
           window.location.href = 'index.html';
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+          if (this.isFullscreen) {
+            this.adjustFullscreenLayout();
+          }
         });
       }
 
@@ -1009,43 +1178,65 @@ this.elements.openLinkBtn.addEventListener('click', () => {
       }
 
       detectCastDevices() {
-  if (window.chrome && window.chrome.cast) {
-    this.elements.castBtn.classList.add('cast-available');
-  }
+        if (window.chrome && window.chrome.cast) {
+          this.elements.castBtn.classList.add('cast-available');
+        }
 
-  if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-    this.elements.castBtn.style.opacity = '1';
-  }
-}
-
-
-handleCast() {
-  const url = this.getDirectVideoLink();
-  if (url && url !== '#') {
-    window.open(url, '_blank');  // opens YouTube/Dailymotion/OK.ru directly
-  } else {
-    alert('Unable to open video link.');
-  }
-}
-
-
-      initializeCast() {
-        // Initialize Google Cast (this would need the Cast SDK loaded)
-        console.log('Initializing Cast...');
-        alert('Cast feature coming soon! You can share the video link to watch on other devices.');
-      }
-
-      toggleFullscreen() {
-        if (!document.fullscreenElement) {
-          this.elements.playerContainer.requestFullscreen().catch(err => {
-            console.log('Fullscreen error:', err);
-          });
-        } else {
-          document.exitFullscreen();
+        if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+          this.elements.castBtn.style.opacity = '1';
         }
       }
 
-      // Global retry function
+      handleCast() {
+        const url = this.getDirectVideoLink();
+        if (url && url !== '#') {
+          window.open(url, '_blank');  // opens YouTube/Dailymotion/OK.ru directly
+        } else {
+          alert('Unable to open video link.');
+        }
+      }
+
+      async toggleFullscreen() {
+        try {
+          if (!this.isFullscreen) {
+            // Enter fullscreen
+            if (this.elements.playerContainer.requestFullscreen) {
+              await this.elements.playerContainer.requestFullscreen();
+            } else if (this.elements.playerContainer.webkitRequestFullscreen) {
+              await this.elements.playerContainer.webkitRequestFullscreen();
+            } else if (this.elements.playerContainer.mozRequestFullScreen) {
+              await this.elements.playerContainer.mozRequestFullScreen();
+            }
+            
+            // Try to lock orientation to landscape for better viewing
+            if ('orientation' in screen && 'lock' in screen.orientation) {
+              try {
+                await screen.orientation.lock('landscape-primary');
+              } catch (orientationError) {
+                console.log('Could not lock orientation:', orientationError);
+                // Try alternative orientation
+                try {
+                  await screen.orientation.lock('landscape');
+                } catch (altError) {
+                  console.log('Alternative orientation lock failed:', altError);
+                }
+              }
+            }
+          } else {
+            // Exit fullscreen
+            if (document.exitFullscreen) {
+              await document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+              await document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+              await document.mozCancelFullScreen();
+            }
+          }
+        } catch (error) {
+          console.error('Fullscreen toggle failed:', error);
+        }
+      }
+
       retryLoad() {
         this.retryCount = 0;
         this.loadVideo();
@@ -1090,6 +1281,14 @@ handleCast() {
         //   .catch(error => console.log('SW registration failed'));
       });
     }
+
+    // Handle device orientation changes for better mobile experience
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        // Force layout recalculation after orientation change
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+    });
   </script>
 </body>
 </html>
