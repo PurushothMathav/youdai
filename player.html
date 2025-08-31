@@ -579,10 +579,10 @@
   <!-- Top Navigation -->
   <nav class="top-nav">
     <div class="nav-container">
-      <a href="index.html" class="back-btn" id="backBtn">
+      <button class="back-btn" id="backBtn">
         <i class="fas fa-arrow-left"></i>
         <span>Back</span>
-      </a>
+      </button>
       
       <div class="nav-actions">
         <button class="nav-btn cast-btn" id="castBtn" title="Open Link">
@@ -1044,9 +1044,15 @@ initCast() {
         });
 
         // Handle back button state
-        window.addEventListener('popstate', () => {
-          window.location.href = 'index.html';
-        });
+        // Back button
+this.elements.backBtn = document.getElementById('backBtn');
+this.elements.backBtn.addEventListener('click', () => {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = 'index.html';
+  }
+});
       }
 
       openShareModal() {
