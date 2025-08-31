@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>YouDai Player</title>
+  
+  <script src="dev.js"></script>
 
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -688,15 +690,34 @@
         this.loadVideo();
       }
 	  
-	  initCast() {
+initCast() {
+  if (!window.chrome || !window.chrome.cast) {
+    console.log('Cast API not available');
+    return;
+  }
+
   window['__onGCastApiAvailable'] = (isAvailable) => {
     if (isAvailable) {
-      const context = cast.framework.CastContext.getInstance();
-      context.setOptions({
-        receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-        autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED
-      });
-      console.log("Cast initialized");
+      try {
+        const context = cast.framework.CastContext.getInstance();
+        context.setOptions({
+          receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+          autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED
+        });
+        
+        // Listen for session state changes
+        context.addEventListener(
+          cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
+          (event) => this.handleCastSessionChange(event)
+        );
+        
+        console.log("Cast initialized successfully");
+        this.updateCastButton();
+      } catch (error) {
+        console.error('Cast initialization failed:', error);
+      }
+    } else {
+      console.log('Cast API not available');
     }
   };
 }
