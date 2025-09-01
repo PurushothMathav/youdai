@@ -589,7 +589,7 @@
           <i class="fas fa-sync-alt"></i>
         </button>
         <button class="nav-btn cast-btn" id="castBtn" title="Open Link">
-          <i class="fas fa-tv"></i>
+          <i class="fa-solid fa-globe"></i>
         </button>
         <button class="nav-btn share-btn" id="shareBtn" title="Share Video">
           <i class="fas fa-share-alt"></i>
@@ -1046,16 +1046,11 @@ initCast() {
           }
         });
 
-        // Handle back button state
-        // Back button
-this.elements.backBtn = document.getElementById('backBtn');
-this.elements.backBtn.addEventListener('click', () => {
-  if (window.history.length > 1) {
-    window.history.back();
-  } else {
-    window.location.href = 'index.html';
-  }
-});
+		// Back button
+		this.elements.backBtn = document.getElementById('backBtn');
+		this.elements.backBtn.addEventListener("click", () => {
+			window.location.href = "index.html";
+		});
       }
 
       openShareModal() {
