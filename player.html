@@ -1146,6 +1146,168 @@ handleCast() {
         this.loadVideo();
       }
 
+async getDailymotionStream(videoId) {
+  console.log('Fetching stream for video ID:', videoId);
+  
+  // Method 1: CORS Proxies (Most Reliable)
+  const corsProxies = [
+    'https://api.allorigins.win/get?url=',
+    'https://corsproxy.io/?',
+    'https://cors-anywhere.herokuapp.com/',
+    'https://thingproxy.freeboard.io/fetch/'
+  ];
+
+  const metadataUrl = `https://www.dailymotion.com/player/metadata/video/${videoId}`;
+
+  // Try CORS proxies first
+  for (const proxy of corsProxies) {
+    try {
+      console.log(`Trying proxy: ${proxy}`);
+      
+      let proxyUrl, isAllOrigins = false;
+      
+      if (proxy.includes('allorigins')) {
+        proxyUrl = `${proxy}${encodeURIComponent(metadataUrl)}`;
+        isAllOrigins = true;
+      } else {
+        proxyUrl = `${proxy}${metadataUrl}`;
+      }
+
+      const response = await fetch(proxyUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36'
+        }
+      });
+
+      if (!response.ok) {
+        console.log(`Proxy ${proxy} failed with status:`, response.status);
+        continue;
+      }
+
+      let data;
+      if (isAllOrigins) {
+        const result = await response.json();
+        if (result.status.http_code !== 200) {
+          console.log('AllOrigins failed:', result.status);
+          continue;
+        }
+        data = JSON.parse(result.contents);
+      } else {
+        data = await response.json();
+      }
+
+      console.log('Successfully fetched metadata:', data);
+
+      // Extract stream URL from the response
+      const streamUrl = this.extractStreamUrl(data);
+      if (streamUrl) {
+        console.log('Stream URL found:', streamUrl);
+        return streamUrl;
+      }
+
+    } catch (error) {
+      console.error(`Proxy ${proxy} failed:`, error);
+      continue;
+    }
+  }
+
+  // Method 2: Server-Side Proxy (if you have one)
+  try {
+    console.log('Trying server-side proxy...');
+    const response = await fetch(`/api/proxy?url=${encodeURIComponent(metadataUrl)}`);
+    if (response.ok) {
+      const data = await response.json();
+      const streamUrl = this.extractStreamUrl(data);
+      if (streamUrl) return streamUrl;
+    }
+  } catch (error) {
+    console.log('Server-side proxy not available:', error);
+  }
+
+  // Method 3: Use JSONP-like technique (Advanced)
+  try {
+    console.log('Trying JSONP technique...');
+    const streamUrl = await this.jsonpMethod(videoId);
+    if (streamUrl) return streamUrl;
+  } catch (error) {
+    console.log('JSONP method failed:', error);
+  }
+
+  console.log('All methods failed');
+  return null;
+}
+
+extractStreamUrl(data) {
+  console.log('Extracting stream from data:', data);
+  
+  // Try different possible locations for stream URLs
+  const possibleUrls = [
+    data.qualities?.auto?.[0]?.url,
+    data.qualities?.hls?.[0]?.url,
+    data.qualities?.h264?.[0]?.url,
+    data.stream_h264_url,
+    data.stream_hls_url,
+    data.manifest_urls?.hls,
+    data.manifest_urls?.dash,
+    // Sometimes the structure is different
+    data.video?.stream_h264_url,
+    data.video?.stream_hls_url,
+    // Check if qualities is an object instead of array
+    data.qualities?.auto?.url,
+    data.qualities?.hls?.url,
+    // Check nested structures
+    data.metadata?.qualities?.auto?.[0]?.url,
+    data.metadata?.stream_h264_url
+  ];
+
+  for (const url of possibleUrls) {
+    if (url && typeof url === 'string' && url.startsWith('http')) {
+      console.log('Found stream URL:', url);
+      return url;
+    }
+  }
+
+  console.log('No stream URL found in data');
+  return null;
+}
+
+// Advanced JSONP-like method for CORS bypass
+async jsonpMethod(videoId) {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error('JSONP timeout'));
+    }, 10000);
+
+    // Create a script tag to bypass CORS (if endpoint supports JSONP)
+    const script = document.createElement('script');
+    const callbackName = `dailymotion_callback_${Date.now()}`;
+    
+    // Set up callback
+    window[callbackName] = function(data) {
+      clearTimeout(timeout);
+      document.head.removeChild(script);
+      delete window[callbackName];
+      
+      const streamUrl = this.extractStreamUrl(data);
+      resolve(streamUrl);
+    }.bind(this);
+
+    script.onerror = () => {
+      clearTimeout(timeout);
+      document.head.removeChild(script);
+      delete window[callbackName];
+      reject(new Error('JSONP script error'));
+    };
+
+    // Try JSONP endpoint (may not exist for this API)
+    script.src = `https://www.dailymotion.com/player/metadata/video/${videoId}?callback=${callbackName}`;
+    document.head.appendChild(script);
+  });
+}
+
+// Updated openInMxPlayer method with better error handling
 openInMxPlayer() {
   const { platform, id } = this.currentVideo;
 
@@ -1154,20 +1316,24 @@ openInMxPlayer() {
     this.elements.mxPlayerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     this.elements.mxPlayerBtn.disabled = true;
 
-    // Try multiple methods to get the stream URL
+    // Add detailed logging
+    console.log('Starting MX Player launch for video:', id);
+
     this.getDailymotionStream(id)
       .then(streamUrl => {
-        if (streamUrl) {
-          console.log('Stream URL found:', streamUrl);
+        console.log('Stream extraction result:', streamUrl);
+        
+        if (streamUrl && streamUrl.startsWith('http')) {
+          console.log('Valid stream URL found, launching MX Player...');
           this.launchMxPlayer(streamUrl, this.currentVideo.title);
         } else {
-          console.log('No stream URL found, using direct link');
+          console.log('No valid stream URL, showing alternatives...');
           this.handleNoStreamFound();
         }
       })
       .catch(err => {
-        console.error("Stream extraction error:", err);
-        this.handleNoStreamFound();
+        console.error("Complete stream extraction failure:", err);
+        this.showDetailedError(err);
       })
       .finally(() => {
         // Reset button state
@@ -1180,28 +1346,130 @@ openInMxPlayer() {
   }
 }
 
-async getDailymotionStream(videoId) {
-  const methods = [
-    () => this.methodOfficialAPI(videoId),
-    () => this.methodPageScraping(videoId),
-    () => this.methodEmbedPage(videoId),
-    () => this.methodAlternativeAPI(videoId)
+showDetailedError(error) {
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background: rgba(30, 30, 30, 0.95);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    ">
+      <i class="fas fa-exclamation-triangle" style="color: #ff6b6b; font-size: 48px; margin-bottom: 20px;"></i>
+      <h3 style="color: white; margin: 0 0 15px 0;">Stream Extraction Failed</h3>
+      <p style="color: rgba(255,255,255,0.7); margin: 0 0 15px 0; line-height: 1.5; text-align: left;">
+        <strong>Technical Details:</strong><br>
+        ${error.message}<br><br>
+        <strong>Possible Solutions:</strong><br>
+        • Check internet connection<br>
+        • Try refreshing the page<br>
+        • Use browser or app alternatives below
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 25px;">
+        <button id="testUrlBtn" style="
+          background: #4ecdc4;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+        ">Test URL in New Tab</button>
+        <button id="openDailymotionBtn" style="
+          background: #ff6b6b;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+        ">Open in Dailymotion</button>
+        <button id="closeModalBtn" style="
+          background: rgba(255,255,255,0.2);
+          border: none;
+          border-radius: 8px;
+          padding: 10px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+        ">Close</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  const { id } = this.currentVideo;
+
+  modal.querySelector('#testUrlBtn').onclick = () => {
+    window.open(`https://www.dailymotion.com/player/metadata/video/${id}`, '_blank');
+    document.body.removeChild(modal);
+  };
+
+  modal.querySelector('#openDailymotionBtn').onclick = () => {
+    window.open(`https://www.dailymotion.com/video/${id}`, '_blank');
+    document.body.removeChild(modal);
+  };
+
+  modal.querySelector('#closeModalBtn').onclick = () => {
+    document.body.removeChild(modal);
+  };
+
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      document.body.removeChild(modal);
+    }
+  };
+}
+
+// Debug function - add this to test CORS proxies
+async testCorsProxies(videoId) {
+  const testUrl = `https://www.dailymotion.com/player/metadata/video/${videoId}`;
+  const proxies = [
+    { name: 'AllOrigins', url: `https://api.allorigins.win/get?url=${encodeURIComponent(testUrl)}` },
+    { name: 'CorsProxy', url: `https://corsproxy.io/?${testUrl}` },
+    { name: 'ThingProxy', url: `https://thingproxy.freeboard.io/fetch/${testUrl}` }
   ];
 
-  for (const method of methods) {
+  console.log('Testing CORS proxies...');
+  
+  for (const proxy of proxies) {
     try {
-      const result = await method();
-      if (result) {
-        console.log('Stream found with method:', method.name);
-        return result;
+      console.log(`Testing ${proxy.name}...`);
+      const response = await fetch(proxy.url);
+      console.log(`${proxy.name}: ${response.status} ${response.statusText}`);
+      
+      if (response.ok) {
+        const data = proxy.name === 'AllOrigins' 
+          ? JSON.parse((await response.json()).contents)
+          : await response.json();
+        
+        console.log(`${proxy.name} data:`, data);
       }
     } catch (error) {
-      console.log('Method failed:', method.name, error);
-      continue;
+      console.error(`${proxy.name} failed:`, error);
     }
   }
-
-  return null;
 }
 
 // Method 1: Official Dailymotion API (new endpoint)
