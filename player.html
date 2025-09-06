@@ -1145,41 +1145,226 @@ handleCast() {
         this.retryCount = 0;
         this.loadVideo();
       }
-	  
+
 openInMxPlayer() {
   const { platform, id } = this.currentVideo;
 
   if (platform === "dailymotion") {
+    // Show loading indicator
+    this.elements.mxPlayerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    this.elements.mxPlayerBtn.disabled = true;
+
     fetch(`https://www.dailymotion.com/player/metadata/video/${id}`)
       .then(res => res.json())
       .then(data => {
         const hls = data.qualities.auto?.[0]?.url;
         if (hls) {
-          // Use https scheme, and include final `;end;`
-          const intentUrl = `intent://${hls.replace(/^https?:\/\//, '')}#Intent;scheme=https;end;`;
-
-          window.location.href = intentUrl;
-
-          // Fallback: Play Store if MX Player not installed
-          setTimeout(() => {
-            window.location.href =
-              "https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad";
-          }, 2000);
+          // Method 1: Try direct MX Player intent with proper structure
+          this.launchMxPlayer(hls, this.currentVideo.title);
         } else {
           alert("No stream link found.");
         }
       })
       .catch(err => {
         console.error("MX fetch error:", err);
-        window.location.href =
-          "https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad";
+        alert("Failed to get video stream. Please try again.");
+      })
+      .finally(() => {
+        // Reset button state
+        this.elements.mxPlayerBtn.innerHTML = '<i class="fas fa-play-circle"></i>';
+        this.elements.mxPlayerBtn.disabled = false;
       });
   } else {
-    // Other platforms
+    // For other platforms, open in browser
     window.open(this.getDirectVideoLink(), "_blank");
   }
 }
 
+launchMxPlayer(streamUrl, title) {
+  // Method 1: Try MX Player Pro first
+  const mxProIntent = `intent:${streamUrl}#Intent;` +
+    `action=android.intent.action.VIEW;` +
+    `type=video/*;` +
+    `package=com.mxtech.videoplayer.pro;` +
+    `S.title=${encodeURIComponent(title)};` +
+    `end;`;
+
+  // Method 2: MX Player Free version
+  const mxFreeIntent = `intent:${streamUrl}#Intent;` +
+    `action=android.intent.action.VIEW;` +
+    `type=video/*;` +
+    `package=com.mxtech.videoplayer.ad;` +
+    `S.title=${encodeURIComponent(title)};` +
+    `end;`;
+
+  // Method 3: Generic video intent (will show app chooser)
+  const genericIntent = `intent:${streamUrl}#Intent;` +
+    `action=android.intent.action.VIEW;` +
+    `type=video/*;` +
+    `S.title=${encodeURIComponent(title)};` +
+    `end;`;
+
+  // Try to launch MX Player with fallback chain
+  this.tryIntentWithFallback([mxProIntent, mxFreeIntent, genericIntent], streamUrl, title);
+}
+
+tryIntentWithFallback(intents, streamUrl, title) {
+  if (intents.length === 0) {
+    // All intents failed, show options to user
+    this.showMxPlayerOptions(streamUrl, title);
+    return;
+  }
+
+  const currentIntent = intents[0];
+  const remainingIntents = intents.slice(1);
+
+  try {
+    // Create a hidden iframe to test the intent
+    const testFrame = document.createElement('iframe');
+    testFrame.style.display = 'none';
+    document.body.appendChild(testFrame);
+
+    // Set a timeout to detect if the intent failed
+    const failTimeout = setTimeout(() => {
+      document.body.removeChild(testFrame);
+      console.log('Intent failed, trying next...');
+      this.tryIntentWithFallback(remainingIntents, streamUrl, title);
+    }, 1000);
+
+    // Try the intent
+    testFrame.src = currentIntent;
+    
+    // If we get here without immediate error, the intent might work
+    setTimeout(() => {
+      clearTimeout(failTimeout);
+      if (document.body.contains(testFrame)) {
+        document.body.removeChild(testFrame);
+      }
+      
+      // Actually launch the intent
+      window.location.href = currentIntent;
+      
+      // Optional: Show success message
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          // User is still on our page, intent might have failed
+          console.log('User still on page, trying next intent...');
+          this.tryIntentWithFallback(remainingIntents, streamUrl, title);
+        }
+      }, 2000);
+    }, 100);
+
+  } catch (error) {
+    console.error('Intent error:', error);
+    this.tryIntentWithFallback(remainingIntents, streamUrl, title);
+  }
+}
+
+showMxPlayerOptions(streamUrl, title) {
+  // Create a modal with options
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background: rgba(30, 30, 30, 0.95);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    ">
+      <h3 style="color: white; margin: 0 0 20px 0;">Open Video</h3>
+      <p style="color: rgba(255,255,255,0.7); margin: 0 0 20px 0;">
+        Choose how to open this video:
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button id="copyStreamBtn" style="
+          background: #4ecdc4;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+        ">Copy Stream URL</button>
+        <button id="installMxBtn" style="
+          background: #ff6b6b;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+        ">Install MX Player</button>
+        <button id="playInBrowserBtn" style="
+          background: #45b7d1;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+        ">Play in Browser</button>
+        <button id="closeModalBtn" style="
+          background: rgba(255,255,255,0.2);
+          border: none;
+          border-radius: 8px;
+          padding: 10px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+        ">Close</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // Add event listeners
+  modal.querySelector('#copyStreamBtn').onclick = () => {
+    navigator.clipboard.writeText(streamUrl).then(() => {
+      alert('Stream URL copied to clipboard!');
+    });
+    document.body.removeChild(modal);
+  };
+
+  modal.querySelector('#installMxBtn').onclick = () => {
+    window.open('https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad', '_blank');
+    document.body.removeChild(modal);
+  };
+
+  modal.querySelector('#playInBrowserBtn').onclick = () => {
+    // Try to play in current browser
+    this.elements.playerIframe.src = streamUrl;
+    document.body.removeChild(modal);
+  };
+
+  modal.querySelector('#closeModalBtn').onclick = () => {
+    document.body.removeChild(modal);
+  };
+
+  // Close on background click
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      document.body.removeChild(modal);
+    }
+  };
+}
     }
 
     // Initialize player when DOM is ready
