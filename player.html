@@ -767,46 +767,151 @@
         }
 
         if (this.isAndroid()) {
-          // Try multiple MX Player intent formats
-          const intents = [
-            // MX Player Free
-            `intent:${this.m3u8Url}#Intent;package=com.mxtech.videoplayer.ad;type=video/*;end`,
-            // MX Player Pro
-            `intent:${this.m3u8Url}#Intent;package=com.mxtech.videoplayer.pro;type=video/*;end`,
-            // Generic video intent that MX Player can handle
-            `intent:${this.m3u8Url}#Intent;action=android.intent.action.VIEW;type=video/*;end`
-          ];
+          // Show loading state
+          this.elements.mxBtn.innerHTML = `
+            <div class="loading-spinner"></div>
+            <span>Opening...</span>
+          `;
           
-          let intentTried = 0;
-          const tryIntent = () => {
-            if (intentTried < intents.length) {
-              try {
-                window.location.href = intents[intentTried];
-                intentTried++;
-                
-                // Try next intent after short delay if this one fails
-                setTimeout(() => {
-                  if (intentTried < intents.length) {
-                    tryIntent();
-                  }
-                }, 1500);
-              } catch (error) {
-                console.error('Intent failed:', error);
-                tryIntent();
-              }
+          // Method 1: Try direct app URL schemes first
+          const directSchemes = [
+            `mxplayer://video?url=${encodeURIComponent(this.m3u8Url)}`,
+            `mxplayerpro://video?url=${encodeURIComponent(this.m3u8Url)}`,
+            `vlc://${this.m3u8Url}`,
+            `potplayer://${this.m3u8Url}`
+          ];
+
+          let schemeIndex = 0;
+          const tryDirectScheme = () => {
+            if (schemeIndex < directSchemes.length) {
+              const iframe = document.createElement('iframe');
+              iframe.style.display = 'none';
+              iframe.src = directSchemes[schemeIndex];
+              document.body.appendChild(iframe);
+              
+              setTimeout(() => {
+                document.body.removeChild(iframe);
+                schemeIndex++;
+                tryDirectScheme();
+              }, 1000);
             } else {
-              // All intents failed, show fallback options
-              if (confirm('MX Player not found. Open in browser?')) {
-                window.open(this.m3u8Url, '_blank');
-              }
+              // If direct schemes fail, try intent method
+              this.tryIntentMethod();
             }
           };
+
+          // Method 2: Intent method with user interaction
+          const tryIntentMethod = () => {
+            // Create a temporary link element
+            const link = document.createElement('a');
+            
+            // Try different intent formats
+            const intents = [
+              `intent:${this.m3u8Url}#Intent;type=video/mp4;package=com.mxtech.videoplayer.ad;scheme=http;end`,
+              `intent:${this.m3u8Url}#Intent;type=video/mp4;package=com.mxtech.videoplayer.pro;scheme=http;end`,
+              `intent:${this.m3u8Url}#Intent;type=video/*;action=android.intent.action.VIEW;end`
+            ];
+            
+            let intentIndex = 0;
+            const tryIntent = () => {
+              if (intentIndex < intents.length) {
+                link.href = intents[intentIndex];
+                link.click();
+                intentIndex++;
+                setTimeout(tryIntent, 1500);
+              } else {
+                // All methods failed, show manual options
+                this.showManualOptions();
+              }
+            };
+            
+            tryIntent();
+          };
+
+          // Start with direct schemes
+          tryDirectScheme();
           
-          tryIntent();
+          // Reset button after attempts
+          setTimeout(() => {
+            this.elements.mxBtn.innerHTML = `
+              <i class="fas fa-external-link-alt"></i>
+              <span>Open in MX Player</span>
+            `;
+          }, 8000);
+
         } else {
-          // Non-Android devices - just open the URL
+          // Non-Android devices
           window.open(this.m3u8Url, '_blank');
         }
+      }
+
+      showManualOptions() {
+        // Create a custom modal for manual instructions
+        const manualModal = document.createElement('div');
+        manualModal.className = 'share-modal';
+        manualModal.style.display = 'flex';
+        manualModal.innerHTML = `
+          <div class="share-content">
+            <h3 class="share-title">Open in MX Player</h3>
+            <p style="margin-bottom: 20px; color: rgba(255,255,255,0.8); line-height: 1.5;">
+              Choose how to open the video:
+            </p>
+            <div class="share-actions" style="flex-direction: column; gap: 15px;">
+              <button class="copy-btn" id="manualCopyBtn" style="width: 100%;">
+                <i class="fas fa-copy"></i>
+                <span>Copy M3U8 Link</span>
+              </button>
+              <a href="${this.m3u8Url}" target="_blank" style="text-decoration: none; width: 100%;">
+                <button class="mx-btn" style="width: 100%;">
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Open in Browser</span>
+                </button>
+              </a>
+              <div style="padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px; font-size: 13px; color: rgba(255,255,255,0.7);">
+                <strong>Manual Steps:</strong><br>
+                1. Copy the M3U8 link above<br>
+                2. Open MX Player<br>
+                3. Tap "Network Stream" or "+"<br>
+                4. Paste the link and play
+              </div>
+              <button class="close-btn" id="manualCloseBtn" style="width: 100%;">
+                <i class="fas fa-times"></i>
+                <span>Close</span>
+              </button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(manualModal);
+        
+        // Add event listeners
+        document.getElementById('manualCopyBtn').addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(this.m3u8Url);
+            document.getElementById('manualCopyBtn').innerHTML = `
+              <i class="fas fa-check"></i>
+              <span>Copied!</span>
+            `;
+            setTimeout(() => {
+              document.getElementById('manualCopyBtn').innerHTML = `
+                <i class="fas fa-copy"></i>
+                <span>Copy M3U8 Link</span>
+              `;
+            }, 2000);
+          } catch (err) {
+            alert('Copy failed. Please copy manually.');
+          }
+        });
+        
+        document.getElementById('manualCloseBtn').addEventListener('click', () => {
+          document.body.removeChild(manualModal);
+        });
+        
+        manualModal.addEventListener('click', (e) => {
+          if (e.target === manualModal) {
+            document.body.removeChild(manualModal);
+          }
+        });
       }
 	  
 initCast() {
