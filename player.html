@@ -1154,20 +1154,20 @@ openInMxPlayer() {
     this.elements.mxPlayerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     this.elements.mxPlayerBtn.disabled = true;
 
-    fetch(`https://www.dailymotion.com/player/metadata/video/${id}`)
-      .then(res => res.json())
-      .then(data => {
-        const hls = data.qualities.auto?.[0]?.url;
-        if (hls) {
-          // Method 1: Try direct MX Player intent with proper structure
-          this.launchMxPlayer(hls, this.currentVideo.title);
+    // Try multiple methods to get the stream URL
+    this.getDailymotionStream(id)
+      .then(streamUrl => {
+        if (streamUrl) {
+          console.log('Stream URL found:', streamUrl);
+          this.launchMxPlayer(streamUrl, this.currentVideo.title);
         } else {
-          alert("No stream link found.");
+          console.log('No stream URL found, using direct link');
+          this.handleNoStreamFound();
         }
       })
       .catch(err => {
-        console.error("MX fetch error:", err);
-        alert("Failed to get video stream. Please try again.");
+        console.error("Stream extraction error:", err);
+        this.handleNoStreamFound();
       })
       .finally(() => {
         // Reset button state
@@ -1180,7 +1180,334 @@ openInMxPlayer() {
   }
 }
 
+async getDailymotionStream(videoId) {
+  const methods = [
+    () => this.methodOfficialAPI(videoId),
+    () => this.methodPageScraping(videoId),
+    () => this.methodEmbedPage(videoId),
+    () => this.methodAlternativeAPI(videoId)
+  ];
+
+  for (const method of methods) {
+    try {
+      const result = await method();
+      if (result) {
+        console.log('Stream found with method:', method.name);
+        return result;
+      }
+    } catch (error) {
+      console.log('Method failed:', method.name, error);
+      continue;
+    }
+  }
+
+  return null;
+}
+
+// Method 1: Official Dailymotion API (new endpoint)
+async methodOfficialAPI(videoId) {
+  try {
+    const apiUrl = `https://www.dailymotion.com/player/metadata/video/${videoId}`;
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36',
+        'Referer': `https://www.dailymotion.com/video/${videoId}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`API response: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('API Response:', data);
+
+    // Try different possible stream URL locations
+    const streamUrls = [
+      data.qualities?.auto?.[0]?.url,
+      data.qualities?.hls?.[0]?.url,
+      data.qualities?.h264?.[0]?.url,
+      data.stream_h264_url,
+      data.stream_hls_url,
+      data.manifest_urls?.hls,
+      data.manifest_urls?.dash
+    ];
+
+    for (const url of streamUrls) {
+      if (url && typeof url === 'string') {
+        return url;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Official API method failed:', error);
+    throw error;
+  }
+}
+
+// Method 2: Scrape from main video page
+async methodPageScraping(videoId) {
+  try {
+    const pageUrl = `https://www.dailymotion.com/video/${videoId}`;
+    
+    // Use a CORS proxy or try direct fetch
+    const proxyUrls = [
+      `https://api.allorigins.win/get?url=${encodeURIComponent(pageUrl)}`,
+      `https://corsproxy.io/?${encodeURIComponent(pageUrl)}`,
+      pageUrl // Direct attempt
+    ];
+
+    for (const proxyUrl of proxyUrls) {
+      try {
+        const response = await fetch(proxyUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36'
+          }
+        });
+
+        if (!response.ok) continue;
+
+        const html = proxyUrl.includes('allorigins') 
+          ? (await response.json()).contents 
+          : await response.text();
+
+        // Look for stream URLs in the page HTML
+        const streamPatterns = [
+          /"stream_h264_url":"([^"]+)"/,
+          /"stream_hls_url":"([^"]+)"/,
+          /"auto":\[{"url":"([^"]+)"/,
+          /master\.m3u8[^"]*"/g,
+          /\.m3u8[^"]*"/g
+        ];
+
+        for (const pattern of streamPatterns) {
+          const match = html.match(pattern);
+          if (match && match[1]) {
+            let streamUrl = match[1].replace(/\\u002F/g, '/').replace(/\\/g, '');
+            if (streamUrl.startsWith('http')) {
+              return streamUrl;
+            }
+          }
+        }
+      } catch (error) {
+        console.log('Proxy failed:', proxyUrl, error);
+        continue;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Page scraping method failed:', error);
+    throw error;
+  }
+}
+
+// Method 3: Try embed page
+async methodEmbedPage(videoId) {
+  try {
+    const embedUrl = `https://www.dailymotion.com/embed/video/${videoId}`;
+    
+    const response = await fetch(embedUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36',
+        'Referer': 'https://www.dailymotion.com/'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Embed response: ${response.status}`);
+    }
+
+    const html = await response.text();
+    
+    // Look for JSON config in embed page
+    const configMatch = html.match(/window\.__PLAYER_CONFIG__\s*=\s*({.+?});/s);
+    if (configMatch) {
+      const config = JSON.parse(configMatch[1]);
+      const streamUrl = config.metadata?.qualities?.auto?.[0]?.url ||
+                       config.metadata?.stream_h264_url ||
+                       config.metadata?.stream_hls_url;
+      
+      if (streamUrl) {
+        return streamUrl;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Embed page method failed:', error);
+    throw error;
+  }
+}
+
+// Method 4: Alternative API endpoints
+async methodAlternativeAPI(videoId) {
+  try {
+    const endpoints = [
+      `https://www.dailymotion.com/player/metadata/video/${videoId}?fields=stream_h264_url,stream_hls_url,qualities`,
+      `https://api.dailymotion.com/video/${videoId}?fields=stream_h264_url,stream_hls_url`,
+      `https://www.dailymotion.com/json/video/${videoId}`
+    ];
+
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(endpoint, {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const streamUrl = data.stream_h264_url || 
+                           data.stream_hls_url ||
+                           data.qualities?.auto?.[0]?.url;
+          
+          if (streamUrl) {
+            return streamUrl;
+          }
+        }
+      } catch (error) {
+        console.log('Alternative API endpoint failed:', endpoint, error);
+        continue;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Alternative API method failed:', error);
+    throw error;
+  }
+}
+
+handleNoStreamFound() {
+  // Show options modal when no stream is found
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  `;
+
+  modal.innerHTML = `
+    <div style="
+      background: rgba(30, 30, 30, 0.95);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    ">
+      <i class="fas fa-exclamation-triangle" style="color: #ff6b6b; font-size: 48px; margin-bottom: 20px;"></i>
+      <h3 style="color: white; margin: 0 0 15px 0;">Stream Not Available</h3>
+      <p style="color: rgba(255,255,255,0.7); margin: 0 0 25px 0; line-height: 1.5;">
+        Unable to extract direct video stream. You can still watch the video using these options:
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button id="openDailymotionBtn" style="
+          background: #ff6b6b;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+        ">Open in Dailymotion App</button>
+        <button id="openBrowserBtn" style="
+          background: #45b7d1;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+        ">Open in Browser</button>
+        <button id="tryEmbedBtn" style="
+          background: #4ecdc4;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 500;
+        ">Try Embedded Player</button>
+        <button id="closeModalBtn" style="
+          background: rgba(255,255,255,0.2);
+          border: none;
+          border-radius: 8px;
+          padding: 10px 20px;
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+        ">Close</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  const { platform, id } = this.currentVideo;
+  const dailymotionUrl = `https://www.dailymotion.com/video/${id}`;
+
+  // Add event listeners
+  modal.querySelector('#openDailymotionBtn').onclick = () => {
+    // Try to open in Dailymotion app
+    const dailymotionAppIntent = `intent://www.dailymotion.com/video/${id}#Intent;scheme=https;package=com.dailymotion.dailymotion;end;`;
+    window.location.href = dailymotionAppIntent;
+    
+    // Fallback to Play Store
+    setTimeout(() => {
+      window.open('https://play.google.com/store/apps/details?id=com.dailymotion.dailymotion', '_blank');
+    }, 2000);
+    
+    document.body.removeChild(modal);
+  };
+
+  modal.querySelector('#openBrowserBtn').onclick = () => {
+    window.open(dailymotionUrl, '_blank');
+    document.body.removeChild(modal);
+  };
+
+  modal.querySelector('#tryEmbedBtn').onclick = () => {
+    // Load embedded player in current iframe
+    const embedUrl = `https://www.dailymotion.com/embed/video/${id}?autoplay=1`;
+    this.elements.playerIframe.src = embedUrl;
+    document.body.removeChild(modal);
+  };
+
+  modal.querySelector('#closeModalBtn').onclick = () => {
+    document.body.removeChild(modal);
+  };
+
+  // Close on background click
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      document.body.removeChild(modal);
+    }
+  };
+}
+
+// Keep your existing launchMxPlayer function as is
 launchMxPlayer(streamUrl, title) {
+  console.log('Launching MX Player with URL:', streamUrl);
+  
   // Method 1: Try MX Player Pro first
   const mxProIntent = `intent:${streamUrl}#Intent;` +
     `action=android.intent.action.VIEW;` +
@@ -1211,57 +1538,35 @@ launchMxPlayer(streamUrl, title) {
 tryIntentWithFallback(intents, streamUrl, title) {
   if (intents.length === 0) {
     // All intents failed, show options to user
-    this.showMxPlayerOptions(streamUrl, title);
+    this.showMxPlayerInstallOptions(streamUrl, title);
     return;
   }
 
   const currentIntent = intents[0];
   const remainingIntents = intents.slice(1);
 
+  console.log('Trying intent:', currentIntent);
+  
+  // Direct attempt to launch intent
   try {
-    // Create a hidden iframe to test the intent
-    const testFrame = document.createElement('iframe');
-    testFrame.style.display = 'none';
-    document.body.appendChild(testFrame);
-
-    // Set a timeout to detect if the intent failed
-    const failTimeout = setTimeout(() => {
-      document.body.removeChild(testFrame);
-      console.log('Intent failed, trying next...');
-      this.tryIntentWithFallback(remainingIntents, streamUrl, title);
-    }, 1000);
-
-    // Try the intent
-    testFrame.src = currentIntent;
+    window.location.href = currentIntent;
     
-    // If we get here without immediate error, the intent might work
+    // Check if user is still on page after a delay
     setTimeout(() => {
-      clearTimeout(failTimeout);
-      if (document.body.contains(testFrame)) {
-        document.body.removeChild(testFrame);
+      if (document.hasFocus()) {
+        // User is still on our page, try next intent
+        console.log('Intent failed, trying next...');
+        this.tryIntentWithFallback(remainingIntents, streamUrl, title);
       }
-      
-      // Actually launch the intent
-      window.location.href = currentIntent;
-      
-      // Optional: Show success message
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          // User is still on our page, intent might have failed
-          console.log('User still on page, trying next intent...');
-          this.tryIntentWithFallback(remainingIntents, streamUrl, title);
-        }
-      }, 2000);
-    }, 100);
-
+    }, 1500);
   } catch (error) {
     console.error('Intent error:', error);
     this.tryIntentWithFallback(remainingIntents, streamUrl, title);
   }
 }
 
-showMxPlayerOptions(streamUrl, title) {
-  // Create a modal with options
+showMxPlayerInstallOptions(streamUrl, title) {
+  // Create installation options modal
   const modal = document.createElement('div');
   modal.style.cssText = `
     position: fixed;
@@ -1288,20 +1593,12 @@ showMxPlayerOptions(streamUrl, title) {
       text-align: center;
       border: 1px solid rgba(255,255,255,0.1);
     ">
-      <h3 style="color: white; margin: 0 0 20px 0;">Open Video</h3>
-      <p style="color: rgba(255,255,255,0.7); margin: 0 0 20px 0;">
-        Choose how to open this video:
+      <i class="fas fa-mobile-alt" style="color: #4ecdc4; font-size: 48px; margin-bottom: 20px;"></i>
+      <h3 style="color: white; margin: 0 0 15px 0;">MX Player Required</h3>
+      <p style="color: rgba(255,255,255,0.7); margin: 0 0 25px 0; line-height: 1.5;">
+        To play this video externally, please install MX Player:
       </p>
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <button id="copyStreamBtn" style="
-          background: #4ecdc4;
-          border: none;
-          border-radius: 8px;
-          padding: 12px 20px;
-          color: white;
-          cursor: pointer;
-          font-size: 14px;
-        ">Copy Stream URL</button>
         <button id="installMxBtn" style="
           background: #ff6b6b;
           border: none;
@@ -1310,16 +1607,18 @@ showMxPlayerOptions(streamUrl, title) {
           color: white;
           cursor: pointer;
           font-size: 14px;
+          font-weight: 500;
         ">Install MX Player</button>
-        <button id="playInBrowserBtn" style="
-          background: #45b7d1;
+        <button id="copyStreamBtn" style="
+          background: #4ecdc4;
           border: none;
           border-radius: 8px;
           padding: 12px 20px;
           color: white;
           cursor: pointer;
           font-size: 14px;
-        ">Play in Browser</button>
+          font-weight: 500;
+        ">Copy Stream URL</button>
         <button id="closeModalBtn" style="
           background: rgba(255,255,255,0.2);
           border: none;
@@ -1335,7 +1634,11 @@ showMxPlayerOptions(streamUrl, title) {
 
   document.body.appendChild(modal);
 
-  // Add event listeners
+  modal.querySelector('#installMxBtn').onclick = () => {
+    window.open('https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad', '_blank');
+    document.body.removeChild(modal);
+  };
+
   modal.querySelector('#copyStreamBtn').onclick = () => {
     navigator.clipboard.writeText(streamUrl).then(() => {
       alert('Stream URL copied to clipboard!');
@@ -1343,22 +1646,10 @@ showMxPlayerOptions(streamUrl, title) {
     document.body.removeChild(modal);
   };
 
-  modal.querySelector('#installMxBtn').onclick = () => {
-    window.open('https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad', '_blank');
-    document.body.removeChild(modal);
-  };
-
-  modal.querySelector('#playInBrowserBtn').onclick = () => {
-    // Try to play in current browser
-    this.elements.playerIframe.src = streamUrl;
-    document.body.removeChild(modal);
-  };
-
   modal.querySelector('#closeModalBtn').onclick = () => {
     document.body.removeChild(modal);
   };
 
-  // Close on background click
   modal.onclick = (e) => {
     if (e.target === modal) {
       document.body.removeChild(modal);
