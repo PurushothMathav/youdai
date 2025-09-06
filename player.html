@@ -515,9 +515,10 @@
       display: flex;
       gap: 10px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .copy-btn, .open-btn, .close-btn {
+    .copy-btn, .mx-btn, .open-btn, .close-btn {
       background: #4ecdc4;
       border: none;
       border-radius: 8px;
@@ -527,10 +528,22 @@
       font-size: 14px;
       font-weight: 500;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .copy-btn:hover, .open-btn:hover {
       background: #45b7d1;
+      transform: translateY(-2px);
+    }
+
+    .mx-btn {
+      background: #ff6b6b;
+    }
+
+    .mx-btn:hover {
+      background: #ff5252;
       transform: translateY(-2px);
     }
 
@@ -540,6 +553,15 @@
 
     .close-btn:hover {
       background: rgba(255,255,255,0.3);
+    }
+
+    .loading-spinner {
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top: 2px solid #4ecdc4;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
     }
 
     /* Cast detection */
@@ -566,6 +588,14 @@
       .share-content {
         padding: 20px;
         margin: 10px;
+      }
+
+      .share-actions {
+        flex-direction: column;
+      }
+
+      .copy-btn, .mx-btn, .close-btn {
+        width: 100%;
       }
     }
 
@@ -647,8 +677,18 @@
       <h3 class="share-title">Share Video</h3>
       <input type="text" class="share-url" id="shareUrl" readonly>
       <div class="share-actions">
-        <button class="copy-btn" id="copyBtn">Copy Link</button>
-        <button class="close-btn" id="closeShareBtn">Close</button>
+        <button class="copy-btn" id="copyBtn">
+          <i class="fas fa-copy"></i>
+          <span>Copy Link</span>
+        </button>
+        <button class="mx-btn" id="mxBtn" style="display: none;">
+          <i class="fas fa-external-link-alt"></i>
+          <span>Open in MX Player</span>
+        </button>
+        <button class="close-btn" id="closeShareBtn">
+          <i class="fas fa-times"></i>
+          <span>Close</span>
+        </button>
       </div>
     </div>
   </div>
@@ -661,6 +701,8 @@
         this.relatedVideos = [];
         this.retryCount = 0;
         this.maxRetries = 3;
+        this.m3u8Url = null;
+        this.workerUrl = 'https://dm.porus-in2012.workers.dev';
         
         this.elements = {
           playerIframe: document.getElementById('playerIframe'),
@@ -675,6 +717,7 @@
           shareModal: document.getElementById('shareModal'),
           shareUrl: document.getElementById('shareUrl'),
           copyBtn: document.getElementById('copyBtn'),
+          mxBtn: document.getElementById('mxBtn'),
           closeShareBtn: document.getElementById('closeShareBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
@@ -687,10 +730,59 @@
       async init() {
         this.loadVideoData();
         this.setupEventListeners();
-        this.setupMobileOrientationHandler(); // Only add this for mobile orientation
+        this.setupMobileOrientationHandler();
         this.detectCastDevices();
-		this.initCast();
+        this.initCast();
         this.loadVideo();
+        
+        // Extract M3U8 if Dailymotion video
+        if (this.currentVideo && this.currentVideo.platform === 'dailymotion') {
+          await this.extractM3U8();
+        }
+      }
+
+      async extractM3U8() {
+        try {
+          const metaRes = await fetch(`${this.workerUrl}/meta?id=${this.currentVideo.id}`);
+          const data = await metaRes.json();
+          
+          const m3u8Url = data?.qualities?.auto?.[0]?.url;
+          if (m3u8Url) {
+            this.m3u8Url = `${this.workerUrl}/proxy?u=${encodeURIComponent(m3u8Url)}&title=${encodeURIComponent(this.currentVideo.title)}`;
+            console.log('M3U8 extracted:', this.m3u8Url);
+          }
+        } catch (error) {
+          console.error('Failed to extract M3U8:', error);
+        }
+      }
+
+      isAndroid() {
+        return /Android/i.test(navigator.userAgent);
+      }
+
+      openInMXPlayer() {
+        if (!this.m3u8Url) {
+          alert('M3U8 URL not available');
+          return;
+        }
+
+        if (this.isAndroid()) {
+          // MX Player intent
+          const intent = `intent:${this.m3u8Url}#Intent;package=com.mxtech.videoplayer.ad;component=com.mxtech.videoplayer.ad/.ActivityScreen;end`;
+          
+          // Try to open with intent
+          window.location.href = intent;
+          
+          // Fallback after a short delay
+          setTimeout(() => {
+            if (confirm('MX Player not found. Open in browser?')) {
+              window.open(this.m3u8Url, '_blank');
+            }
+          }, 2000);
+        } else {
+          // Non-Android devices - just open the URL
+          window.open(this.m3u8Url, '_blank');
+        }
       }
 	  
 initCast() {
@@ -897,7 +989,7 @@ initCast() {
         }, 100);
       }
 
-      playRelatedVideo(video) {
+      async playRelatedVideo(video) {
         // Update current video data
         this.currentVideo = video;
         sessionStorage.setItem('currentVideo', JSON.stringify(video));
@@ -908,12 +1000,18 @@ initCast() {
           .sort((a, b) => new Date(b.date) - new Date(a.date))
           .slice(0, 8);
 
-        // Reset retry count
+        // Reset retry count and M3U8
         this.retryCount = 0;
+        this.m3u8Url = null;
         
         // Update UI and load new video
         this.updateUI();
         this.loadVideo();
+        
+        // Extract M3U8 if Dailymotion video
+        if (video.platform === 'dailymotion') {
+          await this.extractM3U8();
+        }
         
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1020,6 +1118,7 @@ initCast() {
 
         // Share modal
         this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
+        this.elements.mxBtn.addEventListener('click', () => this.openInMXPlayer());
         this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
         this.elements.shareModal.addEventListener('click', (e) => {
           if (e.target === this.elements.shareModal) this.closeShareModal();
@@ -1055,6 +1154,16 @@ initCast() {
 
       openShareModal() {
         this.elements.shareModal.style.display = 'flex';
+        
+        // Update URL based on platform and M3U8 availability
+        if (this.currentVideo.platform === 'dailymotion' && this.m3u8Url) {
+          this.elements.shareUrl.value = this.m3u8Url;
+          this.elements.mxBtn.style.display = 'flex';
+        } else {
+          this.elements.shareUrl.value = this.getDirectVideoLink();
+          this.elements.mxBtn.style.display = 'none';
+        }
+        
         this.elements.shareUrl.select();
       }
 
@@ -1065,21 +1174,33 @@ initCast() {
       async copyShareUrl() {
         try {
           await navigator.clipboard.writeText(this.elements.shareUrl.value);
-          this.elements.copyBtn.textContent = 'Copied!';
+          this.elements.copyBtn.innerHTML = `
+            <i class="fas fa-check"></i>
+            <span>Copied!</span>
+          `;
           this.elements.copyBtn.style.background = '#4ecdc4';
           
           setTimeout(() => {
-            this.elements.copyBtn.textContent = 'Copy Link';
+            this.elements.copyBtn.innerHTML = `
+              <i class="fas fa-copy"></i>
+              <span>Copy Link</span>
+            `;
             this.elements.copyBtn.style.background = '#4ecdc4';
           }, 2000);
         } catch (err) {
           // Fallback for older browsers
           this.elements.shareUrl.select();
           document.execCommand('copy');
-          this.elements.copyBtn.textContent = 'Copied!';
+          this.elements.copyBtn.innerHTML = `
+            <i class="fas fa-check"></i>
+            <span>Copied!</span>
+          `;
           
           setTimeout(() => {
-            this.elements.copyBtn.textContent = 'Copy Link';
+            this.elements.copyBtn.innerHTML = `
+              <i class="fas fa-copy"></i>
+              <span>Copy Link</span>
+            `;
           }, 2000);
         }
       }
