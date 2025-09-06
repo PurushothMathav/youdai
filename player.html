@@ -767,18 +767,42 @@
         }
 
         if (this.isAndroid()) {
-          // MX Player intent
-          const intent = `intent:${this.m3u8Url}#Intent;package=com.mxtech.videoplayer.ad;component=com.mxtech.videoplayer.ad/.ActivityScreen;end`;
+          // Try multiple MX Player intent formats
+          const intents = [
+            // MX Player Free
+            `intent:${this.m3u8Url}#Intent;package=com.mxtech.videoplayer.ad;type=video/*;end`,
+            // MX Player Pro
+            `intent:${this.m3u8Url}#Intent;package=com.mxtech.videoplayer.pro;type=video/*;end`,
+            // Generic video intent that MX Player can handle
+            `intent:${this.m3u8Url}#Intent;action=android.intent.action.VIEW;type=video/*;end`
+          ];
           
-          // Try to open with intent
-          window.location.href = intent;
-          
-          // Fallback after a short delay
-          setTimeout(() => {
-            if (confirm('MX Player not found. Open in browser?')) {
-              window.open(this.m3u8Url, '_blank');
+          let intentTried = 0;
+          const tryIntent = () => {
+            if (intentTried < intents.length) {
+              try {
+                window.location.href = intents[intentTried];
+                intentTried++;
+                
+                // Try next intent after short delay if this one fails
+                setTimeout(() => {
+                  if (intentTried < intents.length) {
+                    tryIntent();
+                  }
+                }, 1500);
+              } catch (error) {
+                console.error('Intent failed:', error);
+                tryIntent();
+              }
+            } else {
+              // All intents failed, show fallback options
+              if (confirm('MX Player not found. Open in browser?')) {
+                window.open(this.m3u8Url, '_blank');
+              }
             }
-          }, 2000);
+          };
+          
+          tryIntent();
         } else {
           // Non-Android devices - just open the URL
           window.open(this.m3u8Url, '_blank');
