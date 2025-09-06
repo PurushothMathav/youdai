@@ -1163,7 +1163,7 @@ async openInMxPlayer() {
       const proxiedUrl = `https://dm.porus-in2012.workers.dev/proxy?u=${encodeURIComponent(m3u8)}&title=${encodeURIComponent(data.title || "playlist")}`;
 
       // MX Player Intent link (free version by default)
-      const intentUrl = `intent://${proxiedUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=com.mxtech.videoplayer.ad;end`;
+      const intentUrl = `intent://${proxiedUrl.replace(/^https?:\/\//, '')}#Intent;scheme=http;package=com.mxtech.videoplayer.ad;end`;
 
       // Try open
       window.location.href = intentUrl;
