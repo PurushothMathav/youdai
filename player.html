@@ -591,9 +591,9 @@
         <button class="nav-btn cast-btn" id="castBtn" title="Open Link">
           <i class="fa-solid fa-globe"></i>
         </button>
-        <button class="nav-btn share-btn" id="shareBtn" title="Share Video">
-          <i class="fas fa-share-alt"></i>
-        </button>
+        <button class="nav-btn mxplayer-btn" id="mxPlayerBtn" title="Open in MX Player">
+		  <i class="fas fa-play-circle"></i>
+		</button>
       </div>
     </div>
   </nav>
@@ -1015,8 +1015,10 @@ initCast() {
       }
 
       setupEventListeners() {
-        // Share button
-        this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
+        // MX Player button
+		this.elements.mxPlayerBtn = document.getElementById('mxPlayerBtn');
+		this.elements.mxPlayerBtn.addEventListener('click', () => this.openInMxPlayer());
+
 
         // Share modal
         this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
@@ -1143,6 +1145,39 @@ handleCast() {
         this.retryCount = 0;
         this.loadVideo();
       }
+	  
+	  openInMxPlayer() {
+  const { platform, id } = this.currentVideo;
+
+  // Get direct video link (HLS .m3u8)
+  if (platform === "dailymotion") {
+    fetch(`https://www.dailymotion.com/player/metadata/video/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        const hls = data.qualities.auto?.[0]?.url;
+        if (hls) {
+          // Try opening in MX Player via Android intent
+          const intentUrl = `intent:${hls}#Intent;package=com.mxtech.videoplayer.ad;scheme=http;end`;
+          window.location.href = intentUrl;
+
+          // Fallback after short delay → redirect to Play Store
+          setTimeout(() => {
+            window.location.href = "https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad";
+          }, 2000);
+        } else {
+          alert("Unable to fetch video link.");
+        }
+      })
+      .catch(err => {
+        console.error("MX Player launch error:", err);
+        window.location.href = "https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad";
+      });
+  } else {
+    // Fallback: just open normal link
+    window.open(this.getDirectVideoLink(), "_blank");
+  }
+}
+
     }
 
     // Initialize player when DOM is ready
