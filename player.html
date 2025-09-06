@@ -591,8 +591,8 @@
         <button class="nav-btn cast-btn" id="castBtn" title="Open Link">
           <i class="fa-solid fa-globe"></i>
         </button>
-        <button class="nav-btn share-btn" id="shareBtn" title="MX Player">
-          <i class="fas fa-play-circle"></i>
+        <button class="nav-btn share-btn" id="shareBtn" title="Share Video">
+          <i class="fas fa-share-alt"></i>
         </button>
       </div>
     </div>
@@ -1015,9 +1015,8 @@ initCast() {
       }
 
       setupEventListeners() {
-        //this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
-		// Share button → open in MX Player
-		this.elements.shareBtn.addEventListener('click', () => this.openInMxPlayer());
+        // Share button
+        this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
 
         // Share modal
         this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
@@ -1144,43 +1143,6 @@ handleCast() {
         this.retryCount = 0;
         this.loadVideo();
       }
-	  
-async openInMxPlayer() {
-  const { platform, id } = this.currentVideo;
-
-  if (platform === "dailymotion") {
-    try {
-      // Call your Worker meta API
-      const res = await fetch(`https://dm.porus-in2012.workers.dev/meta?id=${id}`);
-      const data = await res.json();
-
-      const m3u8 = data.qualities?.auto?.[0]?.url;
-      if (!m3u8) {
-        alert("No M3U8 link found");
-        return;
-      }
-
-      const proxiedUrl = `https://dm.porus-in2012.workers.dev/proxy?u=${encodeURIComponent(m3u8)}&title=${encodeURIComponent(data.title || "playlist")}`;
-
-      // MX Player Intent link (free version by default)
-      //const intentUrl = `intent://${proxiedUrl.replace(/^https?:\/\//, '')}#Intent;scheme=http;package=com.mxtech.videoplayer.ad;end;`;
-	  
-	  const cleanUrl = proxiedUrl.replace(/^https?:\/\//, '');
-  const scheme = proxiedUrl.startsWith('https') ? 'https' : 'http';
-  const mxIntent = `intent://${cleanUrl}#Intent;package=com.mxtech.videoplayer.ad;scheme=${scheme};end;`;
-	  
-      // Try open
-      window.location.href = mxIntent;
-    } catch (err) {
-      console.error("MX Player open error", err);
-      window.open(`https://www.dailymotion.com/video/${id}`, "_blank");
-    }
-  } else {
-    // Fallback: open normal direct link
-    window.open(this.getDirectVideoLink(), "_blank");
-  }
-}	  
-	  
     }
 
     // Initialize player when DOM is ready
