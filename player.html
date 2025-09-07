@@ -760,90 +760,76 @@
         return /Android/i.test(navigator.userAgent);
       }
 
-      openInMXPlayer() {
-        if (!this.m3u8Url) {
-          alert('M3U8 URL not available');
-          return;
-        }
+openInMXPlayer() {
+  if (!this.m3u8Url) {
+    alert('M3U8 URL not available');
+    return;
+  }
 
-        if (this.isAndroid()) {
-          // Show loading state
-          this.elements.mxBtn.innerHTML = `
-            <div class="loading-spinner"></div>
-            <span>Opening...</span>
-          `;
-          
-          // Method 1: Try direct app URL schemes first
-          const directSchemes = [
-            `mxplayer://video?url=${encodeURIComponent(this.m3u8Url)}`,
-            `mxplayerpro://video?url=${encodeURIComponent(this.m3u8Url)}`,
-            `vlc://${this.m3u8Url}`,
-            `potplayer://${this.m3u8Url}`
-          ];
+  if (this.isAndroid()) {
+    this.elements.mxBtn.innerHTML = `
+      <div class="loading-spinner"></div>
+      <span>Opening...</span>
+    `;
 
-          let schemeIndex = 0;
-          const tryDirectScheme = () => {
-            if (schemeIndex < directSchemes.length) {
-              const iframe = document.createElement('iframe');
-              iframe.style.display = 'none';
-              iframe.src = directSchemes[schemeIndex];
-              document.body.appendChild(iframe);
-              
-              setTimeout(() => {
-                document.body.removeChild(iframe);
-                schemeIndex++;
-                tryDirectScheme();
-              }, 1000);
-            } else {
-              // If direct schemes fail, try intent method
-              this.tryIntentMethod();
-            }
-          };
+    // Method 1: Direct schemes
+    const directSchemes = [
+      `mxplayer://video?url=${encodeURIComponent(this.m3u8Url)}`,
+      `mxplayerpro://video?url=${encodeURIComponent(this.m3u8Url)}`,
+      `vlc://${this.m3u8Url}`,
+      `potplayer://${this.m3u8Url}`
+    ];
 
-          // Method 2: Intent method with user interaction
-          const tryIntentMethod = () => {
-            // Create a temporary link element
-            const link = document.createElement('a');
-            
-            // Try different intent formats
-            const intents = [
-              `intent:${this.m3u8Url}#Intent;type=video/mp4;package=com.mxtech.videoplayer.ad;scheme=http;end`,
-              `intent:${this.m3u8Url}#Intent;type=video/mp4;package=com.mxtech.videoplayer.pro;scheme=http;end`,
-              `intent:${this.m3u8Url}#Intent;type=video/*;action=android.intent.action.VIEW;end`
-            ];
-            
-            let intentIndex = 0;
-            const tryIntent = () => {
-              if (intentIndex < intents.length) {
-                link.href = intents[intentIndex];
-                link.click();
-                intentIndex++;
-                setTimeout(tryIntent, 1500);
-              } else {
-                // All methods failed, show manual options
-                this.showManualOptions();
-              }
-            };
-            
-            tryIntent();
-          };
+    let schemeIndex = 0;
+    const tryDirectScheme = () => {
+      if (schemeIndex < directSchemes.length) {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = directSchemes[schemeIndex];
+        document.body.appendChild(iframe);
 
-          // Start with direct schemes
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+          schemeIndex++;
           tryDirectScheme();
-          
-          // Reset button after attempts
-          setTimeout(() => {
-            this.elements.mxBtn.innerHTML = `
-              <i class="fas fa-external-link-alt"></i>
-              <span>Open in MX Player</span>
-            `;
-          }, 8000);
-
-        } else {
-          // Non-Android devices
-          window.open(this.m3u8Url, '_blank');
-        }
+        }, 1000);
+      } else {
+        // Method 2: Corrected intent method
+        tryIntentMethod();
       }
+    };
+
+    // Correct Intent method
+    const tryIntentMethod = () => {
+      const cleanUrl = this.m3u8Url.replace(/^https?:\/\//, '');
+      const scheme = this.m3u8Url.startsWith('https') ? 'https' : 'http';
+
+      const intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=application/x-mpegURL;package=com.mxtech.videoplayer.ad;end`;
+
+      const link = document.createElement('a');
+      link.href = intentUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setTimeout(() => this.showMXPlayerOptions(), 2000);
+    };
+
+    // Start with direct schemes
+    tryDirectScheme();
+
+    // Reset button after attempts
+    setTimeout(() => {
+      this.elements.mxBtn.innerHTML = `
+        <i class="fas fa-external-link-alt"></i>
+        <span>Open in MX Player</span>
+      `;
+    }, 8000);
+
+  } else {
+    window.open(this.m3u8Url, '_blank');
+  }
+}
 
       showMXPlayerOptions() {
         // Create a custom modal for manual instructions
