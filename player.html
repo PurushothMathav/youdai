@@ -741,20 +741,22 @@
         }
       }
 
-      async extractM3U8() {
-        try {
-          const metaRes = await fetch(`${this.workerUrl}/meta?id=${this.currentVideo.id}`);
-          const data = await metaRes.json();
-          
-          const m3u8Url = data?.qualities?.auto?.[0]?.url;
-          if (m3u8Url) {
-            this.m3u8Url = `${this.workerUrl}/proxy?u=${encodeURIComponent(m3u8Url)}&title=${encodeURIComponent(this.currentVideo.title)}`;
-            console.log('M3U8 extracted:', this.m3u8Url);
-          }
-        } catch (error) {
-          console.error('Failed to extract M3U8:', error);
-        }
-      }
+async extractM3U8() {
+  try {
+    const metaRes = await fetch(`${this.workerUrl}/meta?id=${this.currentVideo.id}`);
+    const data = await metaRes.json();
+    
+    const m3u8Url = data?.qualities?.auto?.[0]?.url;
+    if (m3u8Url) {
+      const title = encodeURIComponent(this.currentVideo.title || data.title || "playlist");
+      const created = encodeURIComponent(data.created_time || "");
+      this.m3u8Url = `${this.workerUrl}/proxy?u=${encodeURIComponent(m3u8Url)}&title=${title}&created=${created}`;
+      console.log("M3U8 extracted:", this.m3u8Url);
+    }
+  } catch (error) {
+    console.error("Failed to extract M3U8:", error);
+  }
+}
 
       isAndroid() {
         return /Android/i.test(navigator.userAgent);
@@ -857,7 +859,7 @@ openInMXPlayer() {
                 <strong>Manual Steps:</strong><br>
                 1. Copy the M3U8 link above<br>
                 2. Open MX Player<br>
-                3. Tap "Network Stream" or "+"<br>
+                3. Tap "Network/URL Stream" or "+"<br>
                 4. Paste the link and play
               </div>
               <button class="close-btn" id="manualCloseBtn" style="width: 100%;">
