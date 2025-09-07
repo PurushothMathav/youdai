@@ -806,7 +806,7 @@ openInMXPlayer() {
       const cleanUrl = this.m3u8Url.replace(/^https?:\/\//, '');
       const scheme = this.m3u8Url.startsWith('https') ? 'https' : 'http';
 
-      const intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=application/x-mpegURL;package=com.mxtech.videoplayer.ad;end`;
+      const intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;package=com.mxtech.videoplayer.ad;end`;
 
       const link = document.createElement('a');
       link.href = intentUrl;
