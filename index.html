@@ -1207,33 +1207,34 @@
     }
 
     // Navigation
-    function openPlayer(platform, videoId, video) {
-      const playerData = {
-        platform: platform,
-        id: videoId,
-        title: video.title,
-        channel: video.channel,
-        date: video.date,
-        dthumb: video.dthumb,
-        mthumb: video.mthumb
-      };
-      
-      try {
-        sessionStorage.setItem('currentVideo', JSON.stringify(playerData));
-        sessionStorage.setItem('allVideos', JSON.stringify(videos));
-        window.location.href = `player.html`;
-      } catch (e) {
-        // Fallback if sessionStorage fails
-        console.warn('SessionStorage not available, using URL parameters');
-        const params = new URLSearchParams({
-          platform: platform,
-          id: videoId,
-          title: video.title,
-          channel: video.channel
-        });
-        window.location.href = `player.html?${params.toString()}`;
-      }
-    }
+function openPlayer(platform, videoId, video) {
+  const playerData = {
+    platform: platform,
+    id: videoId,
+    title: video.title,
+    channel: video.channel,
+    date: video.date,
+    dthumb: video.dthumb,
+    mthumb: video.mthumb
+  };
+  
+  try {
+    sessionStorage.setItem('currentVideo', JSON.stringify(playerData));
+    sessionStorage.setItem('allVideos', JSON.stringify(videos));
+    // Redirect to ads page instead of player
+    window.location.href = `ad.html`;
+  } catch (e) {
+    // Fallback if sessionStorage fails
+    console.warn('SessionStorage not available, using URL parameters');
+    const params = new URLSearchParams({
+      platform: platform,
+      id: videoId,
+      title: video.title,
+      channel: video.channel
+    });
+    window.location.href = `ad.html?${params.toString()}`;
+  }
+}
 
     // Rendering functions
     function renderChannelSections() {
