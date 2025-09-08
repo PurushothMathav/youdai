@@ -1,4 +1,4 @@
-const CACHE_NAME = '0809250750';
+const CACHE_NAME = '0809251200';
 const STATIC_CACHE = `youdai-static-${CACHE_NAME}`;
 const DYNAMIC_CACHE = `youdai-dynamic-${CACHE_NAME}`;
 
