@@ -10,27 +10,38 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
       background: #111;
       color: #fff;
       font-family: sans-serif;
       text-align: center;
+      padding: 20px;
     }
     .ad-box {
-      width: 80%;
-      max-width: 500px;
-      height: 250px;
-      background: #333;
+      margin: 15px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #222;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
-      border-radius: 12px;
+    }
+    /* Default: Desktop */
+    .ad-box {
+      width: 300px;
+      height: 250px;
+    }
+    /* Mobile */
+    @media (max-width: 480px) {
+      .ad-box {
+        width: 320px;
+        height: 50px;
+      }
     }
     #timer {
       font-size: 18px;
-      margin-bottom: 15px;
+      margin: 15px 0;
     }
     #continueBtn {
       padding: 12px 24px;
@@ -41,22 +52,65 @@
       color: white;
       cursor: pointer;
       display: none;
+      margin-top: 15px;
     }
   </style>
-  
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3552979279092523"
-     crossorigin="anonymous"></script>
 </head>
 <body>
-  <div class="ad-box">
-    <!-- Replace with real ad script -->
-    <p>Ad goes here</p>
-  </div>
+  <!-- 🔹 Top Ad -->
+  <div class="ad-box" id="adTop"></div>
 
+  <!-- Timer -->
   <div id="timer">Please wait 15s...</div>
+
+  <!-- 🔹 Bottom Ad -->
+  <div class="ad-box" id="adBottom"></div>
+
+  <!-- Continue Button -->
   <button id="continueBtn">Continue to Video</button>
 
   <script>
+    function loadAd(containerId, isMobile) {
+      const adBox = document.getElementById(containerId);
+      if (!adBox) return;
+
+      if (isMobile) {
+        // Mobile Banner (320x50)
+        adBox.innerHTML = `
+          <script type="text/javascript">
+            atOptions = {
+              'key' : 'abe4f108c9f269206a6458c95d0ed435',
+              'format' : 'iframe',
+              'height' : 50,
+              'width' : 320,
+              'params' : {}
+            };
+          <\/script>
+          <script type="text/javascript" src="//www.highperformanceformat.com/abe4f108c9f269206a6458c95d0ed435/invoke.js"><\/script>
+        `;
+      } else {
+        // Desktop Banner (300x250)
+        adBox.innerHTML = `
+          <script type="text/javascript">
+            atOptions = {
+              'key' : 'abe4f108c9f269206a6458c95d0ed435',
+              'format' : 'iframe',
+              'height' : 250,
+              'width' : 300,
+              'params' : {}
+            };
+          <\/script>
+          <script type="text/javascript" src="//www.highperformanceformat.com/abe4f108c9f269206a6458c95d0ed435/invoke.js"><\/script>
+        `;
+      }
+    }
+
+    // Detect device
+    const isMobile = window.innerWidth <= 480;
+    loadAd("adTop", isMobile);
+    loadAd("adBottom", isMobile);
+
+    // Countdown
     let countdown = 15;
     const timerEl = document.getElementById('timer');
     const btn = document.getElementById('continueBtn');
@@ -73,11 +127,7 @@
     }, 1000);
 
     btn.addEventListener("click", () => {
-      // Get stored video data
       const videoData = sessionStorage.getItem("currentVideo");
-      const allVideos = sessionStorage.getItem("allVideos");
-
-      // Redirect to player page
       if (videoData) {
         window.location.href = "player.html";
       } else {
