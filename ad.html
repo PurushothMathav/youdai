@@ -27,7 +27,6 @@
       align-items: center;
       justify-content: center;
     }
-    /* Specific ad sizes */
     #adTop {
       width: 300px;
       height: 250px;
@@ -71,27 +70,34 @@
       const adBox = document.getElementById(containerId);
       adBox.innerHTML = "";
 
-      const configScript = document.createElement("script");
-      configScript.type = "text/javascript";
-      configScript.innerHTML = `
-        atOptions = {
-          'key' : '${key}',
-          'format' : 'iframe',
-          'height' : ${height},
-          'width' : ${width},
-          'params' : {}
-        };
-      `;
+      // Create wrapper iframe for isolation
+      const iframe = document.createElement("iframe");
+      iframe.width = width;
+      iframe.height = height;
+      iframe.style.border = "0";
+      iframe.scrolling = "no";
+      adBox.appendChild(iframe);
 
-      const invokeScript = document.createElement("script");
-      invokeScript.type = "text/javascript";
-      invokeScript.src = `https://www.highperformanceformat.com/${key}/invoke.js`;
-
-      adBox.appendChild(configScript);
-      adBox.appendChild(invokeScript);
+      const doc = iframe.contentWindow.document;
+      doc.open();
+      doc.write(`
+        <html><body style="margin:0;padding:0;overflow:hidden;">
+          <script type="text/javascript">
+            atOptions = {
+              'key' : '${key}',
+              'format' : 'iframe',
+              'height' : ${height},
+              'width' : ${width},
+              'params' : {}
+            };
+          <\/script>
+          <script type="text/javascript" src="https://www.highperformanceformat.com/${key}/invoke.js"><\/script>
+        </body></html>
+      `);
+      doc.close();
     }
 
-    // Load ads with different sizes
+    // Load ads independently
     loadAd("adTop", "abe4f108c9f269206a6458c95d0ed435", 300, 250);
     loadAd("adBottom", "798426b77894364363c49a9c8bd62c1d", 320, 50);
 
