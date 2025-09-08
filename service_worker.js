@@ -1,15 +1,15 @@
-const CACHE_NAME = '0809251200';
+const CACHE_NAME = '0809251300';
 const STATIC_CACHE = `youdai-static-${CACHE_NAME}`;
 const DYNAMIC_CACHE = `youdai-dynamic-${CACHE_NAME}`;
 
 // Files to cache immediately
 const STATIC_ASSETS = [
-  '/youdai/',
-  '/youdai/index.html',
-  '/youdai/player.html', 
-  '/youdai/videos.json',
-  '/youdai/manifest.json',
-  '/youdai/dev.js',
+  '/',
+  '/index.html',
+  '/player.html', 
+  '/videos.json',
+  '/manifest.json',
+  '/dev.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 

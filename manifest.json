@@ -2,8 +2,8 @@
   "name": "YouDai - Tamil Videos",
   "short_name": "YouDai",
   "description": "Watch Tamil TV shows and videos from multiple channels",
-  "start_url": "/youdai/",
-  "scope": "/youdai/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0c0c0c",
   "theme_color": "#4ecdc4",
@@ -11,22 +11,22 @@
   "categories": ["entertainment", "video", "tamil"],
   "icons": [
     {
-      "src": "/youdai/icons/icon-48.png",
+      "src": "/icons/icon-48.png",
       "sizes": "48x48",
       "type": "image/svg+xml"
     },
     {
-      "src": "/youdai/icons/icon-96.png",
+      "src": "/icons/icon-96.png",
       "sizes": "96x96",
       "type": "image/svg+xml"
     },
     {
-      "src": "/youdai/icons/icon-192.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/svg+xml"
     },
     {
-      "src": "/youdai/icons/icon-512.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
