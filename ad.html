@@ -26,8 +26,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    /* Specific ad sizes */
+    #adTop {
       width: 300px;
       height: 250px;
+    }
+    #adBottom {
+      width: 320px;
+      height: 50px;
     }
     #timer {
       font-size: 18px;
@@ -47,37 +54,35 @@
   </style>
 </head>
 <body>
-  <!-- 🔹 Top Ad -->
+  <!-- 🔹 Top Ad (300x250) -->
   <div class="ad-box" id="adTop"></div>
 
   <!-- Timer -->
   <div id="timer">Please wait 15s...</div>
 
-  <!-- 🔹 Bottom Ad -->
+  <!-- 🔹 Bottom Ad (320x50) -->
   <div class="ad-box" id="adBottom"></div>
 
   <!-- Continue Button -->
   <button id="continueBtn">Continue to Video</button>
 
   <script>
-    function loadAd(containerId, key) {
+    function loadAd(containerId, key, width, height) {
       const adBox = document.getElementById(containerId);
       adBox.innerHTML = "";
 
-      // Config
       const configScript = document.createElement("script");
       configScript.type = "text/javascript";
       configScript.innerHTML = `
         atOptions = {
           'key' : '${key}',
           'format' : 'iframe',
-          'height' : 250,
-          'width' : 300,
+          'height' : ${height},
+          'width' : ${width},
           'params' : {}
         };
       `;
 
-      // Adsterra invoke.js
       const invokeScript = document.createElement("script");
       invokeScript.type = "text/javascript";
       invokeScript.src = `https://www.highperformanceformat.com/${key}/invoke.js`;
@@ -86,9 +91,9 @@
       adBox.appendChild(invokeScript);
     }
 
-    // Always load 300x250 (works for both desktop + mobile)
-    loadAd("adTop", "abe4f108c9f269206a6458c95d0ed435");
-    loadAd("adBottom", "abe4f108c9f269206a6458c95d0ed435");
+    // Load ads with different sizes
+    loadAd("adTop", "abe4f108c9f269206a6458c95d0ed435", 300, 250);
+    loadAd("adBottom", "798426b77894364363c49a9c8bd62c1d", 320, 50);
 
     // Countdown
     let countdown = 15;
