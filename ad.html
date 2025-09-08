@@ -26,6 +26,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 300px;
+      height: 250px;
     }
     #timer {
       font-size: 18px;
@@ -58,52 +60,35 @@
   <button id="continueBtn">Continue to Video</button>
 
   <script>
-    const isMobile = window.innerWidth <= 480;
-
-    function loadAd(containerId, isMobile) {
+    function loadAd(containerId, key) {
       const adBox = document.getElementById(containerId);
-      adBox.innerHTML = ""; // clear first
+      adBox.innerHTML = "";
 
-      // Choose ad settings
-      let options, src;
-      if (isMobile) {
-        options = {
-          key: '798426b77894364363c49a9c8bd62c1d', // 320x50
-          format: 'iframe',
-          height: 50,
-          width: 320,
-          params: {}
-        };
-        src = "https://www.highperformanceformat.com/798426b77894364363c49a9c8bd62c1d/invoke.js";
-      } else {
-        options = {
-          key: 'abe4f108c9f269206a6458c95d0ed435', // 300x250
-          format: 'iframe',
-          height: 250,
-          width: 300,
-          params: {}
-        };
-        src = "https://www.highperformanceformat.com/abe4f108c9f269206a6458c95d0ed435/invoke.js";
-      }
-
-      // Create atOptions config
+      // Config
       const configScript = document.createElement("script");
       configScript.type = "text/javascript";
-      configScript.innerHTML = "atOptions = " + JSON.stringify(options) + ";";
+      configScript.innerHTML = `
+        atOptions = {
+          'key' : '${key}',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      `;
 
-      // Create main invoke script
+      // Adsterra invoke.js
       const invokeScript = document.createElement("script");
       invokeScript.type = "text/javascript";
-      invokeScript.src = src;
+      invokeScript.src = `https://www.highperformanceformat.com/${key}/invoke.js`;
 
-      // Append both scripts
       adBox.appendChild(configScript);
       adBox.appendChild(invokeScript);
     }
 
-    // Load ads in both slots
-    loadAd("adTop", isMobile);
-    loadAd("adBottom", isMobile);
+    // Always load 300x250 (works for both desktop + mobile)
+    loadAd("adTop", "abe4f108c9f269206a6458c95d0ed435");
+    loadAd("adBottom", "abe4f108c9f269206a6458c95d0ed435");
 
     // Countdown
     let countdown = 15;
