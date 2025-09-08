@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouDai Ads</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    .ad-box {
+      width: 80%;
+      max-width: 500px;
+      height: 250px;
+      background: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      border-radius: 12px;
+    }
+    #timer {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    #continueBtn {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #4ecdc4;
+      color: white;
+      cursor: pointer;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="ad-box">
+    <!-- Replace with real ad script -->
+    <p>Ad goes here</p>
+  </div>
+
+  <div id="timer">Please wait 15s...</div>
+  <button id="continueBtn">Continue to Video</button>
+
+  <script>
+    let countdown = 15;
+    const timerEl = document.getElementById('timer');
+    const btn = document.getElementById('continueBtn');
+
+    const interval = setInterval(() => {
+      countdown--;
+      if (countdown > 0) {
+        timerEl.textContent = `Please wait ${countdown}s...`;
+      } else {
+        clearInterval(interval);
+        timerEl.style.display = "none";
+        btn.style.display = "inline-block";
+      }
+    }, 1000);
+
+    btn.addEventListener("click", () => {
+      // Get stored video data
+      const videoData = sessionStorage.getItem("currentVideo");
+      const allVideos = sessionStorage.getItem("allVideos");
+
+      // Redirect to player page
+      if (videoData) {
+        window.location.href = "player.html";
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>
