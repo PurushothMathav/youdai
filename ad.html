@@ -27,18 +27,6 @@
       align-items: center;
       justify-content: center;
     }
-    /* Default: Desktop */
-    .ad-box {
-      width: 300px;
-      height: 250px;
-    }
-    /* Mobile */
-    @media (max-width: 480px) {
-      .ad-box {
-        width: 320px;
-        height: 50px;
-      }
-    }
     #timer {
       font-size: 18px;
       margin: 15px 0;
@@ -70,26 +58,27 @@
   <button id="continueBtn">Continue to Video</button>
 
   <script>
+    const isMobile = window.innerWidth <= 480;
+
     function loadAd(containerId, isMobile) {
       const adBox = document.getElementById(containerId);
-      if (!adBox) return;
 
       if (isMobile) {
-        // Mobile Banner (320x50)
+        // 🔹 Mobile 320x50 Ad Code
         adBox.innerHTML = `
           <script type="text/javascript">
             atOptions = {
-              'key' : 'abe4f108c9f269206a6458c95d0ed435',
+              'key' : '798426b77894364363c49a9c8bd62c1d',
               'format' : 'iframe',
               'height' : 50,
               'width' : 320,
               'params' : {}
             };
           <\/script>
-          <script type="text/javascript" src="//www.highperformanceformat.com/abe4f108c9f269206a6458c95d0ed435/invoke.js"><\/script>
+          <script type="text/javascript" src="https://www.highperformanceformat.com/798426b77894364363c49a9c8bd62c1d/invoke.js"><\/script>
         `;
       } else {
-        // Desktop Banner (300x250)
+        // 🔹 Desktop 300x250 Ad Code
         adBox.innerHTML = `
           <script type="text/javascript">
             atOptions = {
@@ -100,13 +89,12 @@
               'params' : {}
             };
           <\/script>
-          <script type="text/javascript" src="//www.highperformanceformat.com/abe4f108c9f269206a6458c95d0ed435/invoke.js"><\/script>
+          <script type="text/javascript" src="https://www.highperformanceformat.com/abe4f108c9f269206a6458c95d0ed435/invoke.js"><\/script>
         `;
       }
     }
 
-    // Detect device
-    const isMobile = window.innerWidth <= 480;
+    // Load ads in both slots
     loadAd("adTop", isMobile);
     loadAd("adBottom", isMobile);
 
