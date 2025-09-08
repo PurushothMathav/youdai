@@ -62,36 +62,43 @@
 
     function loadAd(containerId, isMobile) {
       const adBox = document.getElementById(containerId);
+      adBox.innerHTML = ""; // clear first
 
+      // Choose ad settings
+      let options, src;
       if (isMobile) {
-        // 🔹 Mobile 320x50 Ad Code
-        adBox.innerHTML = `
-          <script type="text/javascript">
-            atOptions = {
-              'key' : '798426b77894364363c49a9c8bd62c1d',
-              'format' : 'iframe',
-              'height' : 50,
-              'width' : 320,
-              'params' : {}
-            };
-          <\/script>
-          <script type="text/javascript" src="https://www.highperformanceformat.com/798426b77894364363c49a9c8bd62c1d/invoke.js"><\/script>
-        `;
+        options = {
+          key: '798426b77894364363c49a9c8bd62c1d', // 320x50
+          format: 'iframe',
+          height: 50,
+          width: 320,
+          params: {}
+        };
+        src = "https://www.highperformanceformat.com/798426b77894364363c49a9c8bd62c1d/invoke.js";
       } else {
-        // 🔹 Desktop 300x250 Ad Code
-        adBox.innerHTML = `
-          <script type="text/javascript">
-            atOptions = {
-              'key' : 'abe4f108c9f269206a6458c95d0ed435',
-              'format' : 'iframe',
-              'height' : 250,
-              'width' : 300,
-              'params' : {}
-            };
-          <\/script>
-          <script type="text/javascript" src="https://www.highperformanceformat.com/abe4f108c9f269206a6458c95d0ed435/invoke.js"><\/script>
-        `;
+        options = {
+          key: 'abe4f108c9f269206a6458c95d0ed435', // 300x250
+          format: 'iframe',
+          height: 250,
+          width: 300,
+          params: {}
+        };
+        src = "https://www.highperformanceformat.com/abe4f108c9f269206a6458c95d0ed435/invoke.js";
       }
+
+      // Create atOptions config
+      const configScript = document.createElement("script");
+      configScript.type = "text/javascript";
+      configScript.innerHTML = "atOptions = " + JSON.stringify(options) + ";";
+
+      // Create main invoke script
+      const invokeScript = document.createElement("script");
+      invokeScript.type = "text/javascript";
+      invokeScript.src = src;
+
+      // Append both scripts
+      adBox.appendChild(configScript);
+      adBox.appendChild(invokeScript);
     }
 
     // Load ads in both slots
