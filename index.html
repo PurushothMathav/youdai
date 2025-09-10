@@ -1222,7 +1222,7 @@ function openPlayer(platform, videoId, video) {
     sessionStorage.setItem('currentVideo', JSON.stringify(playerData));
     sessionStorage.setItem('allVideos', JSON.stringify(videos));
     // Redirect to ads page instead of player
-    window.location.href = `ad.html`;
+    window.location.href = `player.html`;
   } catch (e) {
     // Fallback if sessionStorage fails
     console.warn('SessionStorage not available, using URL parameters');
@@ -1232,7 +1232,7 @@ function openPlayer(platform, videoId, video) {
       title: video.title,
       channel: video.channel
     });
-    window.location.href = `ad.html?${params.toString()}`;
+    window.location.href = `player.html?${params.toString()}`;
   }
 }
 
