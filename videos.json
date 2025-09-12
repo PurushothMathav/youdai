@@ -1,5 +1,131 @@
 [
   {
+    "platform": "dailymotion",
+    "id": "k3zJHz6nVJ4rkzDPM2y",
+    "title": "Ayali",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k5N5aTDJ3FW6S7DPMi0",
+    "title": "Marumagal",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Marumag.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Marumag.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k5dkA6VufXKJGJDPMx4",
+    "title": "Karthigai Deepam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/kd1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/kd1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "ku57Z3J8vmWTZdDPMEo",
+    "title": "Moondru Mudichi",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Moondru.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Moondru.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k5ucjYRLmvia2rDPN4g",
+    "title": "Parijatham",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/pj1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/pj1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k5VrNl3zPbGRwyDPNhK",
+    "title": "Singappenne",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/Singappenn.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/Singappenn.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k2Fyl9NoK0YFbxDPNou",
+    "title": "Sandhya Raagam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/sr1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/sr1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k1vLzW1dkmowtmDPNMq",
+    "title": "Ethir Neechal Thodargirathu",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Ethir.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Ethir.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k7kZWCjAz2F6wnDPO8q",
+    "title": "Ninaithale Innikkum",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/ni1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/ni1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k3zig3z40TgDXQDPOfy",
+    "title": "Aadukalam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/Aadukalam.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/Aadukalam.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k7yrGxpzrmupo7DPNzq",
+    "title": "Ramayanam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/rama.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/rama.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k6Zc6o7TveksZMDPOLQ",
+    "title": "Malli",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Malli.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Malli.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "kVoPqQ6yEhJ63qDPPqg",
+    "title": "Lakshmi Kalyanam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/lk1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/lk1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-12"
+  },
+  {
+    "platform": "youtube",
+    "id": "RHsbozwtKwY",
+    "title": "Innal Ponnal",
+    "mthumb": "https://img.youtube.com/vi/RHsbozwtKwY/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/RHsbozwtKwY/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-12"
+  },
+  {
     "platform": "youtube",
     "id": "K53PpkCwjyc",
     "title": "Ammu",
