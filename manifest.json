@@ -30,5 +30,25 @@
       "sizes": "512x512",
       "type": "image/svg+xml"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Home",
+      "short_name": "Home",
+      "description": "Go to index page",
+      "url": "/index.html",
+      "icons": [
+        { "src": "/icons/icon-96.png", "sizes": "96x96", "type": "image/svg+xml" }
+      ]
+    },
+    {
+      "name": "Stream",
+      "short_name": "Stream",
+      "description": "Go to stream page",
+      "url": "/stream.html",
+      "icons": [
+        { "src": "/icons/icon-96.png", "sizes": "96x96", "type": "image/svg+xml" }
+      ]
+    }
   ]
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = '1309250300';
+const CACHE_NAME = '1309250400';
 const STATIC_CACHE = `youdai-static-${CACHE_NAME}`;
 const DYNAMIC_CACHE = `youdai-dynamic-${CACHE_NAME}`;
 
@@ -6,7 +6,8 @@ const DYNAMIC_CACHE = `youdai-dynamic-${CACHE_NAME}`;
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/player.html', 
+  '/player.html',
+  '/stream.html',
   '/videos.json',
   '/manifest.json',
   '/dev.js',
