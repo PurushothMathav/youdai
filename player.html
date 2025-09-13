@@ -671,27 +671,34 @@
     </div>
   </section>
 
-  <!-- Share Modal -->
-  <div class="share-modal" id="shareModal">
-    <div class="share-content">
-      <h3 class="share-title">Share Video</h3>
-      <input type="text" class="share-url" id="shareUrl" readonly>
-      <div class="share-actions">
-        <button class="copy-btn" id="copyBtn">
-          <i class="fas fa-copy"></i>
-          <span>Copy Link</span>
-        </button>
-        <button class="mx-btn" id="mxBtn" style="display: none;">
-          <i class="fas fa-external-link-alt"></i>
-          <span>Open in MX Player</span>
-        </button>
-        <button class="close-btn" id="closeShareBtn">
-          <i class="fas fa-times"></i>
-          <span>Close</span>
-        </button>
-      </div>
+<!-- Share Modal -->
+<div class="share-modal" id="shareModal">
+  <div class="share-content">
+    <h3 class="share-title">Share Video</h3>
+    <input type="text" class="share-url" id="shareUrl" readonly>
+    <div class="share-actions">
+      <button class="copy-btn" id="copyBtn">
+        <i class="fas fa-copy"></i>
+        <span>Copy Link</span>
+      </button>
+      <button class="mx-btn" id="mxBtn" style="display: none;">
+        <i class="fas fa-external-link-alt"></i>
+        <span>Open in MX Player</span>
+      </button>
+
+      <!-- new Download button -->
+      <button class="mx-btn" id="downloadBtn" style="display: none;">
+        <i class="fas fa-download"></i>
+        <span>Download</span>
+      </button>
+
+      <button class="close-btn" id="closeShareBtn">
+        <i class="fas fa-times"></i>
+        <span>Close</span>
+      </button>
     </div>
   </div>
+</div>
 
   <script>
     class VideoPlayer {
@@ -718,6 +725,7 @@
           shareUrl: document.getElementById('shareUrl'),
           copyBtn: document.getElementById('copyBtn'),
           mxBtn: document.getElementById('mxBtn'),
+		  downloadBtn: document.getElementById('downloadBtn'),
           closeShareBtn: document.getElementById('closeShareBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
@@ -1240,6 +1248,11 @@ initCast() {
         this.elements.shareModal.addEventListener('click', (e) => {
           if (e.target === this.elements.shareModal) this.closeShareModal();
         });
+		this.elements.downloadBtn = document.getElementById('downloadBtn');
+		this.elements.downloadBtn.addEventListener('click', () => {
+			// open stream.html in same tab or new tab
+			window.location.href = 'stream.html';
+		});
 
         // Cast button
         this.elements.castBtn.addEventListener('click', () => this.handleCast());
@@ -1269,20 +1282,24 @@ initCast() {
 		});
       }
 
-      openShareModal() {
-        this.elements.shareModal.style.display = 'flex';
-        
-        // Update URL based on platform and M3U8 availability
-        if (this.currentVideo.platform === 'dailymotion' && this.m3u8Url) {
-          this.elements.shareUrl.value = this.m3u8Url;
-          this.elements.mxBtn.style.display = 'flex';
-        } else {
-          this.elements.shareUrl.value = this.getDirectVideoLink();
-          this.elements.mxBtn.style.display = 'none';
-        }
-        
-        this.elements.shareUrl.select();
-      }
+openShareModal() {
+  this.elements.shareModal.style.display = 'flex';
+
+  // default direct link
+  this.elements.shareUrl.value = this.getDirectVideoLink();
+
+  // Show MX and Download buttons only for videos we can download
+  if (this.currentVideo.platform === 'dailymotion' && this.m3u8Url) {
+    this.elements.shareUrl.value = this.m3u8Url;
+    this.elements.mxBtn.style.display = 'flex';
+    this.elements.downloadBtn.style.display = 'flex';
+  } else {
+    this.elements.mxBtn.style.display = 'none';
+    this.elements.downloadBtn.style.display = 'flex'; // or hide depending on your logic
+  }
+
+  this.elements.shareUrl.select();
+}
 
       closeShareModal() {
         this.elements.shareModal.style.display = 'none';
