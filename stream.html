@@ -499,46 +499,58 @@
                 this.streamsContainer.appendChild(section);
             }
 
-            createStreamCard(stream, type) {
-                const details = [];
-                
-                if (stream.bandwidth) {
-                    details.push(`<div class="detail-item">📊 Bandwidth: ${this.formatBandwidth(stream.bandwidth)}</div>`);
-                }
-                if (stream.resolution) {
-                    details.push(`<div class="detail-item">📐 Resolution: ${stream.resolution}</div>`);
-                }
-                if (stream.language) {
-                    details.push(`<div class="detail-item">🌐 Language: ${stream.language}</div>`);
-                }
-                if (stream.name) {
-                    details.push(`<div class="detail-item">🏷️ Name: ${stream.name}</div>`);
-                }
-                if (stream.codecs) {
-                    details.push(`<div class="detail-item">🎞️ Codecs: ${stream.codecs}</div>`);
-                }
-                if (stream.frameRate) {
-                    details.push(`<div class="detail-item">🎥 Frame Rate: ${stream.frameRate} fps</div>`);
-                }
+createStreamCard(stream, type) {
+    const details = [];
 
-                return `
-                    <div class="stream-card ${type}">
-                        <div class="stream-header">
-                            <span class="stream-type ${type}">${type.toUpperCase()}</span>
-                            ${stream.resolution ? `<span class="resolution">${stream.resolution}</span>` : ''}
-                        </div>
-                        <div class="stream-details">
-                            ${details.join('')}
-                        </div>
-                        <div class="stream-url" onclick="this.select()">
-                            ${stream.url}
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('${stream.url}', this)">
-                            📋 Copy URL
-                        </button>
-                    </div>
-                `;
-            }
+    if (stream.bandwidth) {
+        details.push(`<div class="detail-item">📊 Bandwidth: ${this.formatBandwidth(stream.bandwidth)}</div>`);
+    }
+    if (stream.resolution) {
+        details.push(`<div class="detail-item">📐 Resolution: ${stream.resolution}</div>`);
+    }
+    if (stream.language) {
+        details.push(`<div class="detail-item">🌐 Language: ${stream.language}</div>`);
+    }
+    if (stream.name) {
+        details.push(`<div class="detail-item">🏷️ Name: ${stream.name}</div>`);
+    }
+    if (stream.codecs) {
+        details.push(`<div class="detail-item">🎞️ Codecs: ${stream.codecs}</div>`);
+    }
+    if (stream.frameRate) {
+        details.push(`<div class="detail-item">🎥 Frame Rate: ${stream.frameRate} fps</div>`);
+    }
+
+    // buttons block
+    const buttons = `
+        <button class="copy-btn" onclick="copyToClipboard('${stream.url}', this)">
+            📋 Copy URL
+        </button>
+        ${
+            type === 'video'
+                ? `<button class="copy-btn mx-btn" onclick="openInMX('${stream.url}')">
+                       🎬 Open in MX Player
+                   </button>`
+                : ''
+        }
+    `;
+
+    return `
+        <div class="stream-card ${type}">
+            <div class="stream-header">
+                <span class="stream-type ${type}">${type.toUpperCase()}</span>
+                ${stream.resolution ? `<span class="resolution">${stream.resolution}</span>` : ''}
+            </div>
+            <div class="stream-details">
+                ${details.join('')}
+            </div>
+            <div class="stream-url" onclick="this.select()">
+                ${stream.url}
+            </div>
+            ${buttons}
+        </div>
+    `;
+}
 
             formatBandwidth(bandwidth) {
                 const bw = parseInt(bandwidth);
@@ -610,6 +622,40 @@ window.copyToClipboard = function (text, btnEl) {
     });
 };
 
+window.openInMX = function (url) {
+    const encoded = encodeURIComponent(url);
+    const mxIntent = `intent://${url.replace(/^https?:\/\//, '')}#Intent;scheme=https;type=video/*;package=com.mxtech.videoplayer.ad;end`;
+
+    // Try direct MX Player schemes first
+    const schemes = [
+        `mxplayer://video?url=${encoded}`,
+        `mxplayerpro://video?url=${encoded}`
+    ];
+
+    let tried = 0;
+    const tryScheme = () => {
+        if (tried < schemes.length) {
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = schemes[tried];
+            document.body.appendChild(iframe);
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+                tried++;
+                tryScheme();
+            }, 800);
+        } else {
+            // Fallback to Android intent
+            const link = document.createElement('a');
+            link.href = mxIntent;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+
+    tryScheme();
+};
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
