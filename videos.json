@@ -1,6 +1,114 @@
 [
   {
     "platform": "dailymotion",
+    "id": "k9Ce9CWZWeUTFHDPSSU",
+    "title": "Sakthivel",
+    "mthumb": "https://img.imageride.net/images/2025/09/12/svel.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/12/svel.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k37klxIXIFvua2DPSY6",
+    "title": "Thendrale Mella Pesu",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/TMP.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/TMP.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "kj5QEK6eiktYtfDPSTW",
+    "title": "Dhanam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/dhana-1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/dhana-1.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k2imfJ0ACBySGtDPSTU",
+    "title": "Magale En Marumagale",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/mem.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/mem.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k2r2AnyOx4M5LBDPSSS",
+    "title": "Pandian Stores S2",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/pandian.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/pandian.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k4lewnXv8Q1GAmDPSTS",
+    "title": "Ayyanar Thunai",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/ayy.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/ayy.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "kh5ics7blk2xsIDPSSW",
+    "title": "Siragadikka Aasai",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/sirshu.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/sirshu.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "youtube",
+    "id": "ZUQ_R2a6Mgk",
+    "title": "Innal Ponnal",
+    "mthumb": "https://img.youtube.com/vi/ZUQ_R2a6Mgk/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/ZUQ_R2a6Mgk/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "youtube",
+    "id": "-cPc0LIWbiM",
+    "title": "Garudaa",
+    "mthumb": "https://img.youtube.com/vi/-cPc0LIWbiM/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/-cPc0LIWbiM/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "youtube",
+    "id": "ylHKk5DaOvk",
+    "title": "Ganapathiye Vuravai",
+    "mthumb": "https://img.youtube.com/vi/ylHKk5DaOvk/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/ylHKk5DaOvk/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "youtube",
+    "id": "p0FoAO8-1Bk",
+    "title": "Veera Anjaneyaa",
+    "mthumb": "https://img.youtube.com/vi/p0FoAO8-1Bk/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/p0FoAO8-1Bk/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "youtube",
+    "id": "Kq_Eyeo0H3M",
+    "title": "Vaa Di Rasathi",
+    "mthumb": "https://img.youtube.com/vi/Kq_Eyeo0H3M/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/Kq_Eyeo0H3M/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-13"
+  },
+  {
+    "platform": "dailymotion",
     "id": "k3zJHz6nVJ4rkzDPM2y",
     "title": "Ayali",
     "mthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
