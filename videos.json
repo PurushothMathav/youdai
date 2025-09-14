@@ -1,5 +1,77 @@
 [
   {
+    "platform": "dailymotion",
+    "id": "k7kBHPKmc28JrtDQfYW",
+    "title": "Tamizha Tamizha S3",
+    "mthumb": "https://img1.imageride.net/images/2025/09/14/tt.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/14/tt.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k4F3XbZfcRZ5INDQgeI",
+    "title": "Samayal Express S2",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/samex.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/samex.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "ok",
+    "id": "10563626339026",
+    "title": "Ranjithame",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Ranjithame.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Ranjithame.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "CN7HZ5P81rQ",
+    "title": "Thamarai",
+    "mthumb": "https://img.youtube.com/vi/CN7HZ5P81rQ/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/CN7HZ5P81rQ/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "NRzpZIyW2QY",
+    "title": "Selvi",
+    "mthumb": "https://img.youtube.com/vi/NRzpZIyW2QY/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/NRzpZIyW2QY/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "_1bDxlO7RI0",
+    "title": "Gayathrii",
+    "mthumb": "https://img.youtube.com/vi/_1bDxlO7RI0/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/_1bDxlO7RI0/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "ZPwkGlNAty0",
+    "title": "Koondukkili",
+    "mthumb": "https://img.youtube.com/vi/ZPwkGlNAty0/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/ZPwkGlNAty0/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "SD7FQBMRCWE",
+    "title": "Ammu",
+    "mthumb": "https://img.youtube.com/vi/SD7FQBMRCWE/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/SD7FQBMRCWE/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-14"
+  },
+  {
     "platform": "youtube",
     "id": "Va2ifH6RztU",
     "title": "Bhagyajatakam",
