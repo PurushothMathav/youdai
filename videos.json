@@ -1,6 +1,96 @@
 [
   {
     "platform": "dailymotion",
+    "id": "k1EP8EyUPWVyIKDQaU0",
+    "title": "Neeya Naana",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/nn.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/nn.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k2aqjJk6dWyb0ODQaTY",
+    "title": "Cooku with Comali S6",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/cwc6.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/cwc6.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k6J2GL1QucBB1RDQb70",
+    "title": "Adhu Idhu Yedhu S4",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/aie.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/aie.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k278HZ3GNpEp0vDQb5w",
+    "title": "Start Music S6",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/sm2.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/sm2.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "kTof06sIHEQdyKDQb6Y",
+    "title": "Super Singer S11",
+    "mthumb": "https://img1.imageride.net/images/2025/09/12/sss11.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/12/sss11.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "w2mz32h62GY",
+    "title": "Garudaa",
+    "mthumb": "https://img.youtube.com/vi/w2mz32h62GY/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/w2mz32h62GY/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "bESlcKOQGpY",
+    "title": "Ganapathiye Vuravai",
+    "mthumb": "https://img.youtube.com/vi/bESlcKOQGpY/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/bESlcKOQGpY/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "QnT0EpSx5t8",
+    "title": "Veera Anjaneyaa",
+    "mthumb": "https://img.youtube.com/vi/QnT0EpSx5t8/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/QnT0EpSx5t8/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "_GiDU1QLQjc",
+    "title": "Vaa Di Rasathi",
+    "mthumb": "https://img.youtube.com/vi/_GiDU1QLQjc/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/_GiDU1QLQjc/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "youtube",
+    "id": "K0RCH8vGpOc",
+    "title": "Vaara Rasipalan",
+    "mthumb": "https://img.youtube.com/vi/K0RCH8vGpOc/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/K0RCH8vGpOc/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-14"
+  },
+  {
+    "platform": "dailymotion",
     "id": "k26OHjjCITs7QIDQ2CA",
     "title": "Maari",
     "mthumb": "https://img1.imageride.net/images/2025/09/11/maari1.jpg",
