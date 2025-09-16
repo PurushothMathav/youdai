@@ -847,6 +847,58 @@
       margin: 0;
       opacity: 0.8;
     }
+	
+	/* Scroll buttons - Hidden on mobile for performance */
+.scroll-btn {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.8);
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .scroll-btn {
+    display: flex;
+  }
+
+  .scroll-btn:hover {
+    background: rgba(78, 205, 196, 0.9);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .scroll-btn.left {
+    left: -22px;
+  }
+
+  .scroll-btn.right {
+    right: -22px;
+  }
+
+  .videos-container {
+    position: relative;
+  }
+
+  .videos-container:hover .scroll-btn {
+    opacity: 1;
+  }
+
+  .scroll-btn {
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+}
   </style>
 </head>
 <body>
@@ -1245,67 +1297,68 @@ function openPlayer(platform, videoId, video) {
   }
 }
 
-    // Rendering functions
-    function renderChannelSections() {
-      if (!videos.length) return;
+// Rendering functions
+function renderChannelSections() {
+  if (!videos.length) return;
 
-      const channelOrder = ['Live TV', 'VIJAY TV', 'ZEETAMIL TV', 'SUN TV', 'THANTHI ONE', 'JAYA TV', 'KALAIGNAR TV', 'TAMIL DUB Movies'];
-      const allChannels = [...new Set(videos.map(v => v.channel))];
-      
-      const orderedChannels = [
-        ...channelOrder.filter(channel => allChannels.includes(channel)),
-        ...allChannels.filter(channel => !channelOrder.includes(channel))
-      ];
-      
-      const sectionsHTML = orderedChannels.map(channel => {
-        const channelVideos = videos.filter(v => v.channel === channel);
-        const sortedChannelVideos = sortVideosByDate(channelVideos);
-        const channelId = channel.replace(/\s+/g, '');
-        
-        return `
-          <div class="channel-section" data-channel="${channel}">
-            <div class="section-header">
-              <h2 class="section-title">${(channel === "Live TV" || channel === "TAMIL DUB Movies") ? channel : channel + " Shows"}</h2>
-              <div class="section-actions">
-                <span class="section-expand" onclick="showChannelGrid('${channel}')">
-                  <span>View All</span>
-                  <i class="fas fa-chevron-right"></i>
-                </span>
-              </div>
-            </div>
-            <div class="videos-container">
-              <div class="videos-scroll" id="scroll-${channelId}">
-                ${sortedChannelVideos.map(video => `
-                  <div class="video-card-horizontal" data-platform="${video.platform}" data-id="${video.id}">
-                    <div class="card-thumbnail">
-                      <img src="${getOptimalThumbnail(video)}" alt="${video.title}" loading="lazy" onerror="handleImageError(this)">
-                      <div class="play-overlay">
-                        <i class="fas fa-play"></i>
-                      </div>
-                    </div>
-                    <div class="card-content">
-                      <h3 class="card-title">${video.title}</h3>
-                      <div class="card-meta">
-                        <span class="card-date">${formatDate(video.date)}</span>
-                      </div>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
+  const channelOrder = ['Live TV', 'VIJAY TV', 'ZEETAMIL TV', 'SUN TV', 'THANTHI ONE', 'JAYA TV', 'KALAIGNAR TV', 'TAMIL DUB Movies'];
+  const allChannels = [...new Set(videos.map(v => v.channel))];
+  
+  const orderedChannels = [
+    ...channelOrder.filter(channel => allChannels.includes(channel)),
+    ...allChannels.filter(channel => !channelOrder.includes(channel))
+  ];
+  
+  const sectionsHTML = orderedChannels.map(channel => {
+    const channelVideos = videos.filter(v => v.channel === channel);
+    const sortedChannelVideos = sortVideosByDate(channelVideos);
+    const limitedVideos = sortedChannelVideos.slice(0, 15); // Only show first 12
+    const channelId = channel.replace(/\s+/g, '');
+    
+    return `
+      <div class="channel-section" data-channel="${channel}">
+        <div class="section-header">
+          <h2 class="section-title">${(channel === "Live TV" || channel === "TAMIL DUB Movies") ? channel : channel + " Shows"}</h2>
+          <div class="section-actions">
+            <span class="section-expand" onclick="showChannelGrid('${channel}')">
+              <span>View All</span>
+              <i class="fas fa-chevron-right"></i>
+            </span>
           </div>
-        `;
-      }).join('');
+        </div>
+        <div class="videos-container">
+			<button class="scroll-btn left" onclick="scrollSection('${channelId}', 'left')">
+				<i class="fas fa-chevron-left"></i>
+			</button>
+			<div class="videos-scroll" id="scroll-${channelId}">
+				${limitedVideos.map(video => `
+					<div class="video-card-horizontal" data-platform="${video.platform}" data-id="${video.id}">
+						<div class="card-thumbnail">
+							<img src="${getOptimalThumbnail(video)}" alt="${video.title}" loading="lazy" onerror="handleImageError(this)">
+							<div class="play-overlay">
+								<i class="fas fa-play"></i>
+							</div>
+						</div>
+						<div class="card-content">
+							<h3 class="card-title">${video.title}</h3>
+							<div class="card-meta">
+								<span class="card-date">${formatDate(video.date)}</span>
+							</div>
+						</div>
+					</div>
+				`).join('')}
+			</div>
+			<button class="scroll-btn right" onclick="scrollSection('${channelId}', 'right')">
+				<i class="fas fa-chevron-right"></i>
+			</button>
+		</div>
+      </div>
+    `;
+  }).join('');
 
-      elements.channelSections.innerHTML = sectionsHTML;
-      
-      // Ensure loading state is hidden and sections are visible
-      //elements.loadingState.classList.add('hidden');
-      //elements.errorState.classList.add('hidden');
-      //elements.channelSections.classList.remove('hidden');
-      
-      attachVideoCardListeners(elements.channelSections, '.video-card-horizontal');
-    }
+  elements.channelSections.innerHTML = sectionsHTML;
+  attachVideoCardListeners(elements.channelSections, '.video-card-horizontal');
+}
 
     function renderVideoGrid(videoList, container, showChannelTags) {
       if (videoList.length === 0) {
@@ -1384,6 +1437,31 @@ function openPlayer(platform, videoId, video) {
         }
       }, 250);
     });
+	
+	
+	// Scroll section function for PC navigation
+function scrollSection(channelId, direction) {
+  const scrollContainer = document.getElementById(`scroll-${channelId}`);
+  if (!scrollContainer) return;
+  
+  const scrollAmount = window.innerWidth < 1024 ? 300 : 900;
+  const currentScroll = scrollContainer.scrollLeft;
+  
+  if (direction === 'left') {
+    scrollContainer.scrollTo({
+      left: currentScroll - scrollAmount,
+      behavior: 'smooth'
+    });
+  } else {
+    scrollContainer.scrollTo({
+      left: currentScroll + scrollAmount,
+      behavior: 'smooth'
+    });
+  }
+}
+
+// Make it globally accessible
+window.scrollSection = scrollSection;
   </script>
 </body>
 </html>
