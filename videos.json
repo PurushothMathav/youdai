@@ -1,6 +1,60 @@
 [
   {
     "platform": "dailymotion",
+    "id": "k1VKUMJTO63Id2DRtKq",
+    "title": "Pudhu Vasantham",
+    "mthumb": "https://img1.imageride.net/images/2025/09/15/Puthu.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/15/Puthu.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-17"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k4nVuUDKLXaVl6DRrQs",
+    "title": "Idhayam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/id1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/id1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-17"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "kjA4UYMTX84gBNDRrEg",
+    "title": "Vinodhini",
+    "mthumb": "https://img1.imageride.net/images/2025/09/15/Vinodhi.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/15/Vinodhi.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-17"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k3Xz8fGdtQDcF5DRr3u",
+    "title": "Varisu",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/vari.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/vari.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-17"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k6YkXhIWbQTSMoDRqQo",
+    "title": "Manamagale Vaa",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/ManamagaleVaa.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/ManamagaleVaa.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-17"
+  },
+  {
+    "platform": "youtube",
+    "id": "8bx6aFfVetU",
+    "title": "Arasi",
+    "mthumb": "https://img.youtube.com/vi/8bx6aFfVetU/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/8bx6aFfVetU/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-17"
+  },
+  {
+    "platform": "dailymotion",
     "id": "k7y6iy5GyIxYmIDRq4C",
     "title": "Kanmani Anbudan",
     "mthumb": "https://img.imageride.net/images/2025/09/12/ka.jpg",
