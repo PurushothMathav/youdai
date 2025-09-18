@@ -1,5 +1,140 @@
 [
   {
+    "platform": "dailymotion",
+    "id": "k3NvhnJt2adrw0DS23G",
+    "title": "Lakshmi",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/Lakshmi.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/Lakshmi.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k3I6xHIDoAWhLNDS1HW",
+    "title": "Mounam Pesiyadhe",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/mp-2.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/mp-2.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k7A5kCL5zCQHbdDS11O",
+    "title": "Ilakkiya",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/Ilakki.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/Ilakki.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k7pE2giS8Q1L1bDS0zI",
+    "title": "Manasellam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/me1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/me1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k6qtrOzHAEEd2oDRZRQ",
+    "title": "Pudhu Vasantham",
+    "mthumb": "https://img1.imageride.net/images/2025/09/15/Puthu.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/15/Puthu.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k197zHvBvx9V5HDRZU2",
+    "title": "Idhayam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/id1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/id1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k7xpU7qNh6GuBpDRXTm",
+    "title": "Vinodhini",
+    "mthumb": "https://img1.imageride.net/images/2025/09/15/Vinodhi.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/15/Vinodhi.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k5lTEnJPGbeJm7DRWyq",
+    "title": "Varisu",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/vari.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/vari.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "kpW269xEBIiOybDRWjW",
+    "title": "Manamagale Vaa",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/ManamagaleVaa.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/ManamagaleVaa.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k4dateT9dfcwuYDRVLU",
+    "title": "Punitha",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Punitha.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Punitha.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k7xWCRTx2nlYuKDRVlI",
+    "title": "Poongodi",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/pk.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/pk.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "vwim1ZtMumc",
+    "title": "Koondukkili",
+    "mthumb": "https://img.youtube.com/vi/vwim1ZtMumc/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/vwim1ZtMumc/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "0p9lKnDyFz4",
+    "title": "Gayathrii",
+    "mthumb": "https://img.youtube.com/vi/0p9lKnDyFz4/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/0p9lKnDyFz4/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "YzITOukqyJI",
+    "title": "Arasi",
+    "mthumb": "https://img.youtube.com/vi/YzITOukqyJI/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/YzITOukqyJI/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "6THKasWZtgk",
+    "title": "Thamarai",
+    "mthumb": "https://img.youtube.com/vi/6THKasWZtgk/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/6THKasWZtgk/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-18"
+  },
+  {
     "platform": "youtube",
     "id": "6AdSX69fugg",
     "title": "Annamalai",
