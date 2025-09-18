@@ -645,18 +645,47 @@
   opacity: 1;
 }
 
-/* Disable page zoom but allow video zoom */
-html, body {
-  touch-action: pan-x pan-y;
+
+/* Add fullscreen-specific styles */
+.player-container:-webkit-full-screen .player-iframe,
+.player-container:-moz-full-screen .player-iframe,
+.player-container:fullscreen .player-iframe {
+  position: relative;
+  z-index: 1;
 }
 
-.player-container {
+/* Fullscreen touch overlay */
+.fullscreen-touch-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  background: transparent;
+}
+
+.fullscreen-touch-overlay.active {
+  pointer-events: all;
+}
+
+html {
+  -ms-touch-action: manipulation;
   touch-action: manipulation;
 }
 
-.player-iframe {
+body {
+  -ms-touch-action: manipulation;
   touch-action: manipulation;
-}	
+}
+
+/* Ensure fullscreen container allows touch */
+.player-container:fullscreen,
+.player-container:-webkit-full-screen,
+.player-container:-moz-full-screen {
+  touch-action: manipulation;
+}
   </style>
 </head>
 <body>
@@ -1311,7 +1340,6 @@ initCast() {
 	  
 // Touch gesture setup and handlers
 setupTouchGestures() {
-  // Only enable on mobile devices
   const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
                    window.innerWidth <= 768;
   
@@ -1319,20 +1347,83 @@ setupTouchGestures() {
   
   this.touchGestureEnabled = true;
   
-  // Prevent default zoom on the entire page
-  document.addEventListener('touchmove', (e) => {
-    if (e.touches.length > 1) {
-      e.preventDefault();
-    }
-  }, { passive: false });
+  // Create fullscreen touch overlay
+  this.createTouchOverlay();
   
-  // Add touch event listeners ONLY to the iframe area
-  this.elements.playerIframe.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
-  this.elements.playerIframe.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
-  this.elements.playerIframe.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
+  // Listen for fullscreen changes
+  document.addEventListener('fullscreenchange', () => this.handleFullscreenChange());
+  document.addEventListener('webkitfullscreenchange', () => this.handleFullscreenChange());
+  document.addEventListener('mozfullscreenchange', () => this.handleFullscreenChange());
   
-  // Setup long press for reset - also only on iframe
+  // Setup touch events for both normal and fullscreen modes
+  this.setupTouchEvents();
   this.setupLongPress();
+}
+
+createTouchOverlay() {
+  this.touchOverlay = document.createElement('div');
+  this.touchOverlay.className = 'fullscreen-touch-overlay';
+  this.elements.playerContainer.appendChild(this.touchOverlay);
+}
+
+handleFullscreenChange() {
+  const isFullscreen = !!(document.fullscreenElement || 
+                         document.webkitFullscreenElement || 
+                         document.mozFullScreenElement);
+  
+  if (isFullscreen) {
+    // In fullscreen, activate the overlay
+    this.touchOverlay.classList.add('active');
+    console.log('Fullscreen mode - touch overlay activated');
+  } else {
+    // Not in fullscreen, deactivate overlay
+    this.touchOverlay.classList.remove('active');
+    console.log('Normal mode - touch overlay deactivated');
+  }
+}
+
+setupTouchEvents() {
+  const touchTargets = [this.elements.playerContainer, this.touchOverlay];
+  
+  touchTargets.forEach(target => {
+    target.addEventListener('touchstart', (e) => {
+      if (this.shouldHandleTouch(e)) {
+        this.handleTouchStart(e);
+      }
+    }, { passive: false });
+    
+    target.addEventListener('touchmove', (e) => {
+      if (this.shouldHandleTouch(e)) {
+        this.handleTouchMove(e);
+      }
+    }, { passive: false });
+    
+    target.addEventListener('touchend', (e) => {
+      this.handleTouchEnd(e);
+    }, { passive: false });
+  });
+}
+
+shouldHandleTouch(e) {
+  const isFullscreen = !!(document.fullscreenElement || 
+                         document.webkitFullscreenElement || 
+                         document.mozFullScreenElement);
+  
+  if (isFullscreen) {
+    // In fullscreen, handle all touches on the overlay
+    return e.target === this.touchOverlay || this.touchOverlay.contains(e.target);
+  } else {
+    // In normal mode, check if touch is within player area
+    return this.isTouchWithinPlayer(e.touches[0]);
+  }
+}
+
+isTouchWithinPlayer(touch) {
+  const containerRect = this.elements.playerContainer.getBoundingClientRect();
+  return touch.clientX >= containerRect.left && 
+         touch.clientX <= containerRect.right && 
+         touch.clientY >= containerRect.top && 
+         touch.clientY <= containerRect.bottom;
 }
 
 getDistance(touches) {
@@ -1344,32 +1435,36 @@ getDistance(touches) {
 handleTouchStart(e) {
   if (e.touches.length === 2) {
     this.initialDistance = this.getDistance(e.touches);
-    e.preventDefault(); // Prevent default zoom behavior
+    console.log('Touch start - initial distance:', this.initialDistance);
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
 
 handleTouchMove(e) {
   if (e.touches.length === 2 && this.initialDistance !== null) {
-    e.preventDefault(); // Prevent default zoom behavior
+    e.preventDefault();
+    e.stopPropagation();
     
     const currentDistance = this.getDistance(e.touches);
     const diff = currentDistance - this.initialDistance;
     
-    if (Math.abs(diff) > 40) { // Minimum pinch distance to trigger
+    console.log('Touch move - distance diff:', diff);
+    
+    if (Math.abs(diff) > 40) {
       if (diff > 0) {
-        // Pinch out → stretch
         if (this.currentZoomState !== 'stretch') {
+          console.log('Pinch out - stretching');
           this.setZoomState('stretch');
           this.showToast('Stretch to fill screen');
         }
       } else {
-        // Pinch in → fit
         if (this.currentZoomState !== 'fit') {
+          console.log('Pinch in - fitting');
           this.setZoomState('fit');
           this.showToast('Fit to screen');
         }
       }
-      // Prevent multiple toggles in one gesture
       this.initialDistance = null;
     }
   }
@@ -1378,6 +1473,7 @@ handleTouchMove(e) {
 handleTouchEnd(e) {
   if (e.touches.length < 2) {
     this.initialDistance = null;
+    console.log('Touch end - reset distance');
   }
 }
 
@@ -1436,29 +1532,32 @@ setupLongPress() {
   let longPressTimer = null;
   let touchStarted = false;
   
-  // Change from playerContainer to playerIframe
-  this.elements.playerIframe.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-      touchStarted = true;
-      longPressTimer = setTimeout(() => {
-        if (touchStarted) {
-          this.setZoomState('normal');
-          this.showToast('Reset to normal size');
-          if (navigator.vibrate) {
-            navigator.vibrate(50);
-          }
-        }
-      }, 800);
-    }
-  });
+  const touchTargets = [this.elements.playerContainer, this.touchOverlay];
   
-  // Change from playerContainer to playerIframe
-  this.elements.playerIframe.addEventListener('touchend', (e) => {
-    touchStarted = false;
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      longPressTimer = null;
-    }
+  touchTargets.forEach(target => {
+    target.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1 && this.shouldHandleTouch(e)) {
+        touchStarted = true;
+        longPressTimer = setTimeout(() => {
+          if (touchStarted) {
+            console.log('Long press detected');
+            this.setZoomState('normal');
+            this.showToast('Reset to normal size');
+            if (navigator.vibrate) {
+              navigator.vibrate(50);
+            }
+          }
+        }, 800);
+      }
+    });
+    
+    target.addEventListener('touchend', (e) => {
+      touchStarted = false;
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    });
   });
 }
 
