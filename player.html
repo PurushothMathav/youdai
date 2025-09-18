@@ -686,6 +686,55 @@ body {
 .player-container:-moz-full-screen {
   touch-action: manipulation;
 }
+
+/* Enhanced fullscreen touch support */
+.player-container:fullscreen .player-iframe,
+.player-container:-webkit-full-screen .player-iframe,
+.player-container:-moz-full-screen .player-iframe {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain;
+}
+
+/* Fullscreen zoom states with higher specificity */
+.player-container:fullscreen .player-iframe.touch-fit,
+.player-container:-webkit-full-screen .player-iframe.touch-fit,
+.player-container:-moz-full-screen .player-iframe.touch-fit {
+  transform: scale(0.75) !important;
+  transform-origin: center center !important;
+}
+
+.player-container:fullscreen .player-iframe.touch-stretch,
+.player-container:-webkit-full-screen .player-iframe.touch-stretch,
+.player-container:-moz-full-screen .player-iframe.touch-stretch {
+  transform: scale(1.33) !important;
+  transform-origin: center center !important;
+}
+
+.player-container:fullscreen .player-iframe.touch-normal,
+.player-container:-webkit-full-screen .player-iframe.touch-normal,
+.player-container:-moz-full-screen .player-iframe.touch-normal {
+  transform: scale(1) !important;
+  transform-origin: center center !important;
+}
+
+/* Enhanced touch overlay for fullscreen */
+.fullscreen-touch-overlay.active {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 999999 !important;
+  pointer-events: all !important;
+  background: transparent;
+  touch-action: none !important;
+}
   </style>
 </head>
 <body>
@@ -1390,18 +1439,37 @@ setupTouchEvents() {
       if (this.shouldHandleTouch(e)) {
         this.handleTouchStart(e);
       }
-    }, { passive: false });
+    }, { passive: false, capture: true });
     
     target.addEventListener('touchmove', (e) => {
       if (this.shouldHandleTouch(e)) {
         this.handleTouchMove(e);
       }
-    }, { passive: false });
+    }, { passive: false, capture: true });
     
     target.addEventListener('touchend', (e) => {
       this.handleTouchEnd(e);
-    }, { passive: false });
+    }, { passive: false, capture: true });
   });
+  
+  // Additional fullscreen-specific event handling
+  document.addEventListener('touchstart', (e) => {
+    const isFullscreen = !!(document.fullscreenElement || 
+                           document.webkitFullscreenElement || 
+                           document.mozFullScreenElement);
+    if (isFullscreen && e.touches.length === 2) {
+      this.handleTouchStart(e);
+    }
+  }, { passive: false, capture: true });
+  
+  document.addEventListener('touchmove', (e) => {
+    const isFullscreen = !!(document.fullscreenElement || 
+                           document.webkitFullscreenElement || 
+                           document.mozFullScreenElement);
+    if (isFullscreen && e.touches.length === 2) {
+      this.handleTouchMove(e);
+    }
+  }, { passive: false, capture: true });
 }
 
 shouldHandleTouch(e) {
@@ -1410,8 +1478,8 @@ shouldHandleTouch(e) {
                          document.mozFullScreenElement);
   
   if (isFullscreen) {
-    // In fullscreen, handle all touches on the overlay
-    return e.target === this.touchOverlay || this.touchOverlay.contains(e.target);
+    // In fullscreen, handle ALL touches
+    return true;
   } else {
     // In normal mode, check if touch is within player area
     return this.isTouchWithinPlayer(e.touches[0]);
@@ -1436,22 +1504,37 @@ handleTouchStart(e) {
   if (e.touches.length === 2) {
     this.initialDistance = this.getDistance(e.touches);
     console.log('Touch start - initial distance:', this.initialDistance);
-    e.preventDefault();
-    e.stopPropagation();
+    
+    // Prevent all default behaviors in fullscreen
+    const isFullscreen = !!(document.fullscreenElement || 
+                           document.webkitFullscreenElement || 
+                           document.mozFullScreenElement);
+    if (isFullscreen) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    }
   }
 }
 
 handleTouchMove(e) {
   if (e.touches.length === 2 && this.initialDistance !== null) {
-    e.preventDefault();
-    e.stopPropagation();
+    const isFullscreen = !!(document.fullscreenElement || 
+                           document.webkitFullscreenElement || 
+                           document.mozFullScreenElement);
+    
+    if (isFullscreen) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    }
     
     const currentDistance = this.getDistance(e.touches);
     const diff = currentDistance - this.initialDistance;
     
-    console.log('Touch move - distance diff:', diff);
+    console.log('Touch move - distance diff:', diff, 'fullscreen:', isFullscreen);
     
-    if (Math.abs(diff) > 40) {
+    if (Math.abs(diff) > 30) { // Reduced threshold for better responsiveness
       if (diff > 0) {
         if (this.currentZoomState !== 'stretch') {
           console.log('Pinch out - stretching');
@@ -1465,7 +1548,7 @@ handleTouchMove(e) {
           this.showToast('Fit to screen');
         }
       }
-      this.initialDistance = null;
+      this.initialDistance = currentDistance; // Update reference point
     }
   }
 }
@@ -1497,6 +1580,38 @@ setZoomState(state) {
   }
   
   this.currentZoomState = state;
+  
+  // Force update in fullscreen
+  this.forceZoomUpdate();
+}
+
+forceZoomUpdate() {
+  const iframe = this.elements.playerIframe;
+  const isFullscreen = !!(document.fullscreenElement || 
+                         document.webkitFullscreenElement || 
+                         document.mozFullScreenElement);
+  
+  if (isFullscreen) {
+    // Force a reflow to ensure CSS changes apply
+    iframe.style.display = 'none';
+    iframe.offsetHeight; // Trigger reflow
+    iframe.style.display = 'block';
+    
+    // Additional fallback using direct style
+    setTimeout(() => {
+      switch(this.currentZoomState) {
+        case 'fit':
+          iframe.style.transform = 'scale(0.75)';
+          break;
+        case 'stretch':
+          iframe.style.transform = 'scale(1.33)';
+          break;
+        default:
+          iframe.style.transform = 'scale(1)';
+      }
+      iframe.style.transformOrigin = 'center center';
+    }, 50);
+  }
 }
 
 showToast(message) {
