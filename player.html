@@ -643,6 +643,19 @@
 
 .zoom-toast.show {
   opacity: 1;
+}
+
+/* Disable page zoom but allow video zoom */
+html, body {
+  touch-action: pan-x pan-y;
+}
+
+.player-container {
+  touch-action: manipulation;
+}
+
+.player-iframe {
+  touch-action: manipulation;
 }	
   </style>
 </head>
@@ -1306,12 +1319,19 @@ setupTouchGestures() {
   
   this.touchGestureEnabled = true;
   
-  // Add touch event listeners to player container
-  this.elements.playerContainer.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
-  this.elements.playerContainer.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
-  this.elements.playerContainer.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
+  // Prevent default zoom on the entire page
+  document.addEventListener('touchmove', (e) => {
+    if (e.touches.length > 1) {
+      e.preventDefault();
+    }
+  }, { passive: false });
   
-  // Setup long press for reset
+  // Add touch event listeners ONLY to the iframe area
+  this.elements.playerIframe.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
+  this.elements.playerIframe.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
+  this.elements.playerIframe.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
+  
+  // Setup long press for reset - also only on iframe
   this.setupLongPress();
 }
 
@@ -1416,24 +1436,24 @@ setupLongPress() {
   let longPressTimer = null;
   let touchStarted = false;
   
-  this.elements.playerContainer.addEventListener('touchstart', (e) => {
+  // Change from playerContainer to playerIframe
+  this.elements.playerIframe.addEventListener('touchstart', (e) => {
     if (e.touches.length === 1) {
       touchStarted = true;
       longPressTimer = setTimeout(() => {
         if (touchStarted) {
-          // Long press detected - reset to normal zoom
           this.setZoomState('normal');
           this.showToast('Reset to normal size');
-          // Add haptic feedback if available
           if (navigator.vibrate) {
             navigator.vibrate(50);
           }
         }
-      }, 800); // 800ms long press
+      }, 800);
     }
   });
   
-  this.elements.playerContainer.addEventListener('touchend', (e) => {
+  // Change from playerContainer to playerIframe
+  this.elements.playerIframe.addEventListener('touchend', (e) => {
     touchStarted = false;
     if (longPressTimer) {
       clearTimeout(longPressTimer);
