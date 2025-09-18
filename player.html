@@ -135,6 +135,20 @@
       height: 100%;
       border: none;
     }
+	
+.player-iframe.stretch-fill {
+  object-fit: fill !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.player-iframe.stretch-cover {
+  object-fit: cover !important;
+}
+
+.player-iframe.stretch-contain {
+  object-fit: contain !important;
+}	
 
     .player-loading {
       position: absolute;
@@ -588,6 +602,11 @@
         height: 36px;
         font-size: 14px;
       }
+	  
+.nav-btn.stretch-btn:hover {
+  background: #ffa726;
+  box-shadow: 0 4px 15px rgba(255, 167, 38, 0.3);
+}	  
 
       .share-content {
         padding: 20px;
@@ -625,6 +644,9 @@
         <button class="nav-btn cast-btn" id="castBtn" title="Open Link">
           <i class="fa-solid fa-globe"></i>
         </button>
+		<button class="nav-btn stretch-btn" id="stretchBtn" title="Stretch Mode">
+		  <i class="fas fa-expand-arrows-alt"></i>
+		</button>
         <button class="nav-btn share-btn" id="shareBtn" title="Share Video">
           <i class="fas fa-share-alt"></i>
         </button>
@@ -742,7 +764,8 @@ disable-paste='false'>
           closeShareBtn: document.getElementById('closeShareBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
-          externalLink: document.getElementById('externalLink')
+          externalLink: document.getElementById('externalLink'),
+		  stretchBtn: document.getElementById('stretchBtn'),
         };
 
         this.init();
@@ -1253,6 +1276,11 @@ initCast() {
       setupEventListeners() {
         // Share button
         this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
+		
+		// Stretch button
+		this.elements.stretchBtn = document.getElementById('stretchBtn');
+		this.stretchMode = 'contain'; // default mode
+		this.elements.stretchBtn.addEventListener('click', () => this.toggleStretchMode());
 
         // Share modal
         this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
@@ -1394,6 +1422,27 @@ handleCast() {
     // fallback for other platforms
     window.open(this.getDirectVideoLink(), "_blank");
   }
+}
+
+toggleStretchMode() {
+  const modes = ['contain', 'cover', 'fill'];
+  const icons = ['fas fa-compress-arrows-alt', 'fas fa-expand-arrows-alt', 'fas fa-arrows-alt'];
+  const titles = ['Fit to Screen', 'Fill Screen', 'Stretch to Fill'];
+  
+  const currentIndex = modes.indexOf(this.stretchMode);
+  const nextIndex = (currentIndex + 1) % modes.length;
+  
+  this.stretchMode = modes[nextIndex];
+  
+  // Remove all stretch classes
+  this.elements.playerIframe.classList.remove('stretch-fill', 'stretch-cover', 'stretch-contain');
+  
+  // Add new stretch class
+  this.elements.playerIframe.classList.add(`stretch-${this.stretchMode}`);
+  
+  // Update button icon and title
+  this.elements.stretchBtn.innerHTML = `<i class="${icons[nextIndex]}"></i>`;
+  this.elements.stretchBtn.title = titles[nextIndex];
 }
 
       toggleFullscreen() {
