@@ -1,6 +1,213 @@
 [
   {
     "platform": "dailymotion",
+    "id": "kKbQNMQiuKuvGcDShTQ",
+    "title": "Malli",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Malli.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Malli.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k78RaM62CaiDRADShRI",
+    "title": "Lakshmi Kalyanam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/lk1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/lk1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "kCxeYp13OA6qIBDShru",
+    "title": "Aadukalam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/Aadukalam.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/Aadukalam.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k3dxltiYnD54m9DSgEw",
+    "title": "Ethir Neechal Thodargirathu",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Ethir.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Ethir.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k5YMG98bL0IUaKDShlw",
+    "title": "Ninaithale Innikkum",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/ni1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/ni1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k4WdNWHLu96VqODSgaU",
+    "title": "Sandhya Raagam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/sr1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/sr1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k3tn4ZyRiX1KdJDSfV0",
+    "title": "Singappenne",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/Singappenn.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/Singappenn.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k6qShlODA3wvinDSfDK",
+    "title": "Parijatham",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/pj1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/pj1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k6IpNjXXMvmZgVDSf26",
+    "title": "Moondru Mudichi",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Moondru.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Moondru.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k2RxXc9NAZ6qCzDSdxG",
+    "title": "Karthigai Deepam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/kd1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/kd1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k2fBsne6yQL7f8DScZw",
+    "title": "Annam Kayal Marumagal",
+    "mthumb": "https://img1.imageride.net/images/2025/09/15/ms.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/15/ms.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "kzreNeROyABdMEDSc4Q",
+    "title": "Ayali",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k8XMtlqzZSBFtrDSbtM",
+    "title": "Anna",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/ann1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/ann1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k1WoaSQEXHIsclDS92I",
+    "title": "Veera",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/vee11.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/vee11.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k5KyXWFC5JYzXEDS8R0",
+    "title": "Ramayanam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/rama.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/rama.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k6mmPn6gl1c0zRDS8MO",
+    "title": "Chinna Siru Kiliye",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/csk.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/csk.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k4DliQYuoZUovYDS7ts",
+    "title": "Getti Melam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/gm1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/gm1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
+    "id": "k6VmNqWNGaEAPnDS7qA",
+    "title": "Maari",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/maari1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/maari1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "J00zjgE5STY",
+    "title": "Karnaa",
+    "mthumb": "https://img.youtube.com/vi/J00zjgE5STY/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/J00zjgE5STY/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "lp-wSY2-Yik",
+    "title": "Poovum Pottu",
+    "mthumb": "https://img.youtube.com/vi/lp-wSY2-Yik/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/lp-wSY2-Yik/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "QIk0k2Pjc38",
+    "title": "KAIRASI KUDUMBAM",
+    "mthumb": "https://img.youtube.com/vi/QIk0k2Pjc38/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/QIk0k2Pjc38/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "KgtjAXzXuUU",
+    "title": "Jayam",
+    "mthumb": "https://img.youtube.com/vi/KgtjAXzXuUU/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/KgtjAXzXuUU/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "9rj4FHoX4b4",
+    "title": "Sabash Meera",
+    "mthumb": "https://img.youtube.com/vi/9rj4FHoX4b4/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/9rj4FHoX4b4/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "dailymotion",
     "id": "k60BXxcnoBBqptDS2BA",
     "title": "Salangai Oli",
     "mthumb": "https://img.imageride.net/images/2025/09/11/so.jpg",
