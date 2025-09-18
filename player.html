@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>YouDai Player</title>
   
@@ -21,6 +21,10 @@
     * {
       box-sizing: border-box;
     }
+	
+	html, body {
+	  touch-action: manipulation;
+	}
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
