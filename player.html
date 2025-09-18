@@ -1360,29 +1360,31 @@ const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test
                  || window.innerWidth <= 768;
 
 let pressTimer;
+let longPressTriggered = false;
 
-// --- on mobile: long press toggles zoom-fill, short press toggles fullscreen ---
 if (isMobile) {
   this.elements.customFsBtn.addEventListener('touchstart', (e) => {
+    longPressTriggered = false;
     pressTimer = setTimeout(() => {
-      // long press → toggle zoom fill
+      // long press action → toggle zoom-fill
       if (document.fullscreenElement) {
         this.elements.playerContainer.classList.toggle('zoom-fill');
       }
+      longPressTriggered = true; // mark that long-press was done
     }, 500); // hold 500ms
   }, {passive: true});
 
   this.elements.customFsBtn.addEventListener('touchend', (e) => {
-    if (pressTimer) {
-      clearTimeout(pressTimer);
-      // treat as short press → toggle fullscreen
+    clearTimeout(pressTimer);
+    // only do normal fullscreen toggle if long press did NOT fire
+    if (!longPressTriggered) {
       this.toggleFullscreen();
     }
   });
 
   this.elements.customFsBtn.addEventListener('touchmove', () => clearTimeout(pressTimer));
 } else {
-  // --- on PC: just normal click toggles fullscreen ---
+  // on PC just normal click
   this.elements.customFsBtn.addEventListener('click', () => {
     this.toggleFullscreen();
   });
