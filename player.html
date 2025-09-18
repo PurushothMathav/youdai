@@ -705,8 +705,6 @@
         <div class="loading"></div>
       </div>
 	  
-	  <div class="gesture-overlay" id="gestureOverlay"></div>
-	  
 <div class="custom-fs-btn" id="customFsBtn">
   <i class="fas fa-expand"></i>
 </div>
@@ -827,7 +825,6 @@ disable-paste='false'>
         this.detectCastDevices();
         this.initCast();
         this.loadVideo();
-		this.setupPinchZoom();
         
         // Extract M3U8 if Dailymotion video
         if (this.currentVideo && this.currentVideo.platform === 'dailymotion') {
@@ -1112,10 +1109,8 @@ const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test
                  || window.innerWidth <= 768;
 
 if (this.currentVideo.platform === 'youtube' && isMobile) {
-  document.getElementById('gestureOverlay').style.display = 'block';
   document.getElementById('customFsBtn').style.display = 'flex';
 } else {
-  document.getElementById('gestureOverlay').style.display = 'none';
   document.getElementById('customFsBtn').style.display = 'none';
 }
 
@@ -1361,9 +1356,37 @@ if (this.currentVideo.platform === 'youtube' && isMobile) {
 		
 this.elements.customFsBtn = document.getElementById("customFsBtn");
 
-this.elements.customFsBtn.addEventListener("click", () => {
-  this.toggleFullscreen();
-});
+const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                 || window.innerWidth <= 768;
+
+let pressTimer;
+
+// --- on mobile: long press toggles zoom-fill, short press toggles fullscreen ---
+if (isMobile) {
+  this.elements.customFsBtn.addEventListener('touchstart', (e) => {
+    pressTimer = setTimeout(() => {
+      // long press → toggle zoom fill
+      if (document.fullscreenElement) {
+        this.elements.playerContainer.classList.toggle('zoom-fill');
+      }
+    }, 500); // hold 500ms
+  }, {passive: true});
+
+  this.elements.customFsBtn.addEventListener('touchend', (e) => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      // treat as short press → toggle fullscreen
+      this.toggleFullscreen();
+    }
+  });
+
+  this.elements.customFsBtn.addEventListener('touchmove', () => clearTimeout(pressTimer));
+} else {
+  // --- on PC: just normal click toggles fullscreen ---
+  this.elements.customFsBtn.addEventListener('click', () => {
+    this.toggleFullscreen();
+  });
+}
 
 document.addEventListener("fullscreenchange", () => {
   if (document.fullscreenElement) {
@@ -1520,47 +1543,6 @@ toggleFullscreen() {
         this.retryCount = 0;
         this.loadVideo();
       }
-	  
-setupPinchZoom() {
-  let initialDistance = null;
-  const overlay = document.getElementById("gestureOverlay");
-
-  overlay.addEventListener("touchstart", (e) => {
-    if (e.touches.length === 2 && document.fullscreenElement === this.elements.playerContainer) {
-      // record pinch distance
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      initialDistance = Math.sqrt(dx*dx + dy*dy);
-    }
-
-    // 👇 pass single-finger touch to iframe
-    if (e.touches.length === 1) {
-      overlay.style.pointerEvents = "none"; // let iframe handle it
-      setTimeout(() => {
-        overlay.style.pointerEvents = "auto"; // re-enable after touch ends
-      }, 300);
-    }
-  }, { passive: true });
-
-  overlay.addEventListener("touchmove", (e) => {
-    if (e.touches.length === 2 && initialDistance) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      const newDistance = Math.sqrt(dx*dx + dy*dy);
-
-      if (newDistance - initialDistance > 50) {
-        // Pinch out → Zoom Fill
-        this.elements.playerContainer.classList.add("zoom-fill");
-        initialDistance = null;
-      } else if (initialDistance - newDistance > 50) {
-        // Pinch in → Fit
-        this.elements.playerContainer.classList.remove("zoom-fill");
-        initialDistance = null;
-      }
-    }
-  }, { passive: true });
-}
-
     }
 
     // Initialize player when DOM is ready
