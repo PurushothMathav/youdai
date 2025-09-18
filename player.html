@@ -603,6 +603,61 @@
     .hidden {
       display: none !important;
     }
+	
+/* Zoom controls for mobile */
+.zoom-controls {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 1000;
+}
+
+.zoom-btn {
+  background: rgba(0,0,0,0.7);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: #4ecdc4;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-btn:hover {
+  background: rgba(0,0,0,0.9);
+  transform: scale(1.1);
+}
+
+.zoom-btn:active {
+  transform: scale(0.95);
+}
+
+/* Show zoom controls on mobile */
+@media (max-width: 768px) {
+  .zoom-controls {
+    display: flex;
+  }
+}
+
+/* Iframe scaling */
+.player-iframe.zoomed-out {
+  transform: scale(0.75);
+  transform-origin: center;
+}
+
+.player-iframe.zoomed-in {
+  transform: scale(1.25);
+  transform-origin: center;
+}	
+	
   </style>
 </head>
 <body>
@@ -636,6 +691,12 @@
       </div>
       
       <iframe id="playerIframe" class="player-iframe" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+
+<div class="zoom-controls" id="zoomControls">
+  <button class="zoom-btn" id="zoomOutBtn" title="Zoom Out">−</button>
+  <button class="zoom-btn" id="fitBtn" title="Fit to Screen">⌂</button>
+  <button class="zoom-btn" id="zoomInBtn" title="Zoom In">+</button>
+</div>
       
       <div class="player-error" id="playerError">
         <i class="fas fa-exclamation-triangle error-icon"></i>
@@ -738,7 +799,11 @@ disable-paste='false'>
           closeShareBtn: document.getElementById('closeShareBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
-          externalLink: document.getElementById('externalLink')
+          externalLink: document.getElementById('externalLink'),
+		  zoomControls: document.getElementById('zoomControls'),
+		  zoomOutBtn: document.getElementById('zoomOutBtn'),
+		  fitBtn: document.getElementById('fitBtn'),
+		  zoomInBtn: document.getElementById('zoomInBtn')
         };
 
         this.init();
@@ -747,6 +812,7 @@ disable-paste='false'>
       async init() {
         this.loadVideoData();
         this.setupEventListeners();
+		this.setupZoomControls();
         this.setupMobileOrientationHandler();
         this.detectCastDevices();
         this.initCast();
@@ -1146,6 +1212,8 @@ initCast() {
         if (video.platform === 'dailymotion') {
           await this.extractM3U8();
         }
+		
+		this.showZoomControls();
         
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1210,6 +1278,7 @@ initCast() {
 
       hideLoading() {
         this.elements.playerLoading.style.display = 'none';
+		this.showZoomControls();
       }
 
       showError() {
@@ -1245,6 +1314,50 @@ initCast() {
           this.showError();
         }
       }
+	  
+setupZoomControls() {
+  this.currentZoom = 1; // Track current zoom level
+  
+  // Zoom out (fit to screen)
+  this.elements.zoomOutBtn.addEventListener('click', () => {
+    this.elements.playerIframe.className = 'player-iframe zoomed-out';
+    this.currentZoom = 0.75;
+    this.updateZoomButtons();
+  });
+  
+  // Fit to original size
+  this.elements.fitBtn.addEventListener('click', () => {
+    this.elements.playerIframe.className = 'player-iframe';
+    this.currentZoom = 1;
+    this.updateZoomButtons();
+  });
+  
+  // Zoom in
+  this.elements.zoomInBtn.addEventListener('click', () => {
+    this.elements.playerIframe.className = 'player-iframe zoomed-in';
+    this.currentZoom = 1.25;
+    this.updateZoomButtons();
+  });
+}
+
+updateZoomButtons() {
+  // Update button appearance based on current zoom
+  this.elements.zoomOutBtn.style.opacity = this.currentZoom === 0.75 ? '0.5' : '1';
+  this.elements.fitBtn.style.opacity = this.currentZoom === 1 ? '0.5' : '1';
+  this.elements.zoomInBtn.style.opacity = this.currentZoom === 1.25 ? '0.5' : '1';
+}
+
+showZoomControls() {
+  // Only show for YouTube videos on mobile
+  const isMobile = window.innerWidth <= 768;
+  const isYouTube = this.currentVideo && this.currentVideo.platform === 'youtube';
+  
+  if (isMobile && isYouTube) {
+    this.elements.zoomControls.style.display = 'flex';
+  } else {
+    this.elements.zoomControls.style.display = 'none';
+  }
+}	  
 
       setupEventListeners() {
         // Share button

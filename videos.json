@@ -1,6 +1,33 @@
 [
   {
     "platform": "youtube",
+    "id": "6AdSX69fugg",
+    "title": "Annamalai",
+    "mthumb": "https://img.youtube.com/vi/6AdSX69fugg/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/6AdSX69fugg/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "IriRmVLfGBA",
+    "title": "Vaanampadi",
+    "mthumb": "https://img.youtube.com/vi/IriRmVLfGBA/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/IriRmVLfGBA/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
+    "id": "Q-6ukGTLhqg",
+    "title": "Bhagyajatakam",
+    "mthumb": "https://img.youtube.com/vi/Q-6ukGTLhqg/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/Q-6ukGTLhqg/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-18"
+  },
+  {
+    "platform": "youtube",
     "id": "EOL6Id55wq8",
     "title": "Death Of Me",
     "mthumb": "https://img.youtube.com/vi/EOL6Id55wq8/mqdefault.jpg",
