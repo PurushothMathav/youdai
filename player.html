@@ -663,7 +663,15 @@
   z-index: 10; /* above iframe */
   color: #fff;
   font-size: 18px;
-  transition: background 0.2s ease;
+
+  /* these two added for fading */
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.custom-fs-btn.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .custom-fs-btn:hover {
@@ -1337,94 +1345,117 @@ if (this.currentVideo.platform === 'youtube' && isMobile) {
         }
       }
 
-      setupEventListeners() {
-        // Share button
-        this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
+setupEventListeners() {
+  // Share button
+  this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
 
-        // Share modal
-        this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
-        this.elements.mxBtn.addEventListener('click', () => this.openInMXPlayer());
-        this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
-        this.elements.shareModal.addEventListener('click', (e) => {
-          if (e.target === this.elements.shareModal) this.closeShareModal();
-        });
-		this.elements.downloadBtn = document.getElementById('downloadBtn');
-		this.elements.downloadBtn.addEventListener('click', () => {
-			// open stream.html in same tab or new tab
-			window.location.href = 'stream.html';
-		});
-		
-this.elements.customFsBtn = document.getElementById("customFsBtn");
+  // Share modal
+  this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
+  this.elements.mxBtn.addEventListener('click', () => this.openInMXPlayer());
+  this.elements.closeShareBtn.addEventListener('click', () => this.closeShareModal());
+  this.elements.shareModal.addEventListener('click', (e) => {
+    if (e.target === this.elements.shareModal) this.closeShareModal();
+  });
+  this.elements.downloadBtn = document.getElementById('downloadBtn');
+  this.elements.downloadBtn.addEventListener('click', () => {
+    // open stream.html in same tab or new tab
+    window.location.href = 'stream.html';
+  });
 
-const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
-                 || window.innerWidth <= 768;
+  // Custom fullscreen button element
+  this.elements.customFsBtn = document.getElementById("customFsBtn");
 
-let pressTimer;
-let longPressTriggered = false;
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                   || window.innerWidth <= 768;
 
-if (isMobile) {
-  this.elements.customFsBtn.addEventListener('touchstart', (e) => {
-    longPressTriggered = false;
-    pressTimer = setTimeout(() => {
-      // long press action → toggle zoom-fill
-      if (document.fullscreenElement) {
-        this.elements.playerContainer.classList.toggle('zoom-fill');
+  // --- long press vs single tap logic ---
+  let pressTimer;
+  let longPressTriggered = false;
+
+  if (isMobile) {
+    this.elements.customFsBtn.addEventListener('touchstart', (e) => {
+      longPressTriggered = false;
+      pressTimer = setTimeout(() => {
+        // long press action → toggle zoom-fill
+        if (document.fullscreenElement) {
+          this.elements.playerContainer.classList.toggle('zoom-fill');
+        }
+        longPressTriggered = true; // mark that long-press was done
+      }, 500); // hold 500ms
+    }, {passive: true});
+
+    this.elements.customFsBtn.addEventListener('touchend', (e) => {
+      clearTimeout(pressTimer);
+      // only do normal fullscreen toggle if long press did NOT fire
+      if (!longPressTriggered) {
+        this.toggleFullscreen();
       }
-      longPressTriggered = true; // mark that long-press was done
-    }, 500); // hold 500ms
-  }, {passive: true});
+    });
 
-  this.elements.customFsBtn.addEventListener('touchend', (e) => {
-    clearTimeout(pressTimer);
-    // only do normal fullscreen toggle if long press did NOT fire
-    if (!longPressTriggered) {
+    this.elements.customFsBtn.addEventListener('touchmove', () => clearTimeout(pressTimer));
+  } else {
+    // on PC just normal click
+    this.elements.customFsBtn.addEventListener('click', () => {
       this.toggleFullscreen();
+    });
+  }
+
+  // Change icon depending on fullscreen state
+  document.addEventListener("fullscreenchange", () => {
+    if (document.fullscreenElement) {
+      this.elements.customFsBtn.innerHTML = '<i class="fas fa-compress"></i>'; // exit fs
+    } else {
+      this.elements.customFsBtn.innerHTML = '<i class="fas fa-expand"></i>'; // enter fs
     }
   });
 
-  this.elements.customFsBtn.addEventListener('touchmove', () => clearTimeout(pressTimer));
-} else {
-  // on PC just normal click
-  this.elements.customFsBtn.addEventListener('click', () => {
-    this.toggleFullscreen();
+  // --- Auto-hide fullscreen button after inactivity ---
+  let fsBtnHideTimer;
+  const showFsBtn = () => {
+    this.elements.customFsBtn.style.opacity = '1';        // show
+    this.elements.customFsBtn.style.pointerEvents = 'auto';
+    clearTimeout(fsBtnHideTimer);
+    fsBtnHideTimer = setTimeout(() => {
+      this.elements.customFsBtn.style.opacity = '0';      // hide
+      this.elements.customFsBtn.style.pointerEvents = 'none';
+    }, 3000); // 3 seconds idle
+  };
+
+  // Listen for interactions on the whole player area
+  ['mousemove', 'touchstart', 'click'].forEach(evt => {
+    this.elements.playerContainer.addEventListener(evt, showFsBtn, {passive:true});
+  });
+
+  // Initial state: visible, then auto-hide after idle
+  showFsBtn();
+
+  // Cast button
+  this.elements.castBtn.addEventListener('click', () => this.handleCast());
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    switch(e.key) {
+      case 'Escape':
+        if (this.elements.shareModal.style.display === 'flex') {
+          this.closeShareModal();
+        }
+        break;
+      case 'f':
+      case 'F':
+        if (document.activeElement !== document.querySelector('input')) {
+          e.preventDefault();
+          this.toggleFullscreen();
+        }
+        break;
+    }
+  });
+
+  // Back button
+  this.elements.backBtn = document.getElementById('backBtn');
+  this.elements.backBtn.addEventListener("click", () => {
+    window.location.href = "index.html";
   });
 }
-
-document.addEventListener("fullscreenchange", () => {
-  if (document.fullscreenElement) {
-    this.elements.customFsBtn.innerHTML = '<i class="fas fa-compress"></i>'; // exit fs
-  } else {
-    this.elements.customFsBtn.innerHTML = '<i class="fas fa-expand"></i>'; // enter fs
-  }
-});
-
-        // Cast button
-        this.elements.castBtn.addEventListener('click', () => this.handleCast());
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-          switch(e.key) {
-            case 'Escape':
-              if (this.elements.shareModal.style.display === 'flex') {
-                this.closeShareModal();
-              }
-              break;
-            case 'f':
-            case 'F':
-              if (document.activeElement !== document.querySelector('input')) {
-                e.preventDefault();
-                this.toggleFullscreen();
-              }
-              break;
-          }
-        });
-
-		// Back button
-		this.elements.backBtn = document.getElementById('backBtn');
-		this.elements.backBtn.addEventListener("click", () => {
-			window.location.href = "index.html";
-		});
-      }
 
 openShareModal() {
   this.elements.shareModal.style.display = 'flex';
