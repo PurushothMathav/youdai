@@ -135,20 +135,6 @@
       height: 100%;
       border: none;
     }
-	
-.player-iframe.stretch-fill {
-  object-fit: fill !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.player-iframe.stretch-cover {
-  object-fit: cover !important;
-}
-
-.player-iframe.stretch-contain {
-  object-fit: contain !important;
-}	
 
     .player-loading {
       position: absolute;
@@ -602,76 +588,6 @@
         height: 36px;
         font-size: 14px;
       }
-	  
-.nav-btn.stretch-btn:hover {
-  background: #ffa726;
-  box-shadow: 0 4px 15px rgba(255, 167, 38, 0.3);
-}	
-
-.stretch-dropdown {
-  position: relative;
-}
-
-.stretch-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: rgba(30, 30, 30, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 8px;
-  min-width: 160px;
-  display: none;
-  z-index: 1001;
-  margin-top: 5px;
-}
-
-.stretch-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 15px;
-  cursor: pointer;
-  color: #fff;
-  font-size: 14px;
-  transition: background 0.2s ease;
-}
-
-.stretch-option:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.stretch-option:first-child {
-  border-radius: 8px 8px 0 0;
-}
-
-.stretch-option:last-child {
-  border-radius: 0 0 8px 8px;
-}
-
-.stretch-option.active {
-  background: rgba(78, 205, 196, 0.2);
-  color: #4ecdc4;
-}
-
-/* Only apply stretch in fullscreen mode */
-.player-container.fullscreen-stretch-fill .player-iframe {
-  width: 100vw !important;
-  height: 100vh !important;
-  object-fit: fill;
-}
-
-.player-container.fullscreen-stretch-cover .player-iframe {
-  width: 100vw !important;
-  height: 100vh !important;
-  object-fit: cover;
-}
-
-.player-container.fullscreen-stretch-contain .player-iframe {
-  width: 100vw !important;
-  height: 100vh !important;
-  object-fit: contain;
-} 
 
       .share-content {
         padding: 20px;
@@ -709,25 +625,6 @@
         <button class="nav-btn cast-btn" id="castBtn" title="Open Link">
           <i class="fa-solid fa-globe"></i>
         </button>
-<div class="stretch-dropdown">
-  <button class="nav-btn stretch-btn" id="stretchBtn" title="Video Fit">
-    <i class="fas fa-expand-arrows-alt"></i>
-  </button>
-  <div class="stretch-menu" id="stretchMenu">
-    <div class="stretch-option" data-mode="contain">
-      <i class="fas fa-compress-arrows-alt"></i>
-      <span>Fit to Screen</span>
-    </div>
-    <div class="stretch-option" data-mode="cover">
-      <i class="fas fa-expand-arrows-alt"></i>
-      <span>Fill Screen</span>
-    </div>
-    <div class="stretch-option" data-mode="fill">
-      <i class="fas fa-arrows-alt"></i>
-      <span>Stretch Fill</span>
-    </div>
-  </div>
-</div>
         <button class="nav-btn share-btn" id="shareBtn" title="Share Video">
           <i class="fas fa-share-alt"></i>
         </button>
@@ -845,9 +742,7 @@ disable-paste='false'>
           closeShareBtn: document.getElementById('closeShareBtn'),
           castBtn: document.getElementById('castBtn'),
           shareBtn: document.getElementById('shareBtn'),
-          externalLink: document.getElementById('externalLink'),
-		  stretchBtn: document.getElementById('stretchBtn'),
-		  stretchMenu: document.getElementById('stretchMenu'),
+          externalLink: document.getElementById('externalLink')
         };
 
         this.init();
@@ -1358,33 +1253,6 @@ initCast() {
       setupEventListeners() {
         // Share button
         this.elements.shareBtn.addEventListener('click', () => this.openShareModal());
-		
-// Stretch dropdown
-this.elements.stretchBtn = document.getElementById('stretchBtn');
-this.elements.stretchMenu = document.getElementById('stretchMenu');
-this.stretchMode = 'contain';
-
-this.elements.stretchBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  this.toggleStretchMenu();
-});
-
-// Close dropdown when clicking outside
-document.addEventListener('click', (e) => {
-  if (!this.elements.stretchBtn.contains(e.target) && !this.elements.stretchMenu.contains(e.target)) {
-    this.elements.stretchMenu.style.display = 'none';
-  }
-});
-
-// Handle stretch option selection
-this.elements.stretchMenu.addEventListener('click', (e) => {
-  const option = e.target.closest('.stretch-option');
-  if (option) {
-    const mode = option.dataset.mode;
-    this.setStretchMode(mode);
-    this.elements.stretchMenu.style.display = 'none';
-  }
-});
 
         // Share modal
         this.elements.copyBtn.addEventListener('click', () => this.copyShareUrl());
@@ -1419,20 +1287,6 @@ this.elements.stretchMenu.addEventListener('click', (e) => {
               break;
           }
         });
-		
-// Handle fullscreen exit - remove stretch classes
-document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement) {
-    // Exiting fullscreen - remove all stretch classes
-    this.elements.playerContainer.classList.remove('fullscreen-stretch-fill', 'fullscreen-stretch-cover', 'fullscreen-stretch-contain');
-  }
-});
-
-document.addEventListener('webkitfullscreenchange', () => {
-  if (!document.webkitFullscreenElement) {
-    this.elements.playerContainer.classList.remove('fullscreen-stretch-fill', 'fullscreen-stretch-cover', 'fullscreen-stretch-contain');
-  }
-});		
 
 		// Back button
 		this.elements.backBtn = document.getElementById('backBtn');
@@ -1542,102 +1396,15 @@ handleCast() {
   }
 }
 
-toggleStretchMenu() {
-  const isVisible = this.elements.stretchMenu.style.display === 'block';
-  this.elements.stretchMenu.style.display = isVisible ? 'none' : 'block';
-  
-  if (!isVisible) {
-    this.updateStretchOptions();
-  }
-}
-
-setStretchMode(mode) {
-  this.stretchMode = mode;
-  
-  // Remove all stretch classes first
-  this.elements.playerContainer.classList.remove('fullscreen-stretch-fill', 'fullscreen-stretch-cover', 'fullscreen-stretch-contain');
-  
-  // Update button icon based on mode
-  const icons = {
-    contain: 'fas fa-compress-arrows-alt',
-    cover: 'fas fa-expand-arrows-alt', 
-    fill: 'fas fa-arrows-alt'
-  };
-  
-  this.elements.stretchBtn.innerHTML = `<i class="${icons[mode]}"></i>`;
-  
-  // Auto-trigger fullscreen when stretch mode is selected
-  if (mode !== 'contain') {
-    this.enterFullscreenWithStretch(mode);
-  } else {
-    // If contain mode, just apply normal fullscreen
-    this.toggleFullscreen();
-  }
-  
-  console.log(`Stretch mode set to: ${mode}`);
-}
-
-enterFullscreenWithStretch(mode) {
-  if (!document.fullscreenElement) {
-    this.elements.playerContainer.requestFullscreen().then(() => {
-      // Apply stretch class after fullscreen is active
-      setTimeout(() => {
-        this.elements.playerContainer.classList.add(`fullscreen-stretch-${mode}`);
-      }, 100);
-    }).catch(err => {
-      console.log('Fullscreen error:', err);
-    });
-  } else {
-    // Already in fullscreen, just apply the stretch
-    this.elements.playerContainer.classList.add(`fullscreen-stretch-${mode}`);
-  }
-}
-
-updateStretchOptions() {
-  const options = this.elements.stretchMenu.querySelectorAll('.stretch-option');
-  options.forEach(option => {
-    const mode = option.dataset.mode;
-    option.classList.toggle('active', mode === this.stretchMode);
-  });
-}
-
-toggleStretchMode() {
-  const modes = ['contain', 'cover', 'fill'];
-  const icons = ['fas fa-compress-arrows-alt', 'fas fa-expand-arrows-alt', 'fas fa-arrows-alt'];
-  const titles = ['Fit to Screen', 'Fill Screen', 'Stretch to Fill'];
-  
-  const currentIndex = modes.indexOf(this.stretchMode);
-  const nextIndex = (currentIndex + 1) % modes.length;
-  
-  this.stretchMode = modes[nextIndex];
-  
-  // Remove all stretch classes
-  this.elements.playerIframe.classList.remove('stretch-fill', 'stretch-cover', 'stretch-contain');
-  
-  // Add new stretch class
-  this.elements.playerIframe.classList.add(`stretch-${this.stretchMode}`);
-  
-  // Update button icon and title
-  this.elements.stretchBtn.innerHTML = `<i class="${icons[nextIndex]}"></i>`;
-  this.elements.stretchBtn.title = titles[nextIndex];
-}
-
-toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    this.elements.playerContainer.requestFullscreen().then(() => {
-      // Apply stretch if mode is set and not contain
-      if (this.stretchMode && this.stretchMode !== 'contain') {
-        setTimeout(() => {
-          this.elements.playerContainer.classList.add(`fullscreen-stretch-${this.stretchMode}`);
-        }, 100);
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          this.elements.playerContainer.requestFullscreen().catch(err => {
+            console.log('Fullscreen error:', err);
+          });
+        } else {
+          document.exitFullscreen();
+        }
       }
-    }).catch(err => {
-      console.log('Fullscreen error:', err);
-    });
-  } else {
-    document.exitFullscreen();
-  }
-}
 
       // Global retry function
       retryLoad() {
