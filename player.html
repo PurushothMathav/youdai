@@ -603,6 +603,47 @@
     .hidden {
       display: none !important;
     }
+	
+/* Touch zoom classes for video scaling */
+.player-iframe.touch-fit {
+  transform: scale(0.75);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+.player-iframe.touch-stretch {
+  transform: scale(1.25);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+.player-iframe.touch-normal {
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+/* Toast notification for zoom feedback */
+.zoom-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  color: #4ecdc4;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 10002;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.zoom-toast.show {
+  opacity: 1;
+}	
   </style>
 </head>
 <body>
