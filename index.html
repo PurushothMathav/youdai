@@ -1243,7 +1243,7 @@ disable-paste='false'>
     function showChannelGrid(channel) {
       const channelVideos = videos.filter(v => v.channel === channel);
       const sortedVideos = sortVideosByDate(channelVideos);
-      elements.gridTitle.textContent = (channel === "Live TV" || channel === "TAMIL DUB Movies") ? channel : `${channel} Shows`;
+      elements.gridTitle.textContent = (channel === "Live TV" || channel === "TAMIL DUB Movies" || channel === "Horror Movies" || channel === "Fantasy & Adventure Movies" || channel === "All time Classic Movies" || channel === "Family Movies" || channel === "Comedy Movies" || channel === "" || channel === "Suspense & Thriller Movies" || channel === "Drama Movies" || channel === "Romantic Movies" || channel === "Action Movies" || channel === "Super Hit Cinema") ? channel : `${channel} Shows`;
       renderVideoGrid(sortedVideos, elements.videoGrid, false);
       currentChannel = channel;
       showView('grid');
@@ -1318,7 +1318,7 @@ function renderChannelSections() {
     return `
       <div class="channel-section" data-channel="${channel}">
         <div class="section-header">
-          <h2 class="section-title">${(channel === "Live TV" || channel === "TAMIL DUB Movies") ? channel : channel + " Shows"}</h2>
+          <h2 class="section-title">${(channel === "Live TV" || channel === "TAMIL DUB Movies" || channel === "Horror Movies" || channel === "Fantasy & Adventure Movies" || channel === "All time Classic Movies" || channel === "Family Movies" || channel === "Comedy Movies" || channel === "" || channel === "Suspense & Thriller Movies" || channel === "Drama Movies" || channel === "Romantic Movies" || channel === "Action Movies" || channel === "Super Hit Cinema") ? channel : channel + " Shows"}</h2>
           <div class="section-actions">
             <span class="section-expand" onclick="showChannelGrid('${channel}')">
               <span>View All</span>
