@@ -1,6 +1,51 @@
 [
   {
     "platform": "gcs",
+    "id": "Super-Singer-S11-20-09-2025-Vijay-Tv.mp4",
+    "title": "Super Singer S11",
+    "mthumb": "https://img1.imageride.net/images/2025/09/12/sss11.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/12/sss11.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Cooku-With-Comali-S6-20-09-2025-Vijay-Tv.mp4",
+    "title": "Cooku with Comali S6",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/cwc6.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/cwc6.jpg",
+    "channel": "VIJAY TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "youtube",
+    "id": "rECwRAUmJ9A",
+    "title": "Thamarai",
+    "mthumb": "https://img.youtube.com/vi/rECwRAUmJ9A/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/rECwRAUmJ9A/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "youtube",
+    "id": "6_ydJGVel9w",
+    "title": "Annamalai",
+    "mthumb": "https://img.youtube.com/vi/6_ydJGVel9w/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/6_ydJGVel9w/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "youtube",
+    "id": "vIBZbGE0VX8",
+    "title": "Vaanampadi",
+    "mthumb": "https://img.youtube.com/vi/vIBZbGE0VX8/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/vIBZbGE0VX8/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
     "id": "Top-Cooku-Dupe-Cooku-S2-20-09-2025-Sun-Tv.mp4",
     "title": "Top Cooku Dupe Cooku S2",
     "mthumb": "https://img.imageride.net/images/2025/09/11/tcdc.jpg",
