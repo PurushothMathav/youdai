@@ -792,6 +792,7 @@ disable-paste='false'>
         this.retryCount = 0;
         this.maxRetries = 3;
         this.m3u8Url = null;
+		this.currentBlobUrl = null;
         this.workerUrl = 'https://dm.porus-in2012.workers.dev';
         
         this.elements = {
@@ -827,9 +828,12 @@ disable-paste='false'>
         this.loadVideo();
         
         // Extract M3U8 if Dailymotion video
-        if (this.currentVideo && this.currentVideo.platform === 'dailymotion') {
-          await this.extractM3U8();
-        }
+// Extract M3U8 if Dailymotion video or set direct URL for GCS
+if (this.currentVideo && this.currentVideo.platform === 'dailymotion') {
+  await this.extractM3U8();
+} else if (this.currentVideo && this.currentVideo.platform === 'gcs') {
+  this.m3u8Url = `https://storage.googleapis.com/mrpangu/${this.currentVideo.id}`;
+}
       }
 
 async extractM3U8() {
@@ -1124,6 +1128,8 @@ if (this.currentVideo.platform === 'youtube' && isMobile) {
           case 'dailymotion': return `https://www.dailymotion.com/video/${id}`;
           case 'ok': return `https://ok.ru/video/${id}`;
           case 'yupptv': return `https://www.yupptv.com/yupptvnew/channels/${id}/live`;
+case 'gcs':
+  return `https://storage.googleapis.com/mrpangu/${id}`;		  
           default: return window.location.href;
         }
       }
@@ -1145,6 +1151,9 @@ if (this.currentVideo.platform === 'youtube' && isMobile) {
           case 'yupptv':
             url = `https://www.yupptv.com/yupptvnew/channels/${id}/live`;
             break;
+case 'gcs':
+  url = `https://storage.googleapis.com/mrpangu/${id}`;
+  break;			
         }
         
         this.elements.externalLink.href = url;
@@ -1236,6 +1245,12 @@ if (this.currentVideo.platform === 'youtube' && isMobile) {
       }
 
       loadVideo() {
+	  
+  // Clean up any previous blob URLs
+  if (this.currentBlobUrl) {
+    URL.revokeObjectURL(this.currentBlobUrl);
+    this.currentBlobUrl = null;
+  }	  
         this.showLoading();
         this.hideError();
         
@@ -1288,11 +1303,50 @@ if (this.currentVideo.platform === 'youtube' && isMobile) {
 			
           case 'yupptv':
             return `https://www.yupptv.com/yupptvnew/channels/${id}/live/embed`;
+			
+case 'gcs': 
+  // For GCS, we'll load the MP4 directly in the iframe using a blob URL approach
+  const fullUrl = `https://storage.googleapis.com/mrpangu/${id}`;
+  return this.createVideoIframe(fullUrl);		
             
           default:
             return '';
         }
       }
+
+createVideoIframe(videoUrl) {
+  // Create a simple HTML5 video player
+  const videoHtml = `
+    <html>
+      <head>
+        <style>
+          body { margin:0; padding:0; background:#000; }
+          video { width:100%; height:100vh; object-fit:contain; }
+        </style>
+      </head>
+      <body>
+        <video controls autoplay>
+          <source src="${videoUrl}" type="video/mp4">
+        </video>
+      </body>
+    </html>
+  `;
+  
+  const blob = new Blob([videoHtml], { type: 'text/html' });
+  return URL.createObjectURL(blob);
+}
+
+handleCastSessionChange(event) {
+  // Handle cast session changes
+  console.log('Cast session changed:', event);
+}
+
+updateCastButton() {
+  // Update cast button appearance
+  if (this.elements.castBtn) {
+    this.elements.castBtn.classList.add('cast-available');
+  }
+}  
 
       showLoading() {
         this.elements.playerLoading.style.display = 'flex';
@@ -1433,7 +1487,8 @@ openShareModal() {
   this.elements.shareUrl.value = this.getDirectVideoLink();
 
   // Show MX and Download buttons only for videos we can download
-  if (this.currentVideo.platform === 'dailymotion' && this.m3u8Url) {
+if ((this.currentVideo.platform === 'dailymotion' || 
+     this.currentVideo.platform === 'gcs') && this.m3u8Url) {
     this.elements.shareUrl.value = this.m3u8Url;
     this.elements.mxBtn.style.display = 'flex';
     this.elements.downloadBtn.style.display = 'flex';
@@ -1521,9 +1576,23 @@ handleCast() {
         console.error("Metadata fetch error", err);
         window.open(`https://www.dailymotion.com/video/${id}`, "_blank");
       });
-  } else {
-    // fallback for other platforms
-    window.open(this.getDirectVideoLink(), "_blank");
+} else if (platform === "gcs") {
+  // Cast GCS MP4 URLs
+  const fullUrl = `https://storage.googleapis.com/mrpangu/${id}`;
+  const mediaInfo = new chrome.cast.media.MediaInfo(fullUrl, 'video/mp4');
+  const request = new chrome.cast.media.LoadRequest(mediaInfo);
+
+  cast.framework.CastContext.getInstance().requestSession()
+    .then(session => {
+      session.loadMedia(request).then(
+        () => console.log("Casting GCS video started"),
+        (err) => console.error("GCS Cast error", err)
+      );
+    })
+    .catch(err => {
+      console.error("Cast session error", err);
+      window.open(fullUrl, "_blank");
+    });
   }
 }
 
