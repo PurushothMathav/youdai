@@ -1,6 +1,168 @@
 [
   {
     "platform": "gcs",
+    "id": "Malli-20-09-2025-Sun-Tv.mp4",
+    "title": "Malli",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Malli.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Malli.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Aadukalam-20-09-2025-Sun-Tv.mp4",
+    "title": "Aadukalam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/Aadukalam.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/Aadukalam.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Ninaithale-Innikkum-20-09-2025-Zee-Tamil.mp4",
+    "title": "Ninaithale Innikkum",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/ni1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/ni1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Ethir-Neechal-Thodargirathu-20-09-2025-Sun-Tv.mp4",
+    "title": "Ethir Neechal Thodargirathu",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Ethir.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Ethir.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Sandhya-Raagam-20-09-2025-Zee-Tamil.mp4",
+    "title": "Sandhya Raagam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/sr1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/sr1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Singapenne-20-09-2025-Sun-Tv.mp4",
+    "title": "Singappenne",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/Singappenn.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/Singappenn.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Moondru-Mudichu-20-09-2025-Sun-Tv.mp4",
+    "title": "Moondru Mudichi",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Moondru.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Moondru.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Parijatham-20-09-2025-Zee-Tamil.mp4",
+    "title": "Parijatham",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/pj1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/pj1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Karthigai-Deepam-20-09-2025-Zee-Tamil.mp4",
+    "title": "Karthigai Deepam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/kd1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/kd1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Annam--Kayal--Marumagal-20-09-2025-Sun-Tv.mp4",
+    "title": "Annam Kayal Marumagal",
+    "mthumb": "https://img1.imageride.net/images/2025/09/15/ms.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/15/ms.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Ayali-20-09-2025-Zee-Tamil.mp4",
+    "title": "Ayali",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Ramayanam-20-09-2025-Sun-Tv.mp4",
+    "title": "Ramayanam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/rama.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/rama.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Saregamapa-Seniors-S5-20-09-2025-Zee-Tamil.mp4",
+    "title": "Saregamapa Seniors S5",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/ss.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/ss.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Getti-Melam-20-09-2025-Zee-Tamil.mp4",
+    "title": "Getti Melam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/gm1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/gm1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
+    "id": "Maari-20-09-2025-Zee-Tamil.mp4",
+    "title": "Maari",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/maari1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/maari1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "youtube",
+    "id": "KBCZ0RBxS1Y",
+    "title": "Karnaa",
+    "mthumb": "https://img.youtube.com/vi/KBCZ0RBxS1Y/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/KBCZ0RBxS1Y/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "youtube",
+    "id": "d_bA6v_pW0o",
+    "title": "Tenali Raman",
+    "mthumb": "https://img.youtube.com/vi/d_bA6v_pW0o/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/d_bA6v_pW0o/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "youtube",
+    "id": "zY1aGArqBbE",
+    "title": "Rani Agalya",
+    "mthumb": "https://img.youtube.com/vi/zY1aGArqBbE/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/zY1aGArqBbE/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-20"
+  },
+  {
+    "platform": "gcs",
     "id": "Anandha-Ragam-20-09-2025-Sun-Tv.mp4",
     "title": "Anandha Raagam",
     "mthumb": "https://img.imageride.net/images/2025/09/11/Anandh.jpg",
