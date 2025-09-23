@@ -1,6 +1,105 @@
 [
   {
     "platform": "gcs",
+    "id": "Veera-23-09-2025.mp4",
+    "title": "Veera",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/vee11.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/vee11.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "gcs",
+    "id": "Anna-23-09-2025.mp4",
+    "title": "Anna",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/ann1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/ann1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "gcs",
+    "id": "Ayali-23-09-2025.mp4",
+    "title": "Ayali",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "gcs",
+    "id": "Karthigai-Deepam-23-09-2025.mp4",
+    "title": "Karthigai Deepam",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/kd1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/kd1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "gcs",
+    "id": "Parijatham-23-09-2025.mp4",
+    "title": "Parijatham",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/pj1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/pj1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "gcs",
+    "id": "Sandhya-Raagam-23-09-2025.mp4",
+    "title": "Sandhya Raagam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/sr1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/sr1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "gcs",
+    "id": "Ninaithale-Innikkum-23-09-2025.mp4",
+    "title": "Ninaithale Innikkum",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/ni1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/ni1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "gcs",
+    "id": "Lakshmi-Kalyanam-23-09-2025.mp4",
+    "title": "Lakshmi Kalyanam",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/lk1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/lk1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "youtube",
+    "id": "Hf0hUrN23MY",
+    "title": "Jayam",
+    "mthumb": "https://img.youtube.com/vi/Hf0hUrN23MY/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/Hf0hUrN23MY/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "youtube",
+    "id": "KKjPVi20eqc",
+    "title": "KAIRASI KUDUMBAM",
+    "mthumb": "https://img.youtube.com/vi/KKjPVi20eqc/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/KKjPVi20eqc/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "youtube",
+    "id": "dTBowBJO0fQ",
+    "title": "Poovum Pottu",
+    "mthumb": "https://img.youtube.com/vi/dTBowBJO0fQ/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/dTBowBJO0fQ/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-23"
+  },
+  {
+    "platform": "gcs",
     "id": "Idhayam-23-09-2025.mp4",
     "title": "Idhayam",
     "mthumb": "https://img1.imageride.net/images/2025/09/11/id1.jpg",
@@ -527,7 +626,7 @@
     "title": "Lakshmi Kalyanam",
     "mthumb": "https://img1.imageride.net/images/2025/09/11/lk1.jpg",
     "dthumb": "https://img1.imageride.net/images/2025/09/11/lk1.jpg",
-    "channel": "SUN TV",
+    "channel": "ZEETAMIL TV",
     "date": "2025-09-22"
   },
   {
