@@ -1,6 +1,51 @@
 [
   {
     "platform": "gcs",
+    "id": "Maari-24-09-2025.mp4",
+    "title": "Maari",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/maari1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/maari1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-24"
+  },
+  {
+    "platform": "gcs",
+    "id": "Veera-24-09-2025.mp4",
+    "title": "Veera",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/vee11.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/vee11.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-24"
+  },
+  {
+    "platform": "gcs",
+    "id": "Anna-24-09-2025.mp4",
+    "title": "Anna",
+    "mthumb": "https://img.imageride.net/images/2025/09/11/ann1.jpg",
+    "dthumb": "https://img.imageride.net/images/2025/09/11/ann1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-24"
+  },
+  {
+    "platform": "gcs",
+    "id": "Ayali-24-09-2025.mp4",
+    "title": "Ayali",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/ayali1.jpg",
+    "channel": "ZEETAMIL TV",
+    "date": "2025-09-24"
+  },
+  {
+    "platform": "youtube",
+    "id": "XcJCA7QdYQQ",
+    "title": "Jayam",
+    "mthumb": "https://img.youtube.com/vi/XcJCA7QdYQQ/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/XcJCA7QdYQQ/hqdefault.jpg",
+    "channel": "JAYA TV",
+    "date": "2025-09-24"
+  },
+  {
+    "platform": "gcs",
     "id": "Getti-Melam-24-09-2025.mp4",
     "title": "Getti Melam",
     "mthumb": "https://img1.imageride.net/images/2025/09/11/gm1.jpg",
