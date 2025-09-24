@@ -1,6 +1,15 @@
 [
   {
     "platform": "gcs",
+    "id": "Malli-24-09-2025.mp4",
+    "title": "Malli",
+    "mthumb": "https://img1.imageride.net/images/2025/09/11/Malli.jpg",
+    "dthumb": "https://img1.imageride.net/images/2025/09/11/Malli.jpg",
+    "channel": "SUN TV",
+    "date": "2025-09-24"
+  },
+  {
+    "platform": "gcs",
     "id": "Lakshmi-Kalyanam-24-09-2025.mp4",
     "title": "Lakshmi Kalyanam",
     "mthumb": "https://img1.imageride.net/images/2025/09/11/lk1.jpg",
