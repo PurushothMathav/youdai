@@ -1003,32 +1003,40 @@ initCast() {
     return;
   }
 
-  window['__onGCastApiAvailable'] = (isAvailable) => {
-    if (isAvailable) {
-      try {
-        const context = cast.framework.CastContext.getInstance();
-        context.setOptions({
-          receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-          autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED
-        });
-        
-        // Listen for session state changes
-        context.addEventListener(
-          cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
-          (event) => this.handleCastSessionChange(event)
-        );
-        
-        console.log("Cast initialized successfully");
-        this.updateCastButton();
-      } catch (error) {
-        console.error('Cast initialization failed:', error);
-      }
-    } else {
-      console.log('Cast API not available');
+  // Wait for Cast API to be ready
+  const initializeCastApi = () => {
+    try {
+      cast.framework.CastContext.getInstance().setOptions({
+        receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+        autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+      });
+      
+      // Listen for session state changes
+      const context = cast.framework.CastContext.getInstance();
+      context.addEventListener(
+        cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
+        (event) => this.handleCastSessionChange(event)
+      );
+      
+      console.log("Cast initialized successfully");
+      this.updateCastButton();
+    } catch (error) {
+      console.error('Cast initialization failed:', error);
     }
   };
-}
 
+  // Check if Cast API is already loaded
+  if (window.cast && window.cast.framework) {
+    initializeCastApi();
+  } else {
+    // Wait for Cast API to load
+    window['__onGCastApiAvailable'] = (isAvailable) => {
+      if (isAvailable) {
+        initializeCastApi();
+      }
+    };
+  }
+}
 
       // MINIMAL ADDITION - Only handle mobile orientation in fullscreen
       setupMobileOrientationHandler() {
@@ -1337,14 +1345,31 @@ createVideoIframe(videoUrl) {
 }
 
 handleCastSessionChange(event) {
-  // Handle cast session changes
-  console.log('Cast session changed:', event);
+  const context = cast.framework.CastContext.getInstance();
+  const session = context.getCurrentSession();
+  
+  if (session) {
+    console.log('Cast session started');
+    this.elements.castBtn.innerHTML = '<i class="fas fa-cast-connected"></i>';
+    this.elements.castBtn.style.color = '#4ecdc4';
+  } else {
+    console.log('Cast session ended');
+    this.elements.castBtn.innerHTML = '<i class="fa-solid fa-globe"></i>';
+    this.elements.castBtn.style.color = '';
+  }
 }
 
 updateCastButton() {
-  // Update cast button appearance
-  if (this.elements.castBtn) {
+  const context = cast.framework.CastContext.getInstance();
+  const castState = context.getCastState();
+  
+  if (castState === cast.framework.CastState.NO_DEVICES_AVAILABLE) {
+    this.elements.castBtn.style.opacity = '0.5';
+    this.elements.castBtn.title = 'No cast devices available';
+  } else {
+    this.elements.castBtn.style.opacity = '1';
     this.elements.castBtn.classList.add('cast-available');
+    this.elements.castBtn.title = 'Cast to device';
   }
 }  
 
@@ -1486,16 +1511,21 @@ openShareModal() {
   // default direct link
   this.elements.shareUrl.value = this.getDirectVideoLink();
 
-  // Show MX and Download buttons only for videos we can download
+// Show MX and Download buttons only for videos we can download
 if ((this.currentVideo.platform === 'dailymotion' || 
      this.currentVideo.platform === 'gcs') && this.m3u8Url) {
     this.elements.shareUrl.value = this.m3u8Url;
     this.elements.mxBtn.style.display = 'flex';
     this.elements.downloadBtn.style.display = 'flex';
-  } else {
+} else if (this.currentVideo.platform === 'gcs') {
+    // For GCS without m3u8, show direct link and enable casting
+    this.elements.shareUrl.value = this.getDirectVideoLink();
+    this.elements.downloadBtn.style.display = 'flex';
     this.elements.mxBtn.style.display = 'none';
-    this.elements.downloadBtn.style.display = 'flex'; // or hide depending on your logic
-  }
+} else {
+    this.elements.mxBtn.style.display = 'none';
+    this.elements.downloadBtn.style.display = 'flex';
+}
 
   this.elements.shareUrl.select();
 }
@@ -1549,51 +1579,68 @@ if ((this.currentVideo.platform === 'dailymotion' ||
       }
 
 handleCast() {
-  const { platform, id } = this.currentVideo;
+  const { platform, id, title } = this.currentVideo;
 
-  if (platform === "dailymotion") {
-    fetch(`https://www.dailymotion.com/player/metadata/video/${id}`)
-      .then(res => res.json())
-      .then(data => {
-        const hls = data.qualities.auto?.[0]?.url;
-        if (hls) {
-          const mediaInfo = new chrome.cast.media.MediaInfo(hls, 'application/x-mpegURL');
-          const request = new chrome.cast.media.LoadRequest(mediaInfo);
+  // Only handle GCS casting as requested
+  if (platform === "gcs") {
+    const fullUrl = `https://storage.googleapis.com/mrpangu/${id}`;
+    
+    const mediaInfo = new chrome.cast.media.MediaInfo(fullUrl, 'video/mp4');
+    mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
+    mediaInfo.metadata.metadataType = chrome.cast.media.MetadataType.GENERIC;
+    mediaInfo.metadata.title = title || 'Video';
+    
+    const request = new chrome.cast.media.LoadRequest(mediaInfo);
+    request.autoplay = true;
 
-          cast.framework.CastContext.getInstance().requestSession()
-            .then(session => {
-              session.loadMedia(request).then(
-                () => console.log("Casting started"),
-                (err) => console.error("Load error", err)
-              );
-            })
-            .catch(err => console.error("Cast session error", err));
-        } else {
-          window.open(`https://www.dailymotion.com/video/${id}`, "_blank");
-        }
-      })
-      .catch(err => {
-        console.error("Metadata fetch error", err);
-        window.open(`https://www.dailymotion.com/video/${id}`, "_blank");
-      });
-} else if (platform === "gcs") {
-  // Cast GCS MP4 URLs
-  const fullUrl = `https://storage.googleapis.com/mrpangu/${id}`;
-  const mediaInfo = new chrome.cast.media.MediaInfo(fullUrl, 'video/mp4');
-  const request = new chrome.cast.media.LoadRequest(mediaInfo);
-
-  cast.framework.CastContext.getInstance().requestSession()
-    .then(session => {
+    const context = cast.framework.CastContext.getInstance();
+    
+    context.requestSession().then(session => {
       session.loadMedia(request).then(
-        () => console.log("Casting GCS video started"),
-        (err) => console.error("GCS Cast error", err)
+        () => {
+          console.log("GCS video casting started successfully");
+          // Optional: Show success message
+          this.showCastSuccess();
+        },
+        (error) => {
+          console.error("Failed to load media on cast device:", error);
+          this.showCastError("Failed to start casting");
+        }
       );
-    })
-    .catch(err => {
-      console.error("Cast session error", err);
-      window.open(fullUrl, "_blank");
+    }).catch(error => {
+      console.error("Failed to start cast session:", error);
+      if (error.code === 'cancel') {
+        console.log("User cancelled cast session");
+      } else {
+        this.showCastError("Could not connect to cast device");
+      }
     });
+  } else {
+    // For non-GCS platforms, just open the external link
+    window.open(this.getDirectVideoLink(), "_blank");
   }
+}
+
+showCastSuccess() {
+  const originalHtml = this.elements.castBtn.innerHTML;
+  this.elements.castBtn.innerHTML = '<i class="fas fa-check"></i>';
+  this.elements.castBtn.style.color = '#4ecdc4';
+  
+  setTimeout(() => {
+    this.elements.castBtn.innerHTML = '<i class="fas fa-cast-connected"></i>';
+  }, 2000);
+}
+
+showCastError(message) {
+  console.error("Cast error:", message);
+  const originalHtml = this.elements.castBtn.innerHTML;
+  this.elements.castBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+  this.elements.castBtn.style.color = '#ff6b6b';
+  
+  setTimeout(() => {
+    this.elements.castBtn.innerHTML = originalHtml;
+    this.elements.castBtn.style.color = '';
+  }, 3000);
 }
 
 toggleFullscreen() {
