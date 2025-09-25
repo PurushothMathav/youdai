@@ -1429,8 +1429,13 @@ updateCastButton() {
         });
 		this.elements.downloadBtn = document.getElementById('downloadBtn');
 		this.elements.downloadBtn.addEventListener('click', () => {
-			// open stream.html in same tab or new tab
-			window.location.href = 'stream.html';
+			if (this.currentVideo.platform === 'gcs') {
+				// Direct download for GCS MP4 videos
+				this.downloadGCSVideo();
+			} else {
+				// Go to stream.html for other platforms (like Dailymotion)
+				window.location.href = 'stream.html';
+			}
 		});
 		
 this.elements.customFsBtn = document.getElementById("customFsBtn");
@@ -1504,6 +1509,33 @@ document.addEventListener("fullscreenchange", () => {
 			window.location.href = "index.html";
 		});
       }
+	  
+	  downloadGCSVideo() {
+    const { id, title } = this.currentVideo;
+    const videoUrl = `https://storage.googleapis.com/mrpangu/${id}`;
+    
+    // Create download link
+    const link = document.createElement('a');
+    link.href = videoUrl;
+    link.download = `${title || 'video'}.mp4`;
+    link.style.display = 'none';
+    
+    // Add to DOM, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Show feedback
+    const originalHtml = this.elements.downloadBtn.innerHTML;
+    this.elements.downloadBtn.innerHTML = `
+        <i class="fas fa-check"></i>
+        <span>Downloading...</span>
+    `;
+    
+    setTimeout(() => {
+        this.elements.downloadBtn.innerHTML = originalHtml;
+    }, 3000);
+}
 
 openShareModal() {
   this.elements.shareModal.style.display = 'flex';
@@ -1568,15 +1600,45 @@ if ((this.currentVideo.platform === 'dailymotion' ||
         }
       }
 
-      detectCastDevices() {
-        if (window.chrome && window.chrome.cast) {
-          this.elements.castBtn.classList.add('cast-available');
-        }
+detectCastDevices() {
+  // Initially hide cast button
+  //this.elements.castBtn.style.display = 'none';
+  
+  if (!window.chrome || !window.chrome.cast) {
+    console.log('Cast API not available');
+    return;
+  }
 
-        if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
-          this.elements.castBtn.style.opacity = '1';
-        }
+  // Wait for cast API and check for devices
+  const checkCastDevices = () => {
+    try {
+      const context = cast.framework.CastContext.getInstance();
+      const castState = context.getCastState();
+      
+      if (castState === cast.framework.CastState.NO_DEVICES_AVAILABLE) {
+        this.elements.castBtn.style.display = 'none';
+        console.log('No cast devices available');
+      } else {
+        this.elements.castBtn.style.display = 'flex';
+        this.elements.castBtn.classList.add('cast-available');
+        console.log('Cast devices available');
       }
+    } catch (error) {
+      this.elements.castBtn.style.display = 'none';
+      console.log('Cast state check failed:', error);
+    }
+  };
+
+  // Listen for cast state changes
+  if (window.cast && window.cast.framework) {
+    const context = cast.framework.CastContext.getInstance();
+    context.addEventListener(
+      cast.framework.CastContextEventType.CAST_STATE_CHANGED,
+      checkCastDevices
+    );
+    checkCastDevices(); // Initial check
+  }
+}
 
 handleCast() {
   const { platform, id, title } = this.currentVideo;
