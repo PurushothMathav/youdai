@@ -1,5 +1,14 @@
 [
   {
+    "platform": "youtube",
+    "id": "1q9n-GwBNAc",
+    "title": "Thamarai",
+    "mthumb": "https://img.youtube.com/vi/1q9n-GwBNAc/mqdefault.jpg",
+    "dthumb": "https://img.youtube.com/vi/1q9n-GwBNAc/hqdefault.jpg",
+    "channel": "THANTHI ONE",
+    "date": "2025-09-30"
+  },
+  {
     "platform": "gcs",
     "id": "paarijatham-29-09-2025.mp4",
     "title": "Parijatham",
@@ -343,7 +352,7 @@
   },
   {
     "platform": "youtube",
-    "id": "V8vZdxNizbY",
+    "id": "ltHfk0CYtzg",
     "title": "Krishnathulasi",
     "mthumb": "https://img.youtube.com/vi/V8vZdxNizbY/mqdefault.jpg",
     "dthumb": "https://img.youtube.com/vi/V8vZdxNizbY/hqdefault.jpg",
@@ -929,7 +938,7 @@
   {
     "platform": "youtube",
     "id": "DeCO06vv2aY",
-    "title": "Ammu",
+    "title": "Krishnathulasi",
     "mthumb": "https://img.youtube.com/vi/DeCO06vv2aY/mqdefault.jpg",
     "dthumb": "https://img.youtube.com/vi/DeCO06vv2aY/hqdefault.jpg",
     "channel": "THANTHI ONE",
